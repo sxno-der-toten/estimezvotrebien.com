@@ -1,0 +1,194 @@
+/* =========================================
+   inscription.CSS - Design de la page d'inscription
+========================================= */
+
+/* --- 1. Layout de la page --- */
+.register-section {
+    background-color: var(--hero-bg); 
+    padding: 60px 0 80px 0;
+    min-height: calc(100vh - 400px);
+    display: flex;
+    align-items: center;
+}
+
+.register-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- 2. La carte d'inscription --- */
+.register-card {
+    background-color: var(--white);
+    width: 100%;
+    max-width: 550px; /* Légèrement plus large que la connexion pour accueillir les 2 colonnes Prénom/Nom */
+    padding: 3.5rem 3rem;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(108, 131, 217, 0.08);
+    border: 1px solid var(--card-border);
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.register-header h2 {
+    color: var(--title-blue);
+    font-size: 28px;
+    margin-bottom: 0.8rem;
+}
+
+.register-header p {
+    color: var(--text-gray);
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+/* --- 3. Les champs du formulaire --- */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    color: #2E3F84;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+}
+
+.password-hint {
+    display: block;
+    font-size: 12px;
+    color: #9CA3AF;
+    margin-top: 6px;
+    margin-left: 5px;
+}
+
+/* Conteneur pour intégrer l'icône dans l'input */
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9CA3AF;
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 45px;
+    border: 2px solid #E3E8F5;
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    color: #2E3F84;
+    background-color: #FAFBFE;
+    transition: all 0.3s ease;
+}
+
+.input-with-icon input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    background-color: var(--white);
+    box-shadow: 0 0 0 3px rgba(108, 131, 217, 0.1);
+}
+
+.input-with-icon input:focus + i, 
+.input-with-icon:focus-within i {
+    color: var(--primary-blue);
+}
+
+/* --- 4. Conditions d'utilisation (CGU) --- */
+.terms-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+}
+
+.terms-group input[type="checkbox"] {
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--primary-blue);
+    flex-shrink: 0;
+}
+
+.terms-group label {
+    color: var(--text-gray);
+    font-size: 13px;
+    line-height: 1.5;
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
+.terms-group label a {
+    color: var(--primary-blue);
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.terms-group label a:hover {
+    color: #2E3F84;
+}
+
+/* --- 5. Bouton et bas de carte --- */
+.btn-full-width {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 50px;
+}
+
+.register-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--card-border);
+}
+
+.register-footer p {
+    font-size: 14px;
+    color: var(--text-gray);
+    margin-bottom: 0;
+}
+
+.register-footer a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 5px;
+    transition: color 0.3s ease;
+}
+
+.register-footer a:hover {
+    color: #2E3F84;
+}
+
+/* --- 6. Responsive --- */
+@media (max-width: 576px) {
+    .register-card {
+        padding: 2.5rem 1.5rem;
+        border-radius: 16px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr; /* Prénom et Nom s'empilent sur mobile */
+        gap: 0;
+    }
+}

@@ -1,0 +1,556 @@
+/* =========================================
+   GUIDES.CSS - Styles pour les articles et pages locales
+========================================= */
+
+/* --- SECTION HERO (En-tête des guides) --- */
+.hero {
+    background: linear-gradient(135deg, var(--hero-bg) 0%, #FFFFFF 100%);
+    padding: 4rem 0;
+    border-bottom: 1px solid var(--card-border);
+    margin-bottom: 3rem;
+}
+
+.hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* 50% texte à gauche, 50% image à droite */
+    gap: 4rem;
+    align-items: center;
+}
+
+.hero-text h1 {
+    font-size: 40px;
+    color: var(--title-blue);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    color: var(--text-gray);
+    line-height: 1.6;
+    margin-bottom: 0;
+    margin-bottom: 15px;
+}
+
+.hero-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(108, 131, 217, 0.15);
+    /* Ombre douce aux couleurs de la charte */
+    display: block;
+}
+
+/* --- 1. Layout Principal (Grille Contenu / Sidebar) --- */
+.content-section {
+    padding: var(--section-spacing) 0;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr;
+    /* Le contenu prend 2.5x plus de place que la sidebar */
+    gap: 4rem;
+    align-items: start;
+}
+
+.main-content {
+    min-width: 0;
+    /* Évite les débordements sur petit écran */
+}
+
+/* --- 2. Introduction et Typographie --- */
+.intro-box {
+    margin-bottom: 2.5rem;
+}
+
+.lead {
+    font-size: 20px;
+    color: var(--primary-blue);
+    font-weight: 500;
+    border-left: 4px solid var(--primary-blue);
+    padding-left: 20px;
+    line-height: 1.8;
+}
+
+.main-content ul {
+    padding-left: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.main-content ul li {
+    margin-bottom: 0.5rem;
+}
+
+/* --- 3. Sommaire (Table of contents) --- */
+.table-of-contents {
+    background: var(--hero-bg);
+    border-radius: 16px;
+    padding: 28px;
+    margin: 40px 0;
+    border: 1px solid var(--card-border);
+}
+
+.table-of-contents h3 {
+    margin-bottom: 18px;
+    font-size: 20px;
+}
+
+.toc-list {
+    list-style: none;
+    padding: 0 !important;
+    margin: 0;
+}
+
+.toc-list li {
+    margin-bottom: 8px !important;
+}
+
+.toc-list a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #1f2937;
+    transition: all 0.2s ease;
+}
+
+.toc-list a:hover {
+    background: var(--white);
+    transform: translateX(6px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.toc-number {
+    font-weight: 700;
+    color: var(--primary-blue);
+    min-width: 30px;
+}
+
+/* --- 4. Boîtes d'information (Astuces, Erreurs, Calculs) --- */
+.trend-box,
+.formula-box,
+.calculation-example,
+.error-box,
+.warning-box,
+.cta-box {
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    margin: 2rem 0;
+}
+
+.trend-box {
+    background-color: #F0FDF4;
+    /* Vert très clair */
+    border-left: 4px solid #4CAF50;
+}
+
+.formula-box,
+.calculation-example {
+    background-color: #F0F8FF;
+    /* Bleu très clair */
+    border-left: 4px solid #2196F3;
+}
+
+.error-box {
+    background-color: #FEF2F2;
+    /* Rouge très clair */
+    border-left: 4px solid #EF4444;
+}
+
+.error-box h4,
+.error-box i {
+    color: #DC2626;
+}
+
+.warning-box {
+    background-color: #FFFBEB;
+    /* Jaune très clair */
+    border-left: 4px solid #F59E0B;
+}
+
+.warning-box h4,
+.warning-box i {
+    color: #D97706;
+}
+
+.cta-box {
+    background-color: var(--hero-bg);
+    text-align: center;
+    border: 2px dashed var(--primary-blue);
+}
+
+/* Liste d'étapes chiffrées */
+.method-steps {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 26px 28px;
+    margin: 2rem 0;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.method-steps ol {
+    padding-left: 0;
+    list-style: none;
+    counter-reset: step;
+}
+
+.method-steps li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 42px;
+    margin-bottom: 16px;
+}
+
+.method-steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--primary-blue);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- 5. Grilles de Cartes (Facteurs, Améliorations, Situations) --- */
+.factors-grid,
+.improvement-grid,
+.professional-situations {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 2.5rem 0;
+}
+
+.factor-card,
+.improvement-card,
+.situation-card {
+    background: var(--white);
+    border: 1px solid var(--card-border);
+    padding: 1.5rem;
+    border-radius: 16px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.factor-card:hover,
+.improvement-card:hover,
+.situation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+    border-color: var(--primary-blue);
+}
+
+.factor-card h4 i,
+.situation-card h4 i {
+    font-size: 22px;
+    color: var(--primary-blue);
+    margin-right: 8px;
+}
+
+.improvement-card h4 {
+    border-bottom: 2px solid var(--hero-bg);
+    padding-bottom: 0.5rem;
+}
+
+/* --- 6. Call To Action Final (Bas de page) --- */
+.final-cta {
+    text-align: center;
+    margin-top: 4rem;
+    padding: 3rem;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--card-border);
+}
+
+/* --- 7. Sidebar (Barre latérale) --- */
+.sidebar {
+    position: sticky;
+    top: 100px;
+    /* Reste visible au scroll */
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.sidebar-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--card-border);
+}
+
+.sidebar-card h4 {
+    font-size: 18px;
+    border-bottom: 2px solid var(--hero-bg);
+    padding-bottom: 0.8rem;
+    margin-bottom: 1.2rem;
+}
+
+.sidebar-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-card ul li {
+    margin-bottom: 0.8rem;
+}
+
+.sidebar-card ul a {
+    color: var(--text-gray);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-card ul a::before {
+    content: "›";
+    color: var(--primary-blue);
+    margin-right: 8px;
+    font-weight: bold;
+    transition: transform 0.3s;
+}
+
+.sidebar-card ul a:hover {
+    color: var(--primary-blue);
+}
+
+.sidebar-card ul a:hover::before {
+    transform: translateX(4px);
+}
+
+/* --- Ajouts pour les Tableaux (Guides Appartement & Villes) --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    /* Permet de garder les bords arrondis */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    border: 1px solid var(--card-border);
+}
+
+th,
+td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+}
+
+th {
+    background-color: var(--hero-bg);
+    color: var(--title-blue);
+    font-weight: 600;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background-color: #F8FAFF;
+}
+
+/* Extension des grilles de cartes pour le guide appartement */
+.specifics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 2.5rem 0;
+}
+
+.specific-card {
+    background: var(--white);
+    border: 1px solid var(--card-border);
+    padding: 1.5rem;
+    border-radius: 16px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.specific-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+    border-color: var(--primary-blue);
+}
+
+.specific-card h4 i {
+    font-size: 22px;
+    color: var(--primary-blue);
+    margin-right: 8px;
+}
+
+/* --- SECTION GUIDES FULLSCREEN (Façon Index) --- */
+.guides-hero-fullscreen {
+    position: relative;
+    min-height: calc(100vh - 80px);
+    /* Prend toute la hauteur moins le header */
+    display: flex;
+    align-items: center;
+    /* Centre le contenu verticalement */
+    justify-content: center;
+    background: linear-gradient(135deg, var(--hero-bg) 0%, #FFFFFF 100%);
+    padding: 40px 0;
+    /* Padding de sécurité pour les petits écrans */
+}
+
+.guides-hero-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    /* Espacement entre le titre et la grille */
+}
+
+.guides-header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.guides-header h1 {
+    font-size: 42px;
+    color: var(--title-blue);
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.guides-header p {
+    font-size: 18px;
+    color: var(--text-gray);
+    margin-bottom: 0;
+    /* Géré par le gap du container */
+}
+
+/* =========================================
+   BOUTONS FLOTTANTS (Retour & Remonter)
+========================================= */
+.floating-btn {
+    position: fixed;
+    z-index: 990;
+    /* Reste sous le header qui est à 1000 */
+    background-color: var(--white);
+    color: var(--primary-blue);
+    box-shadow: 0 4px 15px rgba(108, 131, 217, 0.15);
+    border: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.floating-btn:hover {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(108, 131, 217, 0.3);
+    border-color: var(--primary-blue);
+}
+
+/* Bouton Retour (En haut à gauche) */
+.back-btn {
+    top: 100px;
+    /* Se place juste sous le header */
+    left: 30px;
+    /* Petit espace avec le bord */
+    padding: 10px 24px;
+    border-radius: 50px;
+    /* Forme Pilule */
+    gap: 8px;
+}
+
+/* Bouton Remonter (En bas à droite) */
+.top-btn {
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    /* Cercle parfait */
+    font-size: 18px;
+    padding: 0;
+    opacity: 0;
+    /* Caché par défaut, révélé par le scroll */
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.top-btn.visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* --- 8. Responsive --- */
+@media (max-width: 992px) {
+
+    /* Responsive ajouté pour le Hero Section */
+    .hero-content {
+        grid-template-columns: 1fr;
+        /* S'empile sur mobile */
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .content-grid {
+        grid-template-columns: 1fr;
+        /* La sidebar passe en dessous du contenu */
+        gap: 3rem;
+    }
+
+    .sidebar {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .guides-hero-fullscreen {
+        height: auto;
+        min-height: calc(100vh - 80px);
+        padding: 60px 0;
+    }
+
+    .guides-header h1 {
+        font-size: 32px;
+    }
+
+    .guides-hero-container {
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .back-btn {
+        top: 85px;
+        left: 15px;
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .top-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        font-size: 16px;
+    }
+}

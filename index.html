@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estimez la valeur de votre bien immobilier | EstimezVotreBien.com</title>
+    <meta name="description"
+        content="Découvrez la valeur réelle de votre bien immobilier. Obtenez une estimation claire, fiable et sans surprise.">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function () {
+            emailjs.init("kvh8qIqmv_9Vi5cX6");
+        })();
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/index.css">
+    <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Estimez la valeur de votre bien immobilier | EstimezVotreBien.com",
+    "description": "Découvrez la valeur réelle de votre bien immobilier. Obtenez une estimation claire, fiable et basée sur les ventes récentes de votre quartier.",
+    "publisher": {
+      "@type": "RealEstateAgent",
+      "name": "EstimezVotreBien.com",
+      "image": "https://estimezvotrebien.com/images/logo.svg",
+      "parentOrganization": {
+        "@type": "Organization",
+        "name": "EstimezVotreBien.com"
+      }
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "L'estimation immobilière en ligne est-elle vraiment gratuite ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Oui, l'utilisation de notre simulateur est totalement gratuite et ne vous engage à rien. En quelques minutes, après avoir renseigné les caractéristiques de votre propriété, vous obtenez instantanément une fourchette de prix pour démarrer votre projet."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "D'où proviennent les données de votre estimateur en ligne ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Notre algorithme s'appuie sur la base de données officielle DVF (Demandes de Valeurs Foncières) alimentée par les notaires et l'État. Elle recense les transactions immobilières réelles, que nous croisons ensuite avec les tendances et dynamiques du marché de 2026."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Mon estimation en ligne est-elle suffisante pour mettre en vente ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Elle constitue un excellent point de départ pour évaluer votre budget. Toutefois, pour fixer un prix de commercialisation définitif, la visite d'un de nos experts est indispensable : l'algorithme ne peut pas évaluer le charme, la vue exacte ou la qualité de vos récentes rénovations."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Est-ce le bon moment pour vendre mon bien en 2026 ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Avec la stabilisation des taux d'emprunt, le marché de 2026 offre un environnement très propice aux transactions si le bien est estimé à son juste prix. Les acquéreurs sont de retour et actifs, mais ils sont très bien informés et écartent systématiquement les biens surestimés."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Combien de temps reste valable l'estimation de mon bien ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Le marché immobilier (l'offre, la demande et les taux d'emprunt) évolue en permanence. Une estimation est généralement considérée comme pertinente pour une durée de 3 à 6 mois. Passé ce délai, il est fortement conseillé de réaliser une nouvelle évaluation de votre propriété."
+        }
+      }
+    ]
+  }
+]
+</script>
+</head>
+
+<body>
+
+    <header class="header" id="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="nav-brand" style="white-space: nowrap; display: flex; align-items: center;">
+                    <a href="index.html" class="logo-link">
+                        <img src="images/logo.svg" alt="EstimezVotreBien.com" class="logo-img"=======<img
+                            src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
+                            style="max-height: 45px; width: auto; display: block;">
+                    </a>
+                </div>
+                <button class="hamburger-btn" id="hamburger-btn" aria-label="Ouvrir le menu"><i
+                        class="fas fa-bars"></i></button>
+                <div class="nav-content" id="nav-content">
+                    <button class="close-menu-btn" id="close-menu-btn" aria-label="Fermer le menu"><i
+                            class="fas fa-times"></i></button>
+                    <div class="mobile-menu-logo mobile-only">
+                        <a href="index.html" class="logo-link"><img src="images/logo.svg"
+                                alt="EstimezVotreBien.com"=======<a href="index.html" class="logo-link"><img
+                                src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
+                                style="max-height: 40px;"></a>
+                    </div>
+                    <ul class="nav-menu">
+                        <li><a href="acheter.html">Acheter</a></li>
+                        <li><a href="vendre.html">Vendre</a></li>
+                        <li><a href="guides.html">Guides</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="a_propos.html">À propos</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                    <div class="nav-cta">
+                        <a href="connexion.html" class="mobile-login-link mobile-only">Connexion</a>
+                        <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero-fullscreen">
+        <div class="hero-overlay"></div>
+        <div class="container hero-split-container" id="heroSplitContainer">
+
+            <div class="hero-text-content" id="heroText">
+                <h1 class="hero-title-main">L'estimation précise de votre bien en 2 minutes</h1>
+                <p class="hero-subtitle">
+                    <span class="desktop-subtitle">Obtenez une estimation claire, gratuite et basée sur les ventes
+                        récentes de votre quartier pour vendre au bon prix.</span>
+                    <span class="mobile-subtitle">Obtenez une estimation claire et rapide</span>
+                </p>
+
+                <div class="trust-indicators-modern desktop-trust">
+                    <div class="trust-item-modern">
+                        <i class="fas fa-star" style="color: #FBBF24;"></i>
+                        <div><strong>4.8/5</strong><span>Avis clients</span></div>
+                    </div>
+                    <div class="trust-item-modern">
+                        <i class="fas fa-home" style="color: #6C83D9;"></i>
+                        <div><strong>+1200</strong><span>Estimations</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-form-container" id="heroFormContainer">
+                <div class="estimation-card-wrapper" id="estimationWrapper">
+                    <div class="estimation-card">
+
+                        <div class="progress-bar-modern" id="progressBarContainer">
+                            <div class="progress-fill-modern" id="progressFill" style="width: 16.6%;"></div>
+                        </div>
+
+                        <form id="estimationForm" class="estimation-form">
+
+                            <div class="form-step active" data-step="1">
+                                <h3>Où se situe votre bien ?</h3>
+                                <p class="step-subtitle">Saisissez l'adresse pour analyser le marché local.</p>
+                                <div class="input-wrapper autocomplete-wrapper">
+                                    <i class="fas fa-search input-icon"></i>
+                                    <input type="text" name="address" id="addressInput"
+                                        placeholder="Saisissez une adresse postale..." autocomplete="off" required>
+                                    <ul class="autocomplete-suggestions" id="addressSuggestions"></ul>
+                                </div>
+                            </div>
+
+                            <div class="form-step" data-step="2" style="display: none;">
+                                <h3>Appartement ou maison ?</h3>
+                                <p class="step-subtitle">Sélectionnez la catégorie de votre propriété.</p>
+                                <div class="property-types">
+                                    <label class="property-type-card">
+                                        <input type="radio" name="propertyType" value="Maison" required>
+                                        <div class="card-content">
+                                            <i class="fas fa-home"></i>
+                                            <span>Maison</span>
+                                        </div>
+                                    </label>
+                                    <label class="property-type-card">
+                                        <input type="radio" name="propertyType" value="Appartement" required>
+                                        <div class="card-content">
+                                            <i class="fas fa-building"></i>
+                                            <span>Appartement</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-step" data-step="3" style="display: none;">
+                                <h3>Caractéristiques principales</h3>
+
+                                <div class="grid-3-cols" style="margin-bottom: 15px;">
+                                    <div class="input-wrapper"><label>Surface (m²)</label><input type="number"
+                                            name="surface" required></div>
+                                    <div class="input-wrapper"><label>Pièces</label><input type="number" name="rooms"
+                                            required></div>
+                                    <div class="input-wrapper"><label>Chambres</label><input type="number"
+                                            name="bedrooms" required></div>
+                                </div>
+
+                                <div id="appartementFields" style="display: none; margin-bottom: 15px;">
+                                    <div class="grid-2-cols">
+                                        <div class="input-wrapper"><label>Étage du bien</label><input type="number"
+                                                name="floorLevel"></div>
+                                        <div class="input-wrapper"><label>Total étages</label><input type="number"
+                                                name="totalFloors"></div>
+                                    </div>
+                                </div>
+
+                                <div class="checkbox-grid">
+                                    <label class="checkbox-modern"><input type="checkbox" name="garage"><span>Garage /
+                                            Parking</span></label>
+                                    <label class="checkbox-modern"><input type="checkbox"
+                                            name="cave"><span>Cave</span></label>
+                                    <label class="checkbox-modern"><input type="checkbox"
+                                            name="balcon"><span>Balcon/Terrasse</span></label>
+                                    <label class="checkbox-modern maison-only"><input type="checkbox"
+                                            name="jardin"><span>Jardin</span></label>
+                                    <label class="checkbox-modern maison-only"><input type="checkbox"
+                                            name="piscine"><span>Piscine</span></label>
+                                </div>
+                            </div>
+
+                            <div class="form-step" data-step="4" style="display: none;">
+                                <h3>Comment est la vue ?</h3>
+                                <p class="step-subtitle">L'environnement direct impacte fortement la valeur.</p>
+                                <div class="property-types view-types">
+                                    <label class="property-type-card">
+                                        <input type="radio" name="vue" value="Vis-a-vis" required>
+                                        <div class="card-content"><i class="fas fa-building"></i><span>Vis-à-vis</span>
+                                        </div>
+                                    </label>
+                                    <label class="property-type-card">
+                                        <input type="radio" name="vue" value="Dégagée" required>
+                                        <div class="card-content"><i class="fas fa-tree"></i><span>Dégagée</span></div>
+                                    </label>
+                                    <label class="property-type-card">
+                                        <input type="radio" name="vue" value="Exceptionnelle" required>
+                                        <div class="card-content"><i class="fas fa-star"></i><span>Exceptionnelle</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-step" data-step="5" style="display: none;">
+                                <h3>Évaluation de l'état</h3>
+                                <div class="grid-2-cols" style="margin-bottom: 15px;">
+                                    <div class="input-wrapper"><label>Année constr.</label><input type="number"
+                                            name="year" placeholder="Ex: 1990"></div>
+                                    <div class="input-wrapper"><label>Classe DPE</label>
+                                        <select name="dpe">
+                                            <option value="">Inconnu</option>
+                                            <option value="A">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                            <option value="E">E</option>
+                                            <option value="F">F</option>
+                                            <option value="G">G</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="input-wrapper">
+                                    <label>État général du bien</label>
+                                    <select name="condition" required>
+                                        <option value="">Sélectionnez l'état...</option>
+                                        <option value="Excellent">Refait à neuf</option>
+                                        <option value="Bon">Bon état</option>
+                                        <option value="Rafraîchir">À rafraîchir</option>
+                                        <option value="À rénover">À rénover</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-step" data-step="6" style="display: none;">
+                                <h3>Où envoyer l'estimation ?</h3>
+                                <div class="input-wrapper" style="margin-bottom: 15px;">
+                                    <i class="fas fa-envelope input-icon"></i>
+                                    <input type="email" name="email" placeholder="Votre adresse e-mail" required>
+                                </div>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-phone input-icon"></i>
+                                    <input type="tel" name="phone" placeholder="Votre numéro de téléphone" required>
+                                </div>
+                            </div>
+
+                            <div class="form-navigation">
+                                <button type="button" class="btn btn-secondary" id="prevBtn"
+                                    style="display: none;">Retour</button>
+                                <button type="button" class="btn btn-primary" id="nextBtn">Continuer</button>
+                                <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">Voir
+                                    mon estimation</button>
+                            </div>
+
+                        </form>
+                        <div id="loadingSimulation" style="display: none; text-align: center; padding: 40px 10px;">
+                            <div class="spinner-modern"></div>
+                            <h3 id="loadingTextTitle" style="color: var(--title-blue); margin-top: 20px;">Analyse en
+                                cours...</h3>
+                        </div>
+
+                        <div id="estimationResult" class="estimation-result" style="display: none;">
+                            <div class="result-header">
+                                <span class="price-detail">Valeur estimée de votre bien</span>
+                                <span class="price-range" id="priceRange">- €</span>
+                            </div>
+                            <div class="result-cta">
+                                <a href="contact.html" class="btn btn-primary" style="width: 100%;">Être rappelé par un
+                                    expert</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-reassurance">
+                        <span><i class="fas fa-check-circle"></i> 100% Gratuit</span>
+                        <span><i class="fas fa-shield-alt"></i> Sans engagement</span>
+                        <span><i class="fas fa-bolt"></i> Immédiat</span>
+                    </div>
+
+                    <div class="trust-indicators-modern mobile-trust">
+                        <div class="trust-item-modern">
+                            <i class="fas fa-star" style="color: #FBBF24;"></i>
+                            <div><strong>4.8/5</strong><span>Avis clients</span></div>
+                        </div>
+                        <div class="trust-item-modern">
+                            <i class="fas fa-home" style="color: #6C83D9;"></i>
+                            <div><strong>+1200</strong><span>Estimations</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="mission-section" style="padding: var(--section-spacing) 0; background-color: var(--white);">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2>Pourquoi utiliser notre estimateur ?</h2>
+                <p>La clé d'une vente réussie commence par le bon prix.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <div style="background: var(--hero-bg); padding: 30px; border-radius: 15px; text-align: center;">
+                    <i class="fas fa-bullseye"
+                        style="font-size: 40px; color: var(--primary-blue); margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 20px;">Estimation Fiable</h3>
+                    <p style="color: var(--text-gray);">Basée sur les données réelles et récentes des ventes
+                        immobilières de votre secteur.</p>
+                </div>
+                <div style="background: var(--hero-bg); padding: 30px; border-radius: 15px; text-align: center;">
+                    <i class="fas fa-bolt"
+                        style="font-size: 40px; color: var(--primary-blue); margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 20px;">Vente plus rapide</h3>
+                    <p style="color: var(--text-gray);">Évitez les prix irréalistes qui font fuir les acheteurs et
+                        prolongent inutilement la vente.</p>
+                </div>
+                <div style="background: var(--hero-bg); padding: 30px; border-radius: 15px; text-align: center;">
+                    <i class="fas fa-user-tie"
+                        style="font-size: 40px; color: var(--primary-blue); margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 20px;">Accompagnement Expert</h3>
+                    <p style="color: var(--text-gray);">Mise en relation avec des professionnels locaux pour affiner
+                        votre stratégie de vente.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="faq-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 style="margin: 0; white-space: nowrap;">Questions fréquentes</h2>
+                <p>Tout ce que vous devez savoir sur l'estimation immobilière</p>
+            </div>
+
+            <div class="faq-accordion">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>L'estimation immobilière en ligne est-elle vraiment gratuite ?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Oui, l'utilisation de notre simulateur est totalement gratuite et ne vous engage à rien. En
+                            quelques minutes, après avoir renseigné les caractéristiques de votre propriété, vous
+                            obtenez instantanément une fourchette de prix pour démarrer votre projet.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>D'où proviennent les données de votre estimateur en ligne ?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Notre algorithme s'appuie sur la base de données officielle DVF (Demandes de Valeurs
+                            Foncières) alimentée par les notaires et l'État. Elle recense les transactions immobilières
+                            réelles, que nous croisons ensuite avec les tendances et dynamiques du marché de 2026.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Mon estimation en ligne est-elle suffisante pour mettre en vente ?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Elle constitue un excellent point de départ pour évaluer votre budget. Toutefois, pour fixer
+                            un prix de commercialisation définitif, la visite d'un de nos experts est indispensable :
+                            l'algorithme ne peut pas évaluer le charme, la vue exacte ou la qualité de vos récentes
+                            rénovations.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Est-ce le bon moment pour vendre mon bien en 2026 ?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Avec la stabilisation des taux d'emprunt, le marché de 2026 offre un environnement très
+                            propice aux transactions si le bien est estimé à son juste prix. Les acquéreurs sont de
+                            retour et actifs, mais ils sont très bien informés et écartent systématiquement les biens
+                            surestimés.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Combien de temps reste valable l'estimation de mon bien ?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Le marché immobilier (l'offre, la demande et les taux d'emprunt) évolue en permanence. Une
+                            estimation est généralement considérée comme pertinente pour une durée de 3 à 6 mois. Passé
+                            ce délai, il est fortement conseillé de réaliser une nouvelle évaluation de votre propriété.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-column">
+                    <ul>
+                        <li><a href="guides.html">Guides</a></li>
+                        <li><a href="comment-estimer-ma-maison.html">Estimer sa maison</a></li>
+                        <li><a href="comment-estimer-son-appartement.html">Estimer son appartement</a></li>
+                        <li><a href="erreurs-estimation.html">Erreurs à éviter</a></li>
+                        <li><a href="vendrevite.html">Conseils de vente</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <ul>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="a_propos.html">À propos</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="mentions.html">Mentions légales</a></li>
+                        <li><a href="politique.html">Politique de confidentialité</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <div class="footer-text-block">
+                        <h4>Téléphone</h4>
+                        <p>+33 2 38 69 82 77</p>
+                    </div>
+                    <div class="footer-text-block">
+                        <h4>Mail</h4>
+                        <p>contact@estimezvotrebien.com</p>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <div class="footer-text-block">
+                        <h4>Horaires</h4>
+                        <p>Du lundi au samedi<br>9h00 - 18h00<br>Fermé le dimanche et les jours fériés</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom-flex">
+                <div class="footer-logo">
+                    <a href="/">
+                        <img src="images/logo.png" alt="EstimezVotreBien.com" style="max-height: 35px;">
+                    </a>
+                </div>
+                <div class="footer-copyright">
+                    <p>Copyright © 2026 | EstimezVotreBien.com par Fawez</p>
+                </div>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <a href="guides.html" class="floating-btn back-btn">
+        <i class="fas fa-arrow-left"></i> Retour
+    </a>
+
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="floating-btn top-btn" id="scrollTopBtn"
+        aria-label="Remonter en haut">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Petit script pour afficher le bouton "Remonter" uniquement quand on commence à scroller vers le bas
+        window.addEventListener('scroll', () => {
+            const topBtn = document.getElementById('scrollTopBtn');
+            if (window.scrollY > 300) {
+                topBtn.classList.add('visible');
+            } else {
+                topBtn.classList.remove('visible');
+            }
+        });
+    </script>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>

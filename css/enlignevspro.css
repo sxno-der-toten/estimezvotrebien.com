@@ -1,0 +1,146 @@
+/* =========================================
+   ENLIGNEVSPRO.CSS - Composants du comparatif
+========================================= */
+
+/* --- 1. Blocs Avantages / Limites --- */
+.pros-cons-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2.5rem 0;
+}
+
+.pc-box {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--card-border);
+}
+
+.pc-box h4 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.pc-box.pros h4 {
+    color: #059669;
+}
+
+.pc-box.cons h4 {
+    color: #DC2626;
+}
+
+.pc-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pc-box ul li {
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+    color: var(--text-gray);
+}
+
+.pc-box ul li strong {
+    color: #1f2937;
+}
+
+.pc-box.pros ul li::before {
+    content: "\f00c";
+    /* FontAwesome check */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    color: #10B981;
+}
+
+.pc-box.cons ul li::before {
+    content: "\f071";
+    /* FontAwesome exclamation */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    color: #EF4444;
+}
+
+/* --- 2. Le Tableau Comparatif --- */
+.vs-table-container {
+    overflow-x: auto;
+    /* Permet le scroll horizontal sur mobile */
+    margin: 3rem 0;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--primary-blue);
+}
+
+.vs-table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+    background: var(--white);
+    margin: 0;
+    /* Reset de la marge globale des tableaux */
+    border: none;
+    box-shadow: none;
+}
+
+.vs-table th,
+.vs-table td {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.vs-table th {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    font-size: 18px;
+    text-align: center;
+}
+
+.vs-table th:first-child {
+    text-align: left;
+    background-color: var(--title-blue);
+}
+
+.vs-table td:first-child {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.vs-table .col-online,
+.vs-table .col-pro {
+    width: 25%;
+}
+
+.icon-check {
+    color: #10B981;
+    text-align: center;
+    font-weight: bold;
+    background-color: #F0FDF4;
+    /* Légèrement vert */
+}
+
+.icon-cross {
+    color: #DC2626;
+    text-align: center;
+    background-color: #FEF2F2;
+    /* Légèrement rouge */
+}
+
+/* --- 4. Responsive --- */
+@media (max-width: 768px) {
+    .pros-cons-grid {
+        grid-template-columns: 1fr;
+    }
+}

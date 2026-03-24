@@ -1,0 +1,187 @@
+/* =========================================
+   CONNEXION.CSS - Design de la page de Connexion
+========================================= */
+
+/* --- 1. Layout de la page --- */
+.login-section {
+    /* Le fond reprend la couleur de la section Hero pour détacher la carte blanche */
+    background-color: var(--hero-bg); 
+    padding: 80px 0 100px 0;
+    min-height: calc(100vh - 400px); /* Assure que le footer reste en bas même sur grand écran */
+    display: flex;
+    align-items: center;
+}
+
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- 2. La carte de connexion --- */
+.login-card {
+    background-color: var(--white);
+    width: 100%;
+    max-width: 480px; /* Largeur idéale pour un formulaire de connexion */
+    padding: 3.5rem 3rem;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(108, 131, 217, 0.08);
+    border: 1px solid var(--card-border);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.login-header h2 {
+    color: var(--title-blue);
+    font-size: 28px;
+    margin-bottom: 0.8rem;
+}
+
+.login-header p {
+    color: var(--text-gray);
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+/* --- 3. Les champs du formulaire --- */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    color: #2E3F84; /* Bleu très foncé */
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+}
+
+/* Conteneur pour intégrer l'icône dans l'input */
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9CA3AF; /* Gris clair */
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 45px; /* Le padding gauche laisse la place à l'icône */
+    border: 2px solid #E3E8F5;
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    color: #2E3F84;
+    background-color: #FAFBFE;
+    transition: all 0.3s ease;
+}
+
+.input-with-icon input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    background-color: var(--white);
+    box-shadow: 0 0 0 3px rgba(108, 131, 217, 0.1);
+}
+
+/* L'icône prend la couleur principale quand le champ est focus */
+.input-with-icon input:focus + i, 
+.input-with-icon:focus-within i {
+    color: var(--primary-blue);
+}
+
+/* --- 4. Options (Se souvenir de moi & Mot de passe oublié) --- */
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    font-size: 14px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--primary-blue);
+}
+
+.remember-me label {
+    color: var(--text-gray);
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
+.forgot-password {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #2E3F84;
+}
+
+/* --- 5. Bouton et bas de carte --- */
+.btn-full-width {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 50px; /* Forme de pilule */
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--card-border);
+}
+
+.login-footer p {
+    font-size: 14px;
+    color: var(--text-gray);
+    margin-bottom: 0;
+}
+
+.login-footer a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 5px;
+    transition: color 0.3s ease;
+}
+
+.login-footer a:hover {
+    color: #2E3F84;
+}
+
+/* --- 6. Responsive --- */
+@media (max-width: 576px) {
+    .login-card {
+        padding: 2.5rem 1.5rem;
+        border-radius: 16px;
+    }
+    
+    .login-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}

@@ -1,0 +1,126 @@
+/* =========================================
+   POLITIQUE.CSS - Design des pages légales
+========================================= */
+
+/* --- 1. En-tête de la page --- */
+.legal-header {
+    background-color: var(--hero-bg);
+    padding: 60px 0;
+    text-align: center;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.legal-header h1 {
+    font-size: 36px;
+    color: var(--title-blue);
+    margin-bottom: 10px;
+}
+
+.legal-header p {
+    font-size: 16px;
+    color: var(--text-gray);
+    margin: 0;
+}
+
+/* --- 2. Conteneur du document --- */
+.legal-section {
+    padding: 60px 0 100px 0;
+    background-color: #FAFBFE; /* Fond très léger derrière le document */
+}
+
+.legal-document {
+    background-color: var(--white);
+    max-width: 800px; /* Largeur optimale pour la lecture d'un long texte */
+    margin: 0 auto;
+    padding: 4rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(108, 131, 217, 0.05);
+    border: 1px solid var(--card-border);
+}
+
+/* --- 3. Badge "Dernière mise à jour" --- */
+.last-updated {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #F3F4F6;
+    color: var(--text-gray);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 3rem;
+}
+
+.last-updated i {
+    color: var(--primary-blue);
+}
+
+/* --- 4. Typographie du contenu légal --- */
+.legal-content {
+    color: #374151;
+    line-height: 1.8;
+    font-size: 16px;
+}
+
+.legal-intro {
+    font-size: 18px;
+    color: #1f2937;
+    margin-bottom: 3rem;
+}
+
+.legal-content h2 {
+    color: var(--title-blue);
+    font-size: 22px;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.legal-content p {
+    margin-bottom: 1.5rem;
+}
+
+.legal-content ul {
+    margin-bottom: 2rem;
+    padding-left: 1.5rem;
+}
+
+.legal-content ul li {
+    margin-bottom: 0.8rem;
+    position: relative;
+    list-style-type: none; /* On retire les puces standards */
+}
+
+/* Puces personnalisées discrètes */
+.legal-content ul li::before {
+    content: "•";
+    color: var(--primary-blue);
+    font-weight: bold;
+    font-size: 20px;
+    position: absolute;
+    left: -1.2rem;
+    top: -2px;
+}
+
+.legal-content strong {
+    color: #1f2937;
+    font-weight: 600;
+}
+
+/* --- 5. Responsive Design --- */
+@media (max-width: 768px) {
+    .legal-document {
+        padding: 2.5rem 1.5rem;
+        border-radius: 16px;
+    }
+
+    .legal-header {
+        padding: 40px 0;
+    }
+
+    .legal-header h1 {
+        font-size: 28px;
+    }
+}

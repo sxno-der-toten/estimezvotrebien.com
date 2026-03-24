@@ -1,0 +1,156 @@
+/* =========================================
+   ERREURS.CSS - Composants spécifiques aux erreurs d'estimation
+========================================= */
+
+/* --- 1. Bloc Mythe vs Réalité --- */
+.myth-reality-card {
+    display: flex;
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--card-border);
+    margin: 2.5rem 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+}
+
+.mr-half {
+    flex: 1;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.mr-myth {
+    background-color: #FEF2F2;
+    border-right: 1px solid #FEE2E2;
+}
+
+.mr-reality {
+    background-color: #F0FDF4;
+}
+
+.mr-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 1.5rem;
+}
+
+.mr-myth .mr-icon {
+    background-color: white;
+    color: #EF4444;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15);
+}
+
+.mr-reality .mr-icon {
+    background-color: white;
+    color: #10B981;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
+}
+
+.mr-half h4 {
+    margin-bottom: 1rem;
+    font-size: 20px;
+}
+
+.mr-myth h4 { color: #DC2626; }
+.mr-reality h4 { color: #059669; }
+
+.mr-half p {
+    color: var(--text-gray);
+    font-size: 15px;
+    margin-bottom: 0;
+    line-height: 1.6;
+}
+
+/* --- 2. Indicateur d'impact sur le prix (Jauges horizontales) --- */
+.impact-indicator {
+    background: var(--white);
+    padding: 2.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--card-border);
+    margin: 2.5rem 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.impact-indicator h4 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--title-blue);
+}
+
+.impact-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.impact-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.impact-label {
+    font-weight: 600;
+    color: #1f2937;
+    text-align: right;
+    font-size: 15px;
+}
+
+.impact-bar-wrapper {
+    background-color: #F3F4F6;
+    border-radius: 8px;
+    height: 40px;
+    overflow: hidden;
+}
+
+.impact-bar {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: 15px;
+    color: white;
+    font-weight: 500;
+    font-size: 14px;
+    white-space: nowrap;
+    border-radius: 8px;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1);
+}
+
+/* Couleurs des jauges */
+.impact-bar.green { background-color: #10B981; }
+.impact-bar.yellow { background-color: #F59E0B; }
+.impact-bar.red { background-color: #EF4444; }
+
+/* --- 3. Responsive Design spécifique --- */
+@media (max-width: 768px) {
+    .myth-reality-card {
+        flex-direction: column;
+    }
+    
+    .mr-myth {
+        border-right: none;
+        border-bottom: 1px solid #FEE2E2;
+    }
+
+    .impact-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .impact-label {
+        text-align: left;
+    }
+    
+    .impact-bar {
+        font-size: 12px;
+    }
+}

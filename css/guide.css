@@ -1,0 +1,176 @@
+/* =========================================
+   GUIDE.CSS - Design de la page des guides (Bento Grid 2/3)
+========================================= */
+
+/* --- 1. En-tête de la page --- */
+.page-header {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.page-header h1 {
+    font-size: 42px;
+    color: var(--title-blue);
+    margin-bottom: 15px;
+}
+
+.page-header p {
+    font-size: 18px;
+    color: var(--text-gray);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* --- 2. Conteneur du Bento Grid --- */
+.bento-section {
+    padding: var(--section-spacing) 0;
+}
+
+/* use same section-spacing variable for consistent vertical rhythm */
+.bento-grid {
+    display: grid;
+    /* Une grille virtuelle de 6 colonnes permet de diviser facilement en 2 ou en 3 */
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: minmax(200px, auto);
+    gap: 1rem;
+    /* tighter grid gap */
+}
+
+/* --- 3. Style de base d'une carte --- */
+.bento-card {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    padding: var(--card-padding);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid var(--card-border);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+    position: relative;
+}
+
+.bento-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(108, 131, 217, 0.1);
+    border-color: var(--primary-blue);
+}
+
+/* Icône de la carte */
+.bento-icon {
+    width: 60px;
+    height: 60px;
+    background-color: var(--hero-bg);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: var(--primary-blue);
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.bento-card:hover .bento-icon {
+    transform: scale(1.1);
+}
+
+/* Textes de la carte */
+.bento-content h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: var(--title-blue);
+}
+
+.bento-content p {
+    font-size: 15px;
+    color: var(--text-gray);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.bento-link {
+    font-weight: 600;
+    color: var(--primary-blue);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+}
+
+.bento-card:hover .bento-link i {
+    transform: translateX(4px);
+}
+
+/* --- 4. Tailles et Variantes (Layout) --- */
+
+/* Cartes Maison & Appartement : Prennent la moitié de la grille (3/6 colonnes) */
+.card-half {
+    grid-column: span 3;
+}
+
+.card-half .bento-content h3 {
+    font-size: 28px;
+}
+
+/* Cartes du bas : Prennent un tiers de la grille (2/6 colonnes) */
+.card-third {
+    grid-column: span 2;
+}
+
+.card-third .bento-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    margin-bottom: 1rem;
+}
+
+/* --- 5. Couleurs d'accentuation --- */
+.card-primary {
+    background: linear-gradient(145deg, var(--hero-bg) 0%, var(--white) 100%);
+    border: none;
+}
+
+.card-alert .bento-icon {
+    background-color: #FEF2F2;
+    color: #DC2626;
+}
+
+.card-alert:hover {
+    border-color: #DC2626;
+    box-shadow: 0 15px 35px rgba(220, 38, 38, 0.1);
+}
+
+.card-success .bento-icon {
+    background-color: #F0FDF4;
+    color: #059669;
+}
+
+.card-success:hover {
+    border-color: #059669;
+    box-shadow: 0 15px 35px rgba(5, 150, 105, 0.1);
+}
+
+/* --- 6. Responsive Design --- */
+@media (max-width: 1024px) {
+
+    /* Sur tablette : on affiche 2 blocs par ligne pour tout le monde */
+    .card-half,
+    .card-third {
+        grid-column: span 3;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header h1 {
+        font-size: 32px;
+    }
+
+    /* Sur mobile : tout s'empile en 1 seule colonne verticalement */
+    .bento-grid {
+        display: flex;
+        flex-direction: column;
+    }
+}
