@@ -1,6 +1,6 @@
-/* =========================================
+/* ======
    GUIDES.CSS - Styles pour les articles et pages locales
-========================================= */
+====== */
 
 /* --- SECTION HERO (En-tête des guides) --- */
 .hero {
@@ -437,9 +437,9 @@ tr:hover td {
     /* Géré par le gap du container */
 }
 
-/* =========================================
+/* ======
    BOUTONS FLOTTANTS (Retour & Remonter)
-========================================= */
+====== */
 .floating-btn {
     position: fixed;
     z-index: 990;

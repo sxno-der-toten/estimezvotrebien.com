@@ -9,23 +9,28 @@
         content="Créez votre compte pour sauvegarder vos estimations immobilières et être accompagné par nos experts.">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/inscription.css">
+
+    <script async crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_ZmxleGlibGUtd2FydGhvZy03MC5jbGVyay5hY2NvdW50cy5kZXYk"
+        src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" type="text/javascript">
+        </script>
+
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "Créer un compte | EstimezVotreBien.com",
+  "name": "Créer un compte | estimez-votre-bien.com",
   "description": "Créez votre compte pour sauvegarder vos estimations immobilières et être accompagné par nos experts.",
   "mainEntity": {
     "@type": "RealEstateAgent",
-    "name": "EstimezVotreBien.com",
-    "image": "https://estimezvotrebien.com/images/logo.png",
+    "name": "estimez-votre-bien.com",
+    "image": "https://estimez-votre-bien.com/images/logo.png",
     "telephone": "+33238698277",
-    "email": "contact@estimezvotrebien.com",
+    "email": "contact@estimez-votre-bien.com",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Lab'O Village, 1 Avenue du Champ de Mars",
@@ -35,7 +40,7 @@
     },
     "parentOrganization": {
       "@type": "Organization",
-      "name": "EstimezVotreBien.com"
+      "name": "estimez-votre-bien.com"
     }
   }
 }
@@ -49,8 +54,7 @@
             <nav class="nav">
                 <div class="nav-brand" style="white-space: nowrap; display: flex; align-items: center;">
                     <a href="index.html" class="logo-link">
-                        <img src="images/logo.svg" alt="EstimezVotreBien.com" class="logo-img"=======<img
-                            src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
+                        <img src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
                             style="max-height: 45px; width: auto; display: block;">
                     </a>
                 </div>
@@ -60,10 +64,10 @@
                     <button class="close-menu-btn" id="close-menu-btn" aria-label="Fermer le menu"><i
                             class="fas fa-times"></i></button>
                     <div class="mobile-menu-logo mobile-only">
-                        <a href="index.html" class="logo-link"><img src="images/logo.svg"
-                                alt="EstimezVotreBien.com"=======<a href="index.html" class="logo-link"><img
-                                src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
-                                style="max-height: 40px;"></a>
+                        <a href="index.html" class="logo-link">
+                            <img src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
+                                style="max-height: 40px;">
+                        </a>
                     </div>
                     <ul class="nav-menu">
                         <li><a href="acheter.html">Acheter</a></li>
@@ -74,8 +78,12 @@
                         <li><a href="contact.html">Contact</a></li>
                     </ul>
                     <div class="nav-cta">
-                        <a href="connexion.html" class="mobile-login-link mobile-only">Connexion</a>
-                        <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                        <div id="auth-container-mobile" class="mobile-only">
+                            <a href="connexion.html" class="mobile-login-link">Connexion</a>
+                        </div>
+                        <div id="auth-container-desktop" class="desktop-only">
+                            <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -83,74 +91,85 @@
     </header>
 
     <main class="register-section">
-        <div class="container">
-            <div class="register-wrapper">
+        <div class="clerk-card">
+            <div class="card-body">
+                <div class="form-content">
+                    <h2 class="title" id="form-title">Créer un compte</h2>
 
-                <div class="register-card">
-                    <div class="register-header">
-                        <h2>Créer un compte</h2>
-                        <p>Rejoignez-nous pour sauvegarder vos estimations et vendre au meilleur prix.</p>
-                    </div>
+                    <form id="clerk-register-form">
 
-                    <form action="#" method="POST" class="register-form">
+                        <div id="reg-step-1" class="form-step active">
+                            <button type="button" class="btn-google" id="reg-btn-google">
+                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+                                S'inscrire avec Google
+                            </button>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="prenom">Prénom</label>
-                                <div class="input-with-icon">
-                                    <i class="far fa-user"></i>
-                                    <input type="text" id="prenom" name="prenom" placeholder="Jean" required>
+                            <div class="divider"><span>ou avec e-mail</span></div>
+
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <label for="prenom">Prénom</label>
+                                    <input type="text" id="prenom" placeholder="Jean" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="nom">Nom</label>
+                                    <input type="text" id="nom" placeholder="Dupont" required>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="nom">Nom</label>
-                                <div class="input-with-icon">
-                                    <i class="far fa-user"></i>
-                                    <input type="text" id="nom" name="nom" placeholder="Dupont" required>
-                                </div>
+
+                            <div class="input-group">
+                                <label for="email">Adresse e-mail</label>
+                                <input type="email" id="email" placeholder="votre@email.com" required>
+                            </div>
+
+                            <button type="button" class="btn-submit" id="btn-next">Suivant</button>
+                        </div>
+
+                        <div id="reg-step-2" class="form-step">
+                            <div class="input-group">
+                                <label for="password">Mot de passe</label>
+                                <input type="password" id="password" placeholder="••••••••" required>
+                                <small class="password-hint">8 caractères minimum.</small>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="confirm-password">Confirmer le mot de passe</label>
+                                <input type="password" id="confirm-password" placeholder="••••••••" required>
+                            </div>
+
+                            <div class="terms-group">
+                                <input type="checkbox" id="terms" required>
+                                <label for="terms">J'accepte les <a href="#">CGU</a> et la <a href="#">Politique de
+                                        confidentialité</a>.</label>
+                            </div>
+
+                            <div class="btn-row">
+                                <button type="button" class="btn-secondary" id="btn-back">Retour</button>
+                                <button type="submit" class="btn-submit" id="btn-submit-reg">S'inscrire</button>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="email">Adresse e-mail</label>
-                            <div class="input-with-icon">
-                                <i class="far fa-envelope"></i>
-                                <input type="email" id="email" name="email" placeholder="votre@email.com" required>
+                        <div id="reg-step-3" class="form-step">
+                            <p style="font-size: 13px; color: #6b7280; margin-bottom: 15px;">
+                                Un code de vérification à 6 chiffres vient d'être envoyé à votre adresse e-mail.
+                            </p>
+                            <div class="input-group">
+                                <label for="code-verification">Code de vérification</label>
+                                <input type="text" id="code-verification" placeholder="123456" autocomplete="off">
                             </div>
+                            <button type="submit" class="btn-submit" id="btn-verify">Valider et Terminer</button>
                         </div>
 
-                        <div class="form-group">
-                            <label for="password">Mot de passe</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="password" name="password" placeholder="••••••••" required>
-                            </div>
-                            <small class="password-hint">8 caractères minimum, dont un chiffre.</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="confirm-password">Confirmer le mot de passe</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="confirm-password" name="confirm-password"
-                                    placeholder="••••••••" required>
-                            </div>
-                        </div>
-
-                        <div class="terms-group">
-                            <input type="checkbox" id="terms" name="terms" required>
-                            <label for="terms">J'accepte les <a href="#">Conditions Générales d'Utilisation</a> et la <a
-                                    href="#">Politique de confidentialité</a>.</label>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-full-width">S'inscrire</button>
+                        <div id="reg-error-message"></div>
                     </form>
-
-                    <div class="register-footer">
-                        <p>Vous avez déjà un compte ? <a href="connexion.html">Se connecter</a></p>
-                    </div>
                 </div>
+            </div>
 
+            <div class="card-footer" id="reg-footer">
+                <p>Vous avez déjà un compte ? <a href="connexion.html">Se connecter</a></p>
+                <div class="secured-by">
+                    <i class="fas fa-shield-alt"></i> Sécurisé par Clerk
+                </div>
             </div>
         </div>
     </main>
@@ -215,7 +234,7 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script src="main.js"></script>
 </body>
 
 </html>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estimez la valeur de votre bien immobilier | EstimezVotreBien.com</title>
+    <title>Estimez la valeur de votre bien immobilier | estimez-votre-bien.com</title>
     <meta name="description"
         content="Découvrez la valeur réelle de votre bien immobilier. Obtenez une estimation claire, fiable et sans surprise.">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -19,20 +19,24 @@
 
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/index.css">
+    <script async crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_ZmxleGlibGUtd2FydGhvZy03MC5jbGVyay5hY2NvdW50cy5kZXYk"
+        src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" type="text/javascript">
+        </script>
     <script type="application/ld+json">
 [
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "Estimez la valeur de votre bien immobilier | EstimezVotreBien.com",
+    "name": "Estimez la valeur de votre bien immobilier | estimez-votre-bien.com",
     "description": "Découvrez la valeur réelle de votre bien immobilier. Obtenez une estimation claire, fiable et basée sur les ventes récentes de votre quartier.",
     "publisher": {
       "@type": "RealEstateAgent",
-      "name": "EstimezVotreBien.com",
-      "image": "https://estimezvotrebien.com/images/logo.svg",
+      "name": "estimez-votre-bien.com",
+      "image": "https://estimez-votre-bien.com/images/logo.png",
       "parentOrganization": {
         "@type": "Organization",
-        "name": "EstimezVotreBien.com"
+        "name": "estimez-votre-bien.com"
       }
     }
   },
@@ -93,8 +97,7 @@
             <nav class="nav">
                 <div class="nav-brand" style="white-space: nowrap; display: flex; align-items: center;">
                     <a href="index.html" class="logo-link">
-                        <img src="images/logo.svg" alt="EstimezVotreBien.com" class="logo-img"=======<img
-                            src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
+                        <img src="images/logo.png" alt="estimez-votre-bien.com" class="logo-img"
                             style="max-height: 45px; width: auto; display: block;">
                     </a>
                 </div>
@@ -104,10 +107,8 @@
                     <button class="close-menu-btn" id="close-menu-btn" aria-label="Fermer le menu"><i
                             class="fas fa-times"></i></button>
                     <div class="mobile-menu-logo mobile-only">
-                        <a href="index.html" class="logo-link"><img src="images/logo.svg"
-                                alt="EstimezVotreBien.com"=======<a href="index.html" class="logo-link"><img
-                                src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
-                                style="max-height: 40px;"></a>
+                        <a href="index.html" class="logo-link"><img src="images/logo.png" alt="estimez-votre-bien.com"
+                                class="logo-img" style="max-height: 40px;"></a>
                     </div>
                     <ul class="nav-menu">
                         <li><a href="acheter.html">Acheter</a></li>
@@ -118,8 +119,13 @@
                         <li><a href="contact.html">Contact</a></li>
                     </ul>
                     <div class="nav-cta">
-                        <a href="connexion.html" class="mobile-login-link mobile-only">Connexion</a>
-                        <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                        <div id="auth-container-mobile" class="mobile-only">
+                            <a href="connexion.html" class="mobile-login-link">Connexion</a>
+                        </div>
+
+                        <div id="auth-container-desktop" class="desktop-only">
+                            <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -476,7 +482,7 @@
                     </div>
                     <div class="footer-text-block">
                         <h4>Mail</h4>
-                        <p>contact@estimezvotrebien.com</p>
+                        <p>contact@estimez-votre-bien.com</p>
                     </div>
                 </div>
 
@@ -491,11 +497,11 @@
             <div class="footer-bottom-flex">
                 <div class="footer-logo">
                     <a href="/">
-                        <img src="images/logo.png" alt="EstimezVotreBien.com" style="max-height: 35px;">
+                        <img src="images/logo.png" alt="estimez-votre-bien.com" style="max-height: 35px;">
                     </a>
                 </div>
                 <div class="footer-copyright">
-                    <p>Copyright © 2026 | EstimezVotreBien.com par Fawez</p>
+                    <p>Copyright © 2026 | estimez-votre-bien.com par Fawez</p>
                 </div>
                 <div class="footer-socials">
                     <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -525,9 +531,36 @@
                 topBtn.classList.remove('visible');
             }
         });
+
+        window.addEventListener('load', async function () {
+            // 1. On attend que Clerk soit prêt
+            await Clerk.load();
+
+            if (Clerk.user) {
+                // 2. L'utilisateur est connecté : on remplace les boutons par le UserButton
+
+                // Cible Desktop
+                const desktopAuth = document.getElementById('auth-container-desktop');
+                desktopAuth.innerHTML = '<div id="user-button-desktop"></div>';
+                Clerk.mountUserButton(document.getElementById('user-button-desktop'), {
+                    afterSignOutUrl: '/index.html' // Où aller après la déconnexion
+                });
+
+                // Cible Mobile
+                const mobileAuth = document.getElementById('auth-container-mobile');
+                mobileAuth.innerHTML = '<div id="user-button-mobile"></div>';
+                Clerk.mountUserButton(document.getElementById('user-button-mobile'), {
+                    afterSignOutUrl: '/index.html'
+                });
+
+            } else {
+                // 3. L'utilisateur n'est pas connecté : on ne touche à rien, 
+                // tes liens vers connexion.html restent visibles.
+            }
+        });
     </script>
 
-    <script src="js/main.js"></script>
+    <script src="main.js"></script>
 </body>
 
 </html>

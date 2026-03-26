@@ -1,123 +1,163 @@
-/* =========================================
-   inscription.CSS - Design de la page d'inscription
-========================================= */
+/* ======
+   inscription.CSS - Design de la page d'inscription (Multi-step)
+====== */
 
-/* --- 1. Layout de la page --- */
+/* --- LAYOUT GLOBAL --- */
 .register-section {
-    background-color: var(--hero-bg); 
-    padding: 60px 0 80px 0;
-    min-height: calc(100vh - 400px);
-    display: flex;
-    align-items: center;
-}
-
-.register-wrapper {
+    background-color: var(--hero-bg);
+    padding: 30px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: calc(100vh - 200px);
 }
 
-/* --- 2. La carte d'inscription --- */
-.register-card {
-    background-color: var(--white);
+/* --- TON DESIGN SUR-MESURE --- */
+.clerk-card {
+    background: #ffffff;
     width: 100%;
-    max-width: 550px; /* Légèrement plus large que la connexion pour accueillir les 2 colonnes Prénom/Nom */
-    padding: 3.5rem 3rem;
-    border-radius: 20px;
+    max-width: 900px;
+    /* ÉLARGI HORIZONTALEMENT */
+    border-radius: 16px;
     box-shadow: 0 15px 35px rgba(108, 131, 217, 0.08);
-    border: 1px solid var(--card-border);
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+    margin: 0 auto;
 }
 
-.register-header {
+.card-body {
+    padding: 25px 20px;
+    /* TASSEMENT HAUT ET BAS */
+}
+
+.form-content {
+    max-width: 550px;
+    /* ÉLARGI POUR LES CHAMPS */
+    margin: 0 auto;
     text-align: center;
-    margin-bottom: 2.5rem;
 }
 
-.register-header h2 {
+.title {
     color: var(--title-blue);
-    font-size: 28px;
-    margin-bottom: 0.8rem;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 15px;
 }
 
-.register-header p {
-    color: var(--text-gray);
+/* --- BOUTON GOOGLE ANIMÉ --- */
+.btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
     font-size: 15px;
-    line-height: 1.5;
-    margin-bottom: 0;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    /* ANIMATION AJOUTÉE */
+    margin-bottom: 15px;
 }
 
-/* --- 3. Les champs du formulaire --- */
+.btn-google:hover {
+    background: #f9fafb;
+    transform: translateY(-2px);
+    /* ANIMATION AJOUTÉE */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    /* ANIMATION AJOUTÉE */
+}
+
+.btn-google:active {
+    transform: translateY(1px) scale(0.98);
+    /* ANIMATION AJOUTÉE */
+    box-shadow: none;
+    /* ANIMATION AJOUTÉE */
+}
+
+.btn-google img {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.divider span {
+    padding: 0 10px;
+}
+
+/* --- GESTION DES COLONNES (Prénom/Nom) --- */
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+    gap: 12px;
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
+.input-group {
+    text-align: left;
+    margin-bottom: 12px;
 }
 
-.form-group label {
+.input-group label {
     display: block;
-    color: #2E3F84;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
-    margin-bottom: 0.6rem;
+    color: var(--title-blue);
+    margin-bottom: 4px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+    /* ANIMATION FLUIDIFIÉE */
+    font-family: inherit;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(108, 131, 217, 0.15);
+    transform: translateY(-1px);
+    /* ANIMATION LÉGÈRE SUR FOCUS */
 }
 
 .password-hint {
     display: block;
-    font-size: 12px;
+    font-size: 11px;
     color: #9CA3AF;
-    margin-top: 6px;
-    margin-left: 5px;
+    margin-top: 4px;
+    margin-left: 2px;
 }
 
-/* Conteneur pour intégrer l'icône dans l'input */
-.input-with-icon {
-    position: relative;
-}
-
-.input-with-icon i {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #9CA3AF;
-    font-size: 18px;
-    transition: color 0.3s ease;
-}
-
-.input-with-icon input {
-    width: 100%;
-    padding: 1rem 1rem 1rem 45px;
-    border: 2px solid #E3E8F5;
-    border-radius: 12px;
-    font-size: 15px;
-    font-family: inherit;
-    color: #2E3F84;
-    background-color: #FAFBFE;
-    transition: all 0.3s ease;
-}
-
-.input-with-icon input:focus {
-    outline: none;
-    border-color: var(--primary-blue);
-    background-color: var(--white);
-    box-shadow: 0 0 0 3px rgba(108, 131, 217, 0.1);
-}
-
-.input-with-icon input:focus + i, 
-.input-with-icon:focus-within i {
-    color: var(--primary-blue);
-}
-
-/* --- 4. Conditions d'utilisation (CGU) --- */
+/* --- CONDITIONS D'UTILISATION --- */
 .terms-group {
     display: flex;
     align-items: flex-start;
     gap: 0.8rem;
-    margin-bottom: 2rem;
+    margin-bottom: 15px;
+    text-align: left;
 }
 
 .terms-group input[type="checkbox"] {
@@ -127,12 +167,19 @@
     cursor: pointer;
     accent-color: var(--primary-blue);
     flex-shrink: 0;
+    transition: transform 0.2s ease;
+    /* ANIMATION AJOUTÉE */
+}
+
+.terms-group input[type="checkbox"]:active {
+    transform: scale(0.85);
+    /* ANIMATION AJOUTÉE */
 }
 
 .terms-group label {
     color: var(--text-gray);
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: 12px;
+    line-height: 1.4;
     cursor: pointer;
     margin-bottom: 0;
 }
@@ -143,52 +190,158 @@
     font-weight: 500;
 }
 
-.terms-group label a:hover {
-    color: #2E3F84;
-}
-
-/* --- 5. Bouton et bas de carte --- */
-.btn-full-width {
+/* --- BOUTONS PRINCIPAUX ANIMÉS --- */
+.btn-submit {
     width: 100%;
-    padding: 14px;
-    font-size: 16px;
+    padding: 10px 24px;
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
     border-radius: 50px;
-}
-
-.register-footer {
-    text-align: center;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--card-border);
-}
-
-.register-footer p {
-    font-size: 14px;
-    color: var(--text-gray);
-    margin-bottom: 0;
-}
-
-.register-footer a {
-    color: var(--primary-blue);
-    text-decoration: none;
+    font-size: 15px;
     font-weight: 600;
-    margin-left: 5px;
-    transition: color 0.3s ease;
+    cursor: pointer;
+    margin-top: 25px;
+    transition: all 0.3s ease;
+    /* ANIMATION AJOUTÉE */
+    box-shadow: 0 4px 10px rgba(108, 131, 217, 0.2);
+    /* OMBRE DE BASE */
 }
 
-.register-footer a:hover {
-    color: #2E3F84;
+.btn-submit:hover {
+    background-color: #5A71C9;
+    transform: translateY(-2px);
+    /* ANIMATION AJOUTÉE */
+    box-shadow: 0 6px 15px rgba(108, 131, 217, 0.35);
+    /* ANIMATION AJOUTÉE */
 }
 
-/* --- 6. Responsive --- */
-@media (max-width: 576px) {
-    .register-card {
-        padding: 2.5rem 1.5rem;
-        border-radius: 16px;
+.btn-submit:active {
+    transform: translateY(1px) scale(0.98);
+    /* ANIMATION AJOUTÉE */
+    box-shadow: 0 2px 5px rgba(108, 131, 217, 0.2);
+    /* ANIMATION AJOUTÉE */
+}
+
+.btn-row {
+    display: flex;
+    gap: 10px;
+}
+
+/* --- BOUTON SECONDAIRE ANIMÉ --- */
+.btn-secondary {
+    width: 100%;
+    padding: 10px 24px;
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: all 0.3s ease;
+    /* ANIMATION AJOUTÉE */
+}
+
+.btn-secondary:hover {
+    background-color: #e5e7eb;
+    transform: translateY(-2px);
+    /* ANIMATION AJOUTÉE */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    /* ANIMATION AJOUTÉE */
+}
+
+.btn-secondary:active {
+    transform: translateY(1px) scale(0.98);
+    /* ANIMATION AJOUTÉE */
+    box-shadow: none;
+    /* ANIMATION AJOUTÉE */
+}
+
+/* --- GESTION DES ÉTAPES (Animation) --- */
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+    animation: fadeInStep 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    /* ANIMATION AMÉLIORÉE */
+}
+
+@keyframes fadeInStep {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
     }
-    
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+#reg-error-message {
+    color: #ef4444;
+    font-size: 14px;
+    margin-top: 8px;
+    min-height: 20px;
+}
+
+.card-footer {
+    background-color: #f8fafc;
+    border-top: 1px solid #e5e7eb;
+    padding: 15px 20px;
+    text-align: center;
+}
+
+.card-footer p {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 5px;
+}
+
+.card-footer a {
+    color: var(--primary-blue);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    /* ANIMATION AJOUTÉE */
+}
+
+.card-footer a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+    /* ANIMATION AJOUTÉE */
+}
+
+.secured-by {
+    font-size: 12px;
+    color: #9ca3af;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+/* Nav & Menus */
+#user-button-desktop,
+#user-button-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 45px;
+}
+
+#auth-container-mobile {
+    padding: 10px 0;
+}
+
+@media (max-width: 576px) {
     .form-row {
-        grid-template-columns: 1fr; /* Prénom et Nom s'empilent sur mobile */
+        grid-template-columns: 1fr;
         gap: 0;
     }
 }

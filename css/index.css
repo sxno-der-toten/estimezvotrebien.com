@@ -1,6 +1,20 @@
-/* =========================================
+/* ======
    INDEX.CSS - Landing Page Style
-========================================= */
+====== */
+
+#user-button-desktop,
+#user-button-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 45px;
+    /* Aligné sur la hauteur de tes boutons */
+}
+
+/* Sur mobile, on veut que le bouton reste discret mais cliquable */
+#auth-container-mobile {
+    padding: 10px 0;
+}
 
 .hero-fullscreen {
     position: relative;
@@ -416,17 +430,17 @@
     text-overflow: ellipsis;
 }
 
-/* =========================================
+/* ======
    RESPONSIVE MOBILE 
-========================================= */
+====== */
 /* Cache la version mobile des avis par défaut (sur ordinateur) */
 .mobile-trust {
     display: none !important;
 }
 
-/* =========================================
+/* ======
    RESPONSIVE MOBILE 
-========================================= */
+====== */
 @media (max-width: 992px) {
     .hero-split-container {
         flex-direction: column;

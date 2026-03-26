@@ -4,23 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contactez-nous | EstimezVotreBien.com</title>
+    <title>Connexion | EstimezVotreBien.com</title>
     <meta name="description"
-        content="Venez nous rencontrer dans notre agence d'Orléans au Lab'O. Nos experts vous accompagnent dans votre projet immobilier.">
+        content="Connectez-vous à votre espace personnel pour retrouver vos estimations immobilières et gérer votre projet de vente.">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/contact.css">
+    <link rel="stylesheet" href="css/connexion.css">
+
+    <script async crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_ZmxleGlibGUtd2FydGhvZy03MC5jbGVyay5hY2NvdW50cy5kZXYk"
+        src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" type="text/javascript">
+        </script>
+
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "ContactPage",
-  "headline": "Contactez notre agence d'Orléans | EstimezVotreBien.com",
-  "description": "Prenez rendez-vous au Lab'O Village avec nos experts immobiliers. Expertise locale, estimation physique gratuite et accompagnement personnalisé pour votre vente.",
-  "url": "https://estimezvotrebien.com/contact.html",
+  "@type": "WebPage",
+  "headline": "Espace Client Connexion | EstimezVotreBien.com",
+  "description": "Accédez à votre compte EstimezVotreBien.com pour retrouver vos estimations immobilières sauvegardées, gérer vos annonces et suivre votre projet de vente à Orléans.",
+  "url": "https://estimezvotrebien.com/connexion.html",
   "image": "https://estimezvotrebien.com/images/logo.png",
   "datePublished": "2026-01-01",
   "author": {
@@ -32,34 +37,81 @@
     "@type": "RealEstateAgent",
     "name": "EstimezVotreBien.com",
     "image": "https://estimezvotrebien.com/images/logo.png",
-    "telephone": "+33238698277",
-    "email": "contact@estimezvotrebien.com",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Lab'O Village, 1 Avenue du Champ de Mars",
-      "addressLocality": "Orléans",
-      "postalCode": "45000",
-      "addressCountry": "FR"
-    },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": "47.90298",
-      "longitude": "1.90382"
-    },
-    "parentOrganization": {
-      "@type": "Organization",
-      "name": "EstimezVotreBien.com",
-      "url": "https://estimezvotrebien.com"
-    }
-  },
-  "mainEntity": {
-    "@type": "RealEstateAgent",
-    "name": "Agence EstimezVotreBien.com Orléans",
-    "description": "Experts immobiliers spécialisés dans le marché du Loiret, les biens Off-market et l'évaluation précise par la donnée.",
-    "openingHours": "Mo-Sa 09:00-18:00"
+    "telephone": "+33 2 38 69 82 77",
+    "email": "contact@estimezvotrebien.com"
   }
 }
 </script>
+
+    <style>
+        /* 1. HAUTEUR ET ALIGNEMENT POUR VOIR LE FOOTER */
+        .login-section {
+            background-color: var(--hero-bg);
+            padding: 5px 15px !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: calc(100vh - 180px);
+            /* Laisse pile la place pour afficher le footer sans scroller */
+            min-height: auto !important;
+        }
+
+        /* 2. LARGEUR ÉNORME DU CONTENEUR (ÉTIRÉ À 900px) */
+        .login-wrapper {
+            width: 100%;
+            max-width: 900px !important;
+            /* C'est ici l'étirement horizontal ! */
+            margin: 0 auto;
+        }
+
+        #sign-in {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 3. FORCER CLERK À REMPLIR LES 900px ET S'ÉCRASER VERTICALEMENT */
+        .cl-rootBox,
+        .cl-cardBox,
+        .cl-card {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .cl-card {
+            padding: 15px 40px !important;
+            /* Écrase en haut/bas (15px), très large sur les côtés (40px) */
+        }
+
+        /* 4. LE TUEUR DE GAPS (Détruit les espaces internes de Clerk) */
+        [class*="cl-internal-"] {
+            gap: 4px !important;
+        }
+
+        @media (max-width: 768px) {
+            .login-section {
+                height: auto;
+                padding: 15px 10px !important;
+            }
+
+            .cl-card {
+                padding: 15px !important;
+            }
+        }
+
+        #user-button-desktop,
+        #user-button-mobile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 45px;
+        }
+
+        #auth-container-mobile {
+            padding: 10px 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -69,8 +121,7 @@
             <nav class="nav">
                 <div class="nav-brand" style="white-space: nowrap; display: flex; align-items: center;">
                     <a href="index.html" class="logo-link">
-                        <img src="images/logo.svg" alt="EstimezVotreBien.com" class="logo-img"=======<img
-                            src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
+                        <img src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
                             style="max-height: 45px; width: auto; display: block;">
                     </a>
                 </div>
@@ -80,10 +131,10 @@
                     <button class="close-menu-btn" id="close-menu-btn" aria-label="Fermer le menu"><i
                             class="fas fa-times"></i></button>
                     <div class="mobile-menu-logo mobile-only">
-                        <a href="index.html" class="logo-link"><img src="images/logo.svg"
-                                alt="EstimezVotreBien.com"=======<a href="index.html" class="logo-link"><img
-                                src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
-                                style="max-height: 40px;"></a>
+                        <a href="index.html" class="logo-link">
+                            <img src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
+                                style="max-height: 40px;">
+                        </a>
                     </div>
                     <ul class="nav-menu">
                         <li><a href="acheter.html">Acheter</a></li>
@@ -94,179 +145,26 @@
                         <li><a href="contact.html">Contact</a></li>
                     </ul>
                     <div class="nav-cta">
-                        <a href="connexion.html" class="mobile-login-link mobile-only">Connexion</a>
-                        <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                        <div id="auth-container-mobile" class="mobile-only">
+                            <a href="connexion.html" class="mobile-login-link">Connexion</a>
+                        </div>
+
+                        <div id="auth-container-desktop" class="desktop-only">
+                            <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                        </div>
                     </div>
                 </div>
             </nav>
         </div>
     </header>
 
-    <section class="map-section">
+    <main class="login-section">
         <div class="container">
-            <div class="map-container">
-                <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2675.223222058791!2d1.8923753112505428!3d47.89336466801225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e4e5268a751659%3A0x521171b992144b7d!2sLAB%E2%80%99O%20Village%20By%20CA%20Orl%C3%A9ans!5e0!3m2!1sfr!2sfr!4v1773157003725!5m2!1sfr!2sfr"
-                    width="916" height="400" style="border:0;" allowfullscreen="" loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <div class="login-wrapper">
+                <div id="sign-in"></div>
             </div>
         </div>
-    </section>
-
-    <section class="agency-features-section">
-        <div class="container">
-            <div class="agency-features-grid">
-                <div class="feature-col">
-                    <h3>Votre agence d'Orléans</h3>
-                    <p>Retrouvez-nous au cœur d'Orléans pour un accueil personnalisé et chaleureux. Notre équipe
-                        d'experts se tient à votre disposition pour vous guider dans toutes les étapes de votre projet
-                        immobilier, du premier rendez-vous jusqu'à la conclusion de votre vente.</p>
-                </div>
-                <div class="feature-col">
-                    <h3>Un emplacement stratégique</h3>
-                    <p>Située à proximité des axes principaux et des transports en commun, notre agence est facilement
-                        accessible pour tous. Profitez de notre expertise locale et de notre maîtrise du marché
-                        orléanais pour vendre ou acheter dans les meilleures conditions.</p>
-                </div>
-                <div class="feature-col">
-                    <h3>Des services sur mesure</h3>
-                    <p>Sur place, vous bénéficierez de conseils avisés et d'un suivi complet, adapté à vos besoins. Que
-                        vous veniez pour une première estimation ou une vente imminente, notre équipe vous accompagne de
-                        manière transparente et réactive pour concrétiser votre projet immobilier.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="contact-form-section">
-        <div class="container">
-            <div id="grid" class="contact-grid">
-
-                <div class="contact-info-card">
-                    <div class="info-item">
-                        <i class="fas fa-phone"></i>
-                        <h4>Besoin de plus d'informations ?</h4>
-                        <p><a href="tel:+33238698277" style="color: inherit; text-decoration: none;">+33 2 38 69 82
-                                77</a></p>
-                    </div>
-                    <div class="info-item">
-                        <i class="far fa-envelope"></i>
-                        <h4>Nous envoyer un mail</h4>
-                        <p><a href="mailto:contact@estimezvotrebien.com"
-                                style="color: inherit; text-decoration: none;">contact@estimezvotrebien.com</a></p>
-                    </div>
-                    <div class="info-item">
-                        <i class="fab fa-instagram"></i>
-                        <h4>Suivez-nous sur Instagram</h4>
-                    </div>
-                </div>
-
-                <div class="contact-form-wrapper">
-                    <h2>Parlons de votre projet immobilier</h2>
-                    <p>Remplissez le formulaire ci-dessous pour prendre contact avec notre équipe et profiter d'un
-                        accompagnement personnalisé. Que vous souhaitiez obtenir une estimation, en savoir plus sur nos
-                        services ou démarrer une vente, nous sommes à votre écoute pour répondre à toutes vos questions
-                        et vous guider pas à pas.</p>
-
-                    <form action="#" method="POST">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Votre nom <span class="required">*</span></label>
-                                <input type="text" name="nom" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Téléphone <span class="required">*</span></label>
-                                <input type="tel" name="telephone" required>
-                            </div>
-                        </div>
-
-                        <div class="form-row half-width">
-                            <div class="form-group">
-                                <label>E-mail <span class="required">*</span></label>
-                                <input type="email" name="email" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Votre message <span class="required">*</span></label>
-                            <textarea name="message" required></textarea>
-                        </div>
-
-                        <div class="consent-group">
-                            <input type="checkbox" id="consent" name="consent" required>
-                            <label for="consent">Je consens à ce que ce site stocke les informations que j'ai envoyées
-                                afin de pouvoir répondre à ma demande.</label>
-                        </div>
-
-                        <button type="submit" class="submit-btn">ENVOYER</button>
-                    </form>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <section id="faq" class="faq-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Questions fréquentes</h2>
-                <p>Déroulement de nos échanges et rendez-vous</p>
-            </div>
-
-            <div class="faq-accordion">
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>Sous quel délai allez-vous me recontacter suite à mon message ?</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Notre équipe s'engage à vous rappeler dans un délai de 24 heures ouvrées. Ce premier contact
-                            téléphonique nous permet de comprendre les enjeux de votre projet immobilier et de convenir
-                            du rendez-vous le plus adapté à vos disponibilités.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>Faut-il prendre rendez-vous avant de passer à l'agence d'Orléans ?</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Bien que nos portes soient ouvertes du lundi au samedi au Lab'O Village, nous vous
-                            conseillons fortement de prendre rendez-vous. Cela nous permet de garantir la présence de
-                            l'expert spécifiquement affecté à votre secteur géographique (Orléans, métropole ou Loiret).
-                        </p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>De quels documents avez-vous besoin lors de notre première rencontre ?</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Pour réaliser une estimation physique précise, l'idéal est de nous fournir votre titre de
-                            propriété (qui mentionne les surfaces exactes et servitudes), les plans de votre bien, votre
-                            dernier avis de taxe foncière, ainsi que le DPE (Diagnostic de Performance Énergétique) s'il
-                            a déjà été réalisé.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <h3>J'ai reçu mon estimation en ligne, que se passe-t-il ensuite ?</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>L'estimation en ligne que vous avez reçue vous donne une première tendance du marché. L'étape
-                            suivante consiste à ce qu'un de nos conseillers se rende sur place, gratuitement, pour
-                            affiner cette fourchette algorithmique et vous remettre un dossier d'Avis de Valeur complet
-                            et définitif.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    </main>
 
     <footer class="footer">
         <div class="container">
@@ -312,7 +210,7 @@
 
             <div class="footer-bottom-flex">
                 <div class="footer-logo">
-                    <a href="/">
+                    <a href="index.html">
                         <img src="images/logo.png" alt="EstimezVotreBien.com" style="max-height: 35px;">
                     </a>
                 </div>
@@ -328,47 +226,7 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-
-            // Récupérer les paramètres de l'URL
-            const urlParams = new URLSearchParams(window.location.search);
-
-            const email = urlParams.get('email');
-            const phone = urlParams.get('phone');
-            const estimationDone = urlParams.get('estimation');
-            // NOUVEAU : On récupère le type de projet (achat ou vente)
-            const projet = urlParams.get('projet');
-
-            // Si l'utilisateur vient du simulateur, on pré-remplit les champs et on adapte le titre
-            if (estimationDone === 'done') {
-
-                // Pré-remplissage des champs
-                const emailInput = document.querySelector('input[name="email"]');
-                const phoneInput = document.querySelector('input[name="telephone"]');
-
-                if (emailInput && email) emailInput.value = email;
-                if (phoneInput && phone) phoneInput.value = phone;
-
-                // Modification du contenu du formulaire
-                const formTitle = document.querySelector('.contact-form-wrapper h2');
-                const formDesc = document.querySelector('.contact-form-wrapper p');
-
-                // NOUVEAU : Logique de séparation Acheteur / Vendeur
-                if (projet === 'achat') {
-                    if (formTitle) formTitle.textContent = "Votre demande de recherche a été transmise ! 🎯";
-                    if (formDesc) formDesc.textContent = "Un de nos agents vérifie actuellement notre base Off-Market et va vous recontacter très vite. Confirmez votre nom ci-dessous :";
-                } else {
-                    // TON CODE ORIGINAL CONSERVÉ POUR LA VENTE
-                    if (formTitle) formTitle.textContent = "Votre estimation vous a été envoyée !";
-                    if (formDesc) formDesc.textContent = "Un expert a été notifié de votre demande. Pour affiner ce résultat ou planifier une visite, confirmez votre nom et envoyez-nous ce message.";
-                }
-            }
-
-        });
-    </script>
+    <script src="main.js"></script>
 </body>
 
 </html>

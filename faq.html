@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foire Aux Questions | EstimezVotreBien.com</title>
+    <title>Foire Aux Questions | estimez-votre-bien.com</title>
     <meta name="description"
         content="Toutes les réponses à vos questions sur l'estimation et la vente immobilière en 2026 : prix, travaux, succession, DPE, et délais de vente.">
 
@@ -13,19 +13,23 @@
         content="Nos experts répondent aux questions les plus fréquentes des propriétaires pour vendre au bon prix et sereinement.">
     <meta property="og:type" content="website">
 
+    <script async crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_ZmxleGlibGUtd2FydGhvZy03MC5jbGVyay5hY2NvdW50cy5kZXYk"
+        src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" type="text/javascript">
+        </script>
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  "name": "Foire Aux Questions Immobilier 2026 | EstimezVotreBien.com",
+  "name": "Foire Aux Questions Immobilier 2026 | estimez-votre-bien.com",
   "description": "Toutes les réponses d'experts à vos questions sur l'estimation et la vente immobilière en 2026 : prix, travaux, succession, DPE, et délais de vente.",
   "publisher": {
     "@type": "RealEstateAgent",
-    "name": "EstimezVotreBien.com",
-    "image": "https://estimezvotrebien.com/images/logo.png",
+    "name": "estimez-votre-bien.com",
+    "image": "https://estimez-votre-bien.com/images/logo.png",
     "parentOrganization": {
       "@type": "Organization",
-      "name": "EstimezVotreBien.com"
+      "name": "estimez-votre-bien.com"
     }
   },
   "mainEntity": [
@@ -284,8 +288,7 @@
             <nav class="nav">
                 <div class="nav-brand" style="white-space: nowrap; display: flex; align-items: center;">
                     <a href="index.html" class="logo-link">
-                        <img src="images/logo.svg" alt="EstimezVotreBien.com" class="logo-img"=======<img
-                            src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
+                        <img src="images/logo.png" alt="estimez-votre-bien.com" class="logo-img"
                             style="max-height: 45px; width: auto; display: block;">
                     </a>
                 </div>
@@ -295,10 +298,8 @@
                     <button class="close-menu-btn" id="close-menu-btn" aria-label="Fermer le menu"><i
                             class="fas fa-times"></i></button>
                     <div class="mobile-menu-logo mobile-only">
-                        <a href="index.html" class="logo-link"><img src="images/logo.svg"
-                                alt="EstimezVotreBien.com"=======<a href="index.html" class="logo-link"><img
-                                src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
-                                style="max-height: 40px;"></a>
+                        <a href="index.html" class="logo-link"><img src="images/logo.png" alt="estimez-votre-bien.com"
+                                class="logo-img" style="max-height: 40px;"></a>
                     </div>
                     <ul class="nav-menu">
                         <li><a href="acheter.html">Acheter</a></li>
@@ -309,8 +310,13 @@
                         <li><a href="contact.html">Contact</a></li>
                     </ul>
                     <div class="nav-cta">
-                        <a href="connexion.html" class="mobile-login-link mobile-only">Connexion</a>
-                        <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                        <div id="auth-container-mobile" class="mobile-only">
+                            <a href="connexion.html" class="mobile-login-link">Connexion</a>
+                        </div>
+
+                        <div id="auth-container-desktop" class="desktop-only">
+                            <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -609,7 +615,7 @@
                 <h3>Vous n'avez pas trouvé votre réponse ?</h3>
                 <p>Notre équipe d'experts est à votre disposition pour répondre à toutes vos interrogations sur
                     l'estimation et la vente.</p>
-                <a href="mailto:contact@estimezvotrebien.com" class="btn btn-primary">
+                <a href="mailto:contact@estimez-votre-bien.com" class="btn btn-primary">
                     <i class="fas fa-envelope"></i> Poser ma question par e-mail
                 </a>
             </div>
@@ -645,7 +651,7 @@
                     </div>
                     <div class="footer-text-block">
                         <h4>Mail</h4>
-                        <p>contact@estimezvotrebien.com</p>
+                        <p>contact@estimez-votre-bien.com</p>
                     </div>
                 </div>
 
@@ -660,11 +666,11 @@
             <div class="footer-bottom-flex">
                 <div class="footer-logo">
                     <a href="/">
-                        <img src="images/logo.png" alt="EstimezVotreBien.com" style="max-height: 35px;">
+                        <img src="images/logo.png" alt="estimez-votre-bien.com" style="max-height: 35px;">
                     </a>
                 </div>
                 <div class="footer-copyright">
-                    <p>Copyright © 2026 | EstimezVotreBien.com par Fawez</p>
+                    <p>Copyright © 2026 | estimez-votre-bien.com par Fawez</p>
                 </div>
                 <div class="footer-socials">
                     <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -742,7 +748,7 @@
             }
         });
     </script>
-    <script src="js/main.js"></script>
+    <script src="main.js"></script>
 </body>
 
 </html>

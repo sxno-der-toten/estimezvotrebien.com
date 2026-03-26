@@ -1,6 +1,6 @@
-/* =========================================
+/* ======
    VENDRE.CSS - Page de mise en vente
-========================================= */
+====== */
 
 .hero-fullscreen {
     position: relative;
@@ -260,7 +260,7 @@
     box-sizing: border-box;
     border: 2px solid #E5E7EB;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 14px;
     background-color: #fff;
     transition: all 0.3s ease;
     font-family: inherit;
@@ -288,9 +288,9 @@
     box-shadow: 0 4px 15px rgba(108, 131, 217, 0.15);
 }
 
-/* =========================================
+/* ======
    MASQUER LES FLÈCHES DES CHAMPS NUMBER
-========================================= */
+====== */
 .input-wrapper input[type="number"]::-webkit-inner-spin-button,
 .input-wrapper input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;

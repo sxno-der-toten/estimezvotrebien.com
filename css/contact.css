@@ -1,6 +1,6 @@
-/* =========================================
+/* ======
    CONTACT.CSS - Design de la page de Contact
-========================================= */
+====== */
 
 /* --- 1. Section de la Carte Google Maps --- */
 .map-section {
@@ -310,9 +310,9 @@
     transform: translateY(-2px);
 }
 
-/* =========================================
+/* ======
    RESPONSIVE DESIGN (À PARTIR DE 992px)
-========================================= */
+====== */
 @media (max-width: 992px) {
 
     /* Responsive des Cards de présentation */

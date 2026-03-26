@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clerk Login Form - Format Élargi</title>
+    <style>
+        /* --- RESET ET BASE --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            /* Fond gris clair pour faire ressortir la carte */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- CARTE PRINCIPALE --- */
+        .clerk-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 650px;
+            /* C'est ici qu'on gère la largeur (format paysage) */
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            /* Pour que le footer gris suive l'arrondi */
+        }
+
+        /* --- CONTENU BLANC (Haut) --- */
+        .card-body {
+            padding: 40px 20px;
+        }
+
+        /* Conteneur pour centrer les éléments à l'intérieur avec une largeur fixe */
+        .form-content {
+            max-width: 380px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .title {
+            color: #2e335b;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        /* Bouton Google */
+        .btn-google {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 10px 16px;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 24px;
+        }
+
+        .btn-google:hover {
+            background: #f9fafb;
+        }
+
+        .btn-google img {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+        }
+
+        /* Séparateur "ou" */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 12px;
+            margin-bottom: 24px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .divider span {
+            padding: 0 10px;
+        }
+
+        /* Formulaire */
+        .input-group {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #2e335b;
+            margin-bottom: 6px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: #818cf8;
+            box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2);
+        }
+
+        .btn-submit {
+            width: auto;
+            min-width: 200px;
+            padding: 10px 24px;
+            background-color: #7b81cc;
+            /* La couleur de ton bouton */
+            color: white;
+            border: none;
+            border-radius: 20px;
+            /* Forme de pilule */
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+            box-shadow: 0 4px 6px rgba(123, 129, 204, 0.25);
+        }
+
+        .btn-submit:hover {
+            background-color: #6366f1;
+        }
+
+        #error-message {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 12px;
+            min-height: 18px;
+        }
+
+        /* --- FOOTER GRIS (Bas) --- */
+        .card-footer {
+            background-color: #f8fafc;
+            border-top: 1px solid #e5e7eb;
+            padding: 24px 20px;
+            text-align: center;
+        }
+
+        .card-footer p {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 16px;
+        }
+
+        .card-footer a {
+            color: #7b81cc;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .card-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .secured-by {
+            font-size: 12px;
+            color: #4b5563;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="clerk-card">
+        <div class="card-body">
+            <div class="form-content">
+                <h2 class="title">Bon retour parmi nous !</h2>
+
+                <button type="button" class="btn-google" id="btn-google">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+                    Continuer avec Google
+                </button>
+
+                <div class="divider"><span>ou</span></div>
+
+                <form id="clerk-login-form">
+                    <div class="input-group">
+                        <label for="email">Adresse e-mail</label>
+                        <input type="email" id="email" placeholder="votre@email.com" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" id="password" required>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Se connecter ▶</button>
+                    <div id="error-message"></div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <p>Pas encore de compte ? <a href="/sign-up">Créer un compte</a></p>
+            <div class="secured-by">
+                Secured by <strong>clerk</strong>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Remplace par ta vraie clé Clerk
+        const clerkPubKey = 'pk_test_VOTRE_CLE_ICI';
+
+        const loadClerk = () => {
+            const script = document.createElement('script');
+            script.setAttribute('data-clerk-publishable-key', clerkPubKey);
+            script.async = true;
+            script.src = `https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js`;
+            script.crossOrigin = 'anonymous';
+
+            script.addEventListener('load', async function () {
+                await window.Clerk.load();
+                setupAuth();
+            });
+            document.body.appendChild(script);
+        };
+
+        const setupAuth = () => {
+            const form = document.getElementById('clerk-login-form');
+            const googleBtn = document.getElementById('btn-google');
+            const errorDiv = document.getElementById('error-message');
+
+            // 1. Logique Formulaire classique (Email/Mot de passe)
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorDiv.textContent = '';
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                try {
+                    const result = await window.Clerk.client.signIn.create({
+                        identifier: email,
+                        password: password,
+                    });
+
+                    if (result.status === 'complete') {
+                        await window.Clerk.setActive({ session: result.createdSessionId });
+                        window.location.href = '/dashboard'; // URL de redirection
+                    } else {
+                        console.log('Besoin de 2FA:', result);
+                    }
+                } catch (err) {
+                    errorDiv.textContent = err.errors[0]?.longMessage || 'Identifiants incorrects.';
+                }
+            });
+
+            // 2. Logique bouton Google (OAuth)
+            googleBtn.addEventListener('click', async () => {
+                try {
+                    await window.Clerk.client.signIn.authenticateWithRedirect({
+                        strategy: "oauth_google",
+                        redirectUrl: "/sso-callback",      // Page de traitement intermédiaire (optionnel selon ton setup)
+                        redirectUrlComplete: "/dashboard", // URL après connexion réussie
+                    });
+                } catch (err) {
+                    errorDiv.textContent = "Erreur avec la connexion Google.";
+                }
+            });
+        };
+
+        loadClerk();
+    </script>
+</body>
+
+</html>

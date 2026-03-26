@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comment vendre vite et au meilleur prix ? | EstimezVotreBien.com</title>
+    <title>Comment vendre vite et au meilleur prix ? | estimez-votre-bien.com</title>
     <meta name="description"
         content="Découvrez nos conseils d'experts pour accélérer la vente de votre maison ou appartement sans brader votre prix : home staging, juste prix, photos pros.">
 
@@ -15,24 +15,28 @@
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/guides.css">
     <link rel="stylesheet" href="css/vendrevite.css">
+    <script async crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_ZmxleGlibGUtd2FydGhvZy03MC5jbGVyay5hY2NvdW50cy5kZXYk"
+        src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" type="text/javascript">
+        </script>
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "Comment vendre vite et au meilleur prix ? | EstimezVotreBien.com",
+  "headline": "Comment vendre vite et au meilleur prix ? | estimez-votre-bien.com",
   "description": "Conseils d'experts pour accélérer la vente immobilière : home staging, fixation du juste prix, photos professionnelles et constitution d'un dossier technique irréprochable.",
-  "url": "https://estimezvotrebien.com/vendrevite.html",
+  "url": "https://estimez-votre-bien.com/vendrevite.html",
   "image": "https://images.unsplash.com/photo-1592595896616-c37162298647?w=900",
   "datePublished": "2026-03-15",
   "author": {
     "@type": "Organization",
-    "name": "EstimezVotreBien.com",
-    "url": "https://estimezvotrebien.com"
+    "name": "estimez-votre-bien.com",
+    "url": "https://estimez-votre-bien.com"
   },
   "publisher": {
     "@type": "RealEstateAgent",
-    "name": "EstimezVotreBien.com",
-    "image": "https://estimezvotrebien.com/images/logo.png",
+    "name": "estimez-votre-bien.com",
+    "image": "https://estimez-votre-bien.com/images/logo.png",
     "telephone": "+33238698277",
     "address": {
       "@type": "PostalAddress",
@@ -43,7 +47,7 @@
     },
     "parentOrganization": {
       "@type": "Organization",
-      "name": "EstimezVotreBien.com"
+      "name": "estimez-votre-bien.com"
     }
   },
   "mainEntity": {
@@ -62,8 +66,7 @@
             <nav class="nav">
                 <div class="nav-brand" style="white-space: nowrap; display: flex; align-items: center;">
                     <a href="index.html" class="logo-link">
-                        <img src="images/logo.svg" alt="EstimezVotreBien.com" class="logo-img"=======<img
-                            src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
+                        <img src="images/logo.png" alt="estimez-votre-bien.com" class="logo-img"
                             style="max-height: 45px; width: auto; display: block;">
                     </a>
                 </div>
@@ -73,10 +76,8 @@
                     <button class="close-menu-btn" id="close-menu-btn" aria-label="Fermer le menu"><i
                             class="fas fa-times"></i></button>
                     <div class="mobile-menu-logo mobile-only">
-                        <a href="index.html" class="logo-link"><img src="images/logo.svg"
-                                alt="EstimezVotreBien.com"=======<a href="index.html" class="logo-link"><img
-                                src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
-                                style="max-height: 40px;"></a>
+                        <a href="index.html" class="logo-link"><img src="images/logo.png" alt="estimez-votre-bien.com"
+                                class="logo-img" style="max-height: 40px;"></a>
                     </div>
                     <ul class="nav-menu">
                         <li><a href="acheter.html">Acheter</a></li>
@@ -87,8 +88,13 @@
                         <li><a href="contact.html">Contact</a></li>
                     </ul>
                     <div class="nav-cta">
-                        <a href="connexion.html" class="mobile-login-link mobile-only">Connexion</a>
-                        <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                        <div id="auth-container-mobile" class="mobile-only">
+                            <a href="connexion.html" class="mobile-login-link">Connexion</a>
+                        </div>
+
+                        <div id="auth-container-desktop" class="desktop-only">
+                            <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -419,7 +425,7 @@
                     </div>
                     <div class="footer-text-block">
                         <h4>Mail</h4>
-                        <p>contact@estimezvotrebien.com</p>
+                        <p>contact@estimez-votre-bien.com</p>
                     </div>
                 </div>
 
@@ -434,11 +440,11 @@
             <div class="footer-bottom-flex">
                 <div class="footer-logo">
                     <a href="/">
-                        <img src="images/logo.png" alt="EstimezVotreBien.com" style="max-height: 35px;">
+                        <img src="images/logo.png" alt="estimez-votre-bien.com" style="max-height: 35px;">
                     </a>
                 </div>
                 <div class="footer-copyright">
-                    <p>Copyright © 2026 | EstimezVotreBien.com par Fawez</p>
+                    <p>Copyright © 2026 | estimez-votre-bien.com par Fawez</p>
                 </div>
                 <div class="footer-socials">
                     <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -470,7 +476,7 @@
         });
     </script>
 
-    <script src="js/main.js"></script>
+    <script src="main.js"></script>
 </body>
 
 </html>

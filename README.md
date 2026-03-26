@@ -1,4 +1,4 @@
-# 🏠 EstimezVotreBien.com
+# 🏠 estimez-votre-bien.com
 
 > **L'alliance de la Data et de l'expertise humaine pour une estimation immobilière transparente et indépendante.**
 
@@ -6,7 +6,7 @@
 
 ## 📖 À propos du projet
 
-**EstimezVotreBien.com** est une plateforme web moderne dédiée à l'estimation et à la transaction immobilière. 
+**estimez-votre-bien.com** est une plateforme web moderne dédiée à l'estimation et à la transaction immobilière. 
 
 Contrairement aux réseaux nationaux, cette nouvelle entreprise privilégie la transparence absolue. Le projet est conçu pour accompagner deux types d'utilisateurs :
 * **Les Vendeurs** : Pour obtenir une estimation fiable basée sur des faits notariés et non sur des promesses de mandats.
@@ -86,8 +86,8 @@ Ce projet est conçu pour l'ère de la Search Generative Experience (SGE). En ut
 ---
 
 ## ⚖️ Engagement & Indépendance
-EstimezVotreBien.com est une structure indépendante. Elle n'est affiliée à aucun grand groupe immobilier national, garantissant une neutralité totale dans les avis de valeur remis aux propriétaires.
+estimez-votre-bien.com est une structure indépendante. Elle n'est affiliée à aucun grand groupe immobilier national, garantissant une neutralité totale dans les avis de valeur remis aux propriétaires.
 
 ---
 
-*Copyright © 2026 | EstimezVotreBien.com par Fawez*
+*Copyright © 2026 | estimez-votre-bien.com par Fawez*
