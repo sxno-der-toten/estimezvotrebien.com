@@ -1,3 +1,59 @@
+// ==========================================
+// CONFIGURATION SUPABASE (Correction)
+// ==========================================
+const supabaseUrl = 'https://crswkagawmfksizojgsf.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNyc3drYWdhd21ma3Npem9qZ3NmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MDgyMjAsImV4cCI6MjA5MDE4NDIyMH0.hymLWw0vjv0HW_5DX5xE9DXJdbEo_OOyjIZ9qagWRnw';
+
+// On crée une instance claire et on la stocke globalement
+if (!window.supabaseClient && window.supabase) {
+    window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+}
+
+// ==========================================
+// FONCTION DE CHARGEMENT DU DASHBOARD CLIENT
+// ==========================================
+async function loadClientDashboard(userId) {
+    // On vérifie que le client Supabase est bien initialisé
+    if (!window.supabaseClient) {
+        console.error("Supabase Client introuvable.");
+        return;
+    }
+
+    try {
+        // 1. Récupération du message de l'expert
+        // On utilise .maybeSingle() au lieu de .single() pour éviter l'erreur 406
+        const { data: msgData, error: msgError } = await window.supabaseClient
+            .from('expert_messages')
+            .select('agent_name, content')
+            .eq('clerk_user_id', userId)
+            .maybeSingle();
+
+        if (msgError) {
+            console.error("Erreur lors de la requête expert_messages:", msgError.message);
+        }
+
+        // MISE À JOUR DE L'INTERFACE
+        const nameEl = document.getElementById('expert-name');
+        const msgEl = document.getElementById('expert-message');
+
+        if (msgData) {
+            // Si on trouve une ligne dans la BDD, on applique les données (ex: Mael)
+            nameEl.textContent = msgData.agent_name;
+            msgEl.textContent = msgData.content;
+        } else {
+            // Si aucune ligne n'est trouvée pour cet ID Clerk, on met un message par défaut
+            nameEl.textContent = "Sarah - Astella Agency";
+            msgEl.textContent = "Bienvenue ! Je prépare actuellement votre dossier. N'hésitez pas à me contacter si vous avez des questions.";
+        }
+    } catch (err) {
+        console.error("Erreur lors du chargement des données Supabase :", err);
+    }
+}
+
+
+// ==========================================
+// OUTIL D'ESTIMATION EXISTANT
+// ==========================================
 class EstimationTool {
     constructor() {
         this.currentStep = 1;
@@ -172,7 +228,7 @@ class EstimationTool {
         }
     }
 
-    submitForm(e) {
+    async submitForm(e) {
         e.preventDefault();
         if (!this.validateStep()) return;
 
@@ -182,7 +238,57 @@ class EstimationTool {
         if (loadingSimulation) loadingSimulation.style.display = 'block';
 
         const data = new FormData(this.form);
-        const address = data.get('address') || "";
+        const isVendrePage = window.location.pathname.includes('vendre.html');
+        const isAchat = window.location.pathname.includes('acheter.html');
+
+        // =========================================================
+        // 🚀 NOUVEAU : INSERTION DANS SUPABASE (BDD)
+        // =========================================================
+        if (window.supabaseDb && window.Clerk && window.Clerk.user) {
+            try {
+                if (isVendrePage) {
+                    // Récupération des données du formulaire Vendre
+                    const villeSelectionnee = data.get('ville') || data.get('cp') || "Adresse non précisée";
+                    const prixSaisi = parseFloat(data.get('prix')) || 0;
+
+                    // Envoi vers la table properties_for_sale
+                    const { error } = await window.supabaseDb
+                        .from('properties_for_sale')
+                        .insert([{
+                            clerk_user_id: window.Clerk.user.id,
+                            address: villeSelectionnee,
+                            listing_price: prixSaisi,
+                            status_step: 1,
+                            status_label: 'Constitution du dossier'
+                        }]);
+
+                    if (error) throw error;
+                    console.log("✅ Bien mis en vente sauvegardé dans la BDD Supabase !");
+                } else {
+                    // Optionnel : Sauvegarde pour la page Estimer
+                    const address = data.get('address') || "";
+                    const surface = parseFloat(data.get('surface')) || 0;
+                    const { error } = await window.supabaseDb
+                        .from('estimations')
+                        .insert([{
+                            clerk_user_id: window.Clerk.user.id,
+                            address: address,
+                            property_type: data.get('propertyType'),
+                            surface: surface
+                        }]);
+                    if (error) throw error;
+                }
+            } catch (err) {
+                console.error("❌ Erreur lors de l'insertion dans Supabase :", err);
+            }
+        } else if (!window.Clerk || !window.Clerk.user) {
+            // Si l'utilisateur n'est pas connecté, on le prévient (ou on le redirige)
+            alert("Attention : Vous n'êtes pas connecté. Votre demande sera envoyée à l'agence mais n'apparaîtra pas dans votre espace client.");
+        }
+        // =========================================================
+
+        // === LOGIQUE EXISTANTE (Calculs & EmailJS) ===
+        const address = data.get('address') || data.get('ville') || "";
         const addrLower = address.toLowerCase();
         const surface = parseFloat(data.get('surface')) || 0;
         const type = data.get('propertyType');
@@ -198,12 +304,11 @@ class EstimationTool {
         else if (addrLower.includes('nice')) prixM2Base = 5700;
 
         let coeff = 1.0;
-
         const condition = data.get('condition');
         if (condition === 'Excellent') coeff *= 1.12;
         else if (condition === 'Bon') coeff *= 1.0;
-        else if (condition === 'Rafraîchir') coeff *= 0.90;
-        else if (condition === 'À rénover') coeff *= 0.75;
+        else if (condition === 'Rafraîchir' || condition === 'Rafraichir') coeff *= 0.90;
+        else if (condition === 'À rénover' || condition === 'Renover') coeff *= 0.75;
 
         const dpe = data.get('dpe');
         if (['A', 'B'].includes(dpe)) coeff *= 1.05;
@@ -217,11 +322,9 @@ class EstimationTool {
         if (type === 'Appartement' || type === 'appartement') {
             const etage = parseInt(data.get('floorLevel')) || 0;
             const ascenseur = data.get('Ascenseur') || data.get('ascenseur');
-
-            if (etage === 0) {
-                coeff *= 0.85;
-            } else if (etage >= 4) {
-                if (!ascenseur) coeff *= 0.90;
+            if (etage === 0) coeff *= 0.85;
+            else if (etage >= 4) {
+                if (!ascenseur || ascenseur === "Non") coeff *= 0.90;
                 else coeff *= 1.05;
             }
         }
@@ -230,16 +333,11 @@ class EstimationTool {
         if (data.get('Garage') || data.get('garage')) extras += 18000;
         if (data.get('Cave') || data.get('cave')) extras += 3500;
         if (data.get('Piscine') || data.get('piscine')) extras += 30000;
-
-        if (data.get('Balcon') || data.get('balcon')) {
-            const surfaceBalconMoyenne = 6;
-            extras += (surfaceBalconMoyenne * (prixM2Base * 0.35));
-        }
+        if (data.get('Balcon') || data.get('balcon')) extras += (6 * (prixM2Base * 0.35));
 
         const prixFinal = (surface * prixM2Base * coeff) + extras;
         const lowPrice = Math.round((prixFinal * 0.94) / 1000) * 1000;
         const highPrice = Math.round((prixFinal * 1.06) / 1000) * 1000;
-
         const format = (p) => p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
         const allParams = {
@@ -248,7 +346,6 @@ class EstimationTool {
             address: address,
             low_price: format(lowPrice),
             high_price: format(highPrice),
-
             property_type: type,
             surface: surface,
             rooms: data.get('rooms'),
@@ -258,7 +355,6 @@ class EstimationTool {
             condition: condition,
             vue: vue,
             floor: data.get('floorLevel') || "N/A",
-
             garage: check('Garage') !== "❌" ? check('Garage') : check('garage'),
             piscine: check('Piscine') !== "❌" ? check('Piscine') : check('piscine'),
             jardin: check('Jardin') !== "❌" ? check('Jardin') : check('jardin'),
@@ -270,17 +366,15 @@ class EstimationTool {
         if (typeof emailjs !== 'undefined') {
             emailjs.send("service_zr2ihqm", "template_yjrnk9t", allParams);
             emailjs.send("service_zr2ihqm", "template_j6mtlqm", allParams)
-                .then(() => console.log('Les deux mails ont été envoyés !'))
-                .catch(err => console.error("Erreur envoi agent:", err));
+                .then(() => console.log('Les mails ont été envoyés !'))
+                .catch(err => console.error("Erreur envoi email agent:", err));
         }
 
         setTimeout(() => {
-            const isAchat = window.location.pathname.includes('acheter.html');
             const paramsUrl = new URLSearchParams({
                 email: data.get('email'),
                 phone: data.get('phone'),
-                estimation: 'done',
-                projet: isAchat ? 'achat' : 'vente'
+                projet: isVendrePage ? 'vente' : (isAchat ? 'achat' : 'estimation')
             });
             window.location.href = `contact.html?${paramsUrl.toString()}#grid`;
         }, 2500);
@@ -319,14 +413,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// LOGIQUE CLERK SUR-MESURE (Custom UI Connexion & Inscription)
+// LOGIQUE CLERK ET INITIALISATION DASHBOARD
 // ==========================================
 const clerkInterval = setInterval(async () => {
     if (window.Clerk) {
         clearInterval(clerkInterval);
 
         try {
-            // CHARGEMENT DE CLERK AVEC TRADUCTION INTÉGRALE DES FENÊTRES DE PROFIL
             await window.Clerk.load({
                 localization: {
                     userButton: {
@@ -334,51 +427,18 @@ const clerkInterval = setInterval(async () => {
                         action__signOut: "Se déconnecter"
                     },
                     userProfile: {
-                        navbar: {
-                            title: "Compte",
-                            description: "Gérez les informations de votre compte.",
-                            account: "Profil",
-                            security: "Sécurité"
-                        },
+                        navbar: { title: "Compte", description: "Gérez les informations de votre compte.", account: "Profil", security: "Sécurité" },
                         start: {
                             headerTitle__account: "Détails du profil",
                             headerTitle__security: "Sécurité",
-                            profileSection: {
-                                title: "Profil",
-                                primaryButton: "Mettre à jour le profil"
-                            },
-                            emailAddressesSection: {
-                                title: "Adresses e-mail",
-                                primaryButton: "Ajouter une adresse e-mail",
-                                detailsAction__primary: "Principale",
-                                detailsAction__nonPrimary: "Définir comme principale",
-                                detailsAction__remove: "Supprimer"
-                            },
-                            connectedAccountsSection: {
-                                title: "Comptes connectés",
-                                primaryButton: "Connecter un compte",
-                                action__connect: "Connecter",
-                                action__disconnect: "Déconnecter"
-                            },
-                            passwordSection: {
-                                title: "Mot de passe",
-                                primaryButton: "Modifier le mot de passe"
-                            },
-                            dangerSection: {
-                                title: "Zone de danger",
-                                deleteAccountTitle: "Supprimer le compte",
-                                deleteAccountDescription: "Supprimez définitivement votre compte et toutes vos données.",
-                                deleteAccountButton: "Supprimer le compte"
-                            }
+                            profileSection: { title: "Profil", primaryButton: "Mettre à jour le profil" },
+                            emailAddressesSection: { title: "Adresses e-mail", primaryButton: "Ajouter une adresse e-mail", detailsAction__primary: "Principale", detailsAction__nonPrimary: "Définir comme principale", detailsAction__remove: "Supprimer" },
+                            connectedAccountsSection: { title: "Comptes connectés", primaryButton: "Connecter un compte", action__connect: "Connecter", action__disconnect: "Déconnecter" },
+                            passwordSection: { title: "Mot de passe", primaryButton: "Modifier le mot de passe" },
+                            dangerSection: { title: "Zone de danger", deleteAccountTitle: "Supprimer le compte", deleteAccountDescription: "Supprimez définitivement votre compte et toutes vos données.", deleteAccountButton: "Supprimer le compte" }
                         },
-                        profilePage: {
-                            title: "Modifier le profil",
-                            imageFormTitle: "Photo de profil",
-                            imageFormSubtitle: "Mettez à jour votre photo."
-                        },
-                        securityPage: {
-                            title: "Sécurité",
-                        },
+                        profilePage: { title: "Modifier le profil", imageFormTitle: "Photo de profil", imageFormSubtitle: "Mettez à jour votre photo." },
+                        securityPage: { title: "Sécurité" },
                         formButtonPrimary: "Enregistrer",
                         formButtonReset: "Annuler"
                     },
@@ -387,6 +447,11 @@ const clerkInterval = setInterval(async () => {
                 }
             });
 
+            const desktopAuthContainer = document.getElementById('auth-container-desktop');
+            if (desktopAuthContainer) {
+                desktopAuthContainer.style.opacity = '1';
+            }
+
             if (window.Clerk.user) {
                 // --- UTILISATEUR CONNECTÉ ---
                 if (window.location.pathname.includes('connexion.html') || window.location.pathname.includes('inscription.html')) {
@@ -394,9 +459,14 @@ const clerkInterval = setInterval(async () => {
                     return;
                 }
 
-                const desktopAuth = document.getElementById('auth-container-desktop');
-                if (desktopAuth) {
-                    desktopAuth.innerHTML = '<div id="user-button-desktop"></div>';
+                if (desktopAuthContainer) {
+                    const userName = window.Clerk.user.fullName || window.Clerk.user.firstName || "Mon espace";
+                    desktopAuthContainer.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 12px; justify-content: flex-end; width: 100%;">
+                            <span style="font-size: 14px; font-weight: 600; color: #2E3F84; white-space: nowrap;">${userName}</span>
+                            <div id="user-button-desktop"></div>
+                        </div>
+                    `;
                     window.Clerk.mountUserButton(document.getElementById('user-button-desktop'));
                 }
 
@@ -406,9 +476,13 @@ const clerkInterval = setInterval(async () => {
                     window.Clerk.mountUserButton(document.getElementById('user-button-mobile'));
                 }
 
+                // ==> APPEL À SUPABASE SI ON EST SUR LE DASHBOARD
+                if (window.location.pathname.includes('client.html')) {
+                    loadClientDashboard(window.Clerk.user.id);
+                }
+
             } else {
                 // --- UTILISATEUR DÉCONNECTÉ ---
-
                 // --- 1. LOGIQUE DE CONNEXION (connexion.html) ---
                 const loginForm = document.getElementById('clerk-login-form');
                 if (loginForm) {
@@ -416,13 +490,11 @@ const clerkInterval = setInterval(async () => {
                     const errorDiv = document.getElementById('error-message');
                     const formTitle = document.getElementById('form-title');
 
-                    // Éléments du Mdp Oublié
                     const btnForgot = document.getElementById('btn-forgot-password');
                     const step1 = document.getElementById('login-step-1');
                     const stepCode = document.getElementById('login-step-forgot-code');
                     const stepReset = document.getElementById('login-step-forgot-reset');
 
-                    // 1.A. Soumission Classique
                     loginForm.addEventListener('submit', async (e) => {
                         e.preventDefault();
                         errorDiv.textContent = '';
@@ -457,7 +529,6 @@ const clerkInterval = setInterval(async () => {
                         }
                     });
 
-                    // 1.B. Mot de passe oublié (Demande du code)
                     if (btnForgot) {
                         btnForgot.addEventListener('click', async (e) => {
                             e.preventDefault();
@@ -500,7 +571,6 @@ const clerkInterval = setInterval(async () => {
                         });
                     }
 
-                    // 1.C. Validation du code reçu
                     const btnVerifyReset = document.getElementById('btn-verify-reset');
                     if (btnVerifyReset) {
                         btnVerifyReset.addEventListener('click', async () => {
@@ -526,7 +596,6 @@ const clerkInterval = setInterval(async () => {
                         });
                     }
 
-                    // 1.D. Enregistrement du nouveau mot de passe
                     const btnSavePwd = document.getElementById('btn-save-new-password');
                     if (btnSavePwd) {
                         btnSavePwd.addEventListener('click', async () => {
@@ -553,7 +622,6 @@ const clerkInterval = setInterval(async () => {
                         });
                     }
 
-                    // 1.E. Bouton Retour (Annuler le reset)
                     const btnBackLogin = document.getElementById('btn-back-to-login');
                     if (btnBackLogin) {
                         btnBackLogin.addEventListener('click', () => {
@@ -564,7 +632,6 @@ const clerkInterval = setInterval(async () => {
                         });
                     }
 
-                    // 1.F. Google OAuth
                     if (googleBtn) {
                         googleBtn.addEventListener('click', async () => {
                             try {

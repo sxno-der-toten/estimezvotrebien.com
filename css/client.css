@@ -1,0 +1,280 @@
+/* ====== CLIENT.CSS DASHBOARD PRO ====== */
+.dashboard-body {
+    background-color: #FAFBFE;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 250px;
+    background: #fff;
+    border-right: 1px solid #E3E8F5;
+    position: fixed;
+    height: calc(100vh - 72px);
+    top: 72px;
+    left: 0;
+    z-index: 100;
+}
+
+.sidebar-nav {
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: #6B7280;
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 10px;
+}
+
+.sidebar-nav a i {
+    margin-right: 12px;
+    font-size: 18px;
+}
+
+.sidebar-nav a.active {
+    background: #EEF2FF;
+    color: #6C83D9;
+    font-weight: 600;
+}
+
+/* CONTENU PRINCIPAL */
+.dashboard-content {
+    margin-left: 250px;
+    padding: 40px;
+    max-width: 1000px;
+}
+
+.dashboard-header {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 18px;
+    color: #2E3F84;
+    margin: 30px 0 15px 0;
+    font-weight: 700;
+}
+
+h1 {
+    color: #6C83D9;
+    font-weight: 800;
+}
+
+.dash-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid #E3E8F5;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+/* CARTE EXPERT */
+.expert-card {
+    border-left: 5px solid #6C83D9;
+    position: relative;
+}
+
+.expert-badge {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: #6C83D9;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 50px;
+}
+
+.expert-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.expert-avatar {
+    width: 50px;
+    height: 50px;
+    background: #EEF2FF;
+    color: #6C83D9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.expert-info h4 {
+    margin: 0;
+    font-size: 15px;
+    color: #2E3F84;
+}
+
+.expert-info p {
+    margin: 5px 0 0 0;
+    font-size: 13px;
+    font-style: italic;
+}
+
+/* GRILLE ET ETATS VIDES */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #9CA3AF;
+}
+
+.empty-state p {
+    margin-bottom: 15px;
+}
+
+.mb-30 {
+    margin-bottom: 30px;
+}
+
+/* BOUTONS */
+.btn-primary-small,
+.btn-secondary-small {
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary-small {
+    background: #6C83D9;
+    color: #fff;
+}
+
+.btn-secondary-small {
+    background: #F3F4F6;
+    color: #4B5563;
+}
+
+/* ====== NOUVEAUX STYLES DES CARTES (VENTE ET ESTIMATION) SUPABASE ====== */
+
+/* Carte Bien en Vente */
+.sale-header {
+    font-size: 15px;
+    color: #2E3F84;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.sale-header i {
+    color: #6C83D9;
+    margin-top: 3px;
+}
+
+.sale-price {
+    font-size: 22px;
+    font-weight: 700;
+    color: #6C83D9;
+    margin-bottom: 15px;
+}
+
+.sale-status {
+    font-size: 13px;
+    color: #4B5563;
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    height: 6px;
+    background: #F3F4F6;
+    border-radius: 10px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #6C83D9;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.sale-agent {
+    font-size: 12px;
+    color: #6B7280;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-top: 15px;
+    border-top: 1px solid #E3E8F5;
+}
+
+/* Carte Historique des Estimations */
+.estimation-card .est-date {
+    font-size: 11px;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.estimation-card .est-address {
+    font-weight: 600;
+    color: #2E3F84;
+    margin-bottom: 10px;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.estimation-card .est-address i {
+    color: #6C83D9;
+}
+
+.estimation-card .est-details {
+    font-size: 13px;
+    color: #6B7280;
+    margin-bottom: 15px;
+}
+
+.estimation-card .est-price-range {
+    background: #EEF2FF;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #4B5563;
+}
+
+.estimation-card .est-price-range strong {
+    color: #6C83D9;
+    display: block;
+    font-size: 17px;
+    margin-top: 4px;
+}
+
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+    .sidebar {
+        display: none;
+    }
+
+    .dashboard-content {
+        margin-left: 0;
+        padding: 20px;
+        padding-bottom: 80px;
+    }
+}

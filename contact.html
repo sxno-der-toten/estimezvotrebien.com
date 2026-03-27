@@ -4,114 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion | EstimezVotreBien.com</title>
+    <title>Contact | EstimezVotreBien.com</title>
     <meta name="description"
-        content="Connectez-vous à votre espace personnel pour retrouver vos estimations immobilières et gérer votre projet de vente.">
+        content="Une question sur votre estimation immobilière ? Contactez notre agence Astella Agency à Orléans. Notre équipe d'experts vous répond sous 24h.">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/connexion.css">
+    <link rel="stylesheet" href="css/contact.css">
 
     <script async crossorigin="anonymous"
         data-clerk-publishable-key="pk_test_ZmxleGlibGUtd2FydGhvZy03MC5jbGVyay5hY2NvdW50cy5kZXYk"
         src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" type="text/javascript">
         </script>
-
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "headline": "Espace Client Connexion | EstimezVotreBien.com",
-  "description": "Accédez à votre compte EstimezVotreBien.com pour retrouver vos estimations immobilières sauvegardées, gérer vos annonces et suivre votre projet de vente à Orléans.",
-  "url": "https://estimezvotrebien.com/connexion.html",
-  "image": "https://estimezvotrebien.com/images/logo.png",
-  "datePublished": "2026-01-01",
-  "author": {
-    "@type": "Organization",
-    "name": "EstimezVotreBien.com",
-    "url": "https://estimezvotrebien.com"
-  },
-  "publisher": {
-    "@type": "RealEstateAgent",
-    "name": "EstimezVotreBien.com",
-    "image": "https://estimezvotrebien.com/images/logo.png",
-    "telephone": "+33 2 38 69 82 77",
-    "email": "contact@estimezvotrebien.com"
-  }
-}
-</script>
-
-    <style>
-        /* 1. HAUTEUR ET ALIGNEMENT POUR VOIR LE FOOTER */
-        .login-section {
-            background-color: var(--hero-bg);
-            padding: 5px 15px !important;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: calc(100vh - 180px);
-            /* Laisse pile la place pour afficher le footer sans scroller */
-            min-height: auto !important;
-        }
-
-        /* 2. LARGEUR ÉNORME DU CONTENEUR (ÉTIRÉ À 900px) */
-        .login-wrapper {
-            width: 100%;
-            max-width: 900px !important;
-            /* C'est ici l'étirement horizontal ! */
-            margin: 0 auto;
-        }
-
-        #sign-in {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        /* 3. FORCER CLERK À REMPLIR LES 900px ET S'ÉCRASER VERTICALEMENT */
-        .cl-rootBox,
-        .cl-cardBox,
-        .cl-card {
-            width: 100% !important;
-            max-width: 100% !important;
-        }
-
-        .cl-card {
-            padding: 15px 40px !important;
-            /* Écrase en haut/bas (15px), très large sur les côtés (40px) */
-        }
-
-        /* 4. LE TUEUR DE GAPS (Détruit les espaces internes de Clerk) */
-        [class*="cl-internal-"] {
-            gap: 4px !important;
-        }
-
-        @media (max-width: 768px) {
-            .login-section {
-                height: auto;
-                padding: 15px 10px !important;
-            }
-
-            .cl-card {
-                padding: 15px !important;
-            }
-        }
-
-        #user-button-desktop,
-        #user-button-mobile {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 45px;
-        }
-
-        #auth-container-mobile {
-            padding: 10px 0;
-        }
-    </style>
 </head>
 
 <body>
@@ -136,34 +42,143 @@
                                 style="max-height: 40px;">
                         </a>
                     </div>
+
                     <ul class="nav-menu">
+                        <li><a href="index.html">Estimer</a></li>
                         <li><a href="acheter.html">Acheter</a></li>
                         <li><a href="vendre.html">Vendre</a></li>
                         <li><a href="guides.html">Guides</a></li>
                         <li><a href="faq.html">FAQ</a></li>
                         <li><a href="a_propos.html">À propos</a></li>
-                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="contact.html" style="color: var(--primary-blue); font-weight: 700;">Contact</a>
+                        </li>
+                        <li><a href="client.html">Espace client</a></li>
                     </ul>
+
                     <div class="nav-cta">
                         <div id="auth-container-mobile" class="mobile-only">
                             <a href="connexion.html" class="mobile-login-link">Connexion</a>
                         </div>
 
-                        <div id="auth-container-desktop" class="desktop-only">
+                        <div id="auth-container-desktop" class="desktop-only"
+                            style="opacity: 0; transition: opacity 0.4s ease; min-width: 150px; height: 45px; display: flex; justify-content: flex-end; align-items: center;">
                             <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
                         </div>
                     </div>
+
                 </div>
             </nav>
         </div>
     </header>
 
-    <main class="login-section">
-        <div class="container">
-            <div class="login-wrapper">
-                <div id="sign-in"></div>
+    <main>
+        <section class="map-section">
+            <div class="container">
+                <div class="map-container">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2673.8051772635985!2d1.8953155767576594!3d47.89230557122116!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e4e52ec77a66b9%3A0xcb13e9a7e3d1a37c!2s1%20Av.%20du%20Champ%20de%20Mars%2C%2045100%20Orl%C3%A9ans!5e0!3m2!1sfr!2sfr!4v1700000000000!5m2!1sfr!2sfr"
+                        width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
             </div>
-        </div>
+        </section>
+
+        <section class="agency-features-section">
+            <div class="container">
+                <div class="agency-features-grid">
+                    <div class="feature-col">
+                        <h3>Notre Agence</h3>
+                        <p>Idéalement située au cœur d'Orléans, au Lab'O Village, notre agence vous accueille dans un
+                            cadre moderne et professionnel pour discuter de vos projets immobiliers.</p>
+                    </div>
+                    <div class="feature-col">
+                        <h3>Notre Expertise</h3>
+                        <p>Spécialistes de l'estimation et de la transaction, nous croisons la data de pointe avec notre
+                            fine connaissance du terrain pour vous garantir le meilleur prix.</p>
+                    </div>
+                    <div class="feature-col">
+                        <h3>Notre Engagement</h3>
+                        <p>Transparence, réactivité et suivi personnalisé. Notre équipe s'engage à vous apporter une
+                            réponse claire sous 24h ouvrées, quel que soit votre besoin.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-form-section" id="grid">
+            <div class="container">
+                <div class="contact-grid">
+
+                    <div class="contact-info-card">
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h4>Adresse</h4>
+                            <p>Lab'O Village, 1 Av. du Champ de Mars<br>45000 Orléans</p>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-phone-alt"></i>
+                            <h4>Téléphone</h4>
+                            <p>+33 2 38 69 82 77</p>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <h4>E-mail</h4>
+                            <p>contact@estimezvotrebien.com</p>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock"></i>
+                            <h4>Horaires</h4>
+                            <p>Du Lundi au Samedi<br>9h00 - 18h00</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-form-wrapper">
+                        <h2>Écrivez-nous</h2>
+                        <p>Un projet de vente ? Une question sur votre estimation ? Laissez-nous un message.</p>
+
+                        <form id="contactForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="prenom">Prénom <span class="required">*</span></label>
+                                    <input type="text" id="prenom" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="nom">Nom <span class="required">*</span></label>
+                                    <input type="text" id="nom" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="email_contact">E-mail <span class="required">*</span></label>
+                                    <input type="email" id="email_contact" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="telephone">Téléphone</label>
+                                    <input type="tel" id="telephone">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="message">Message <span class="required">*</span></label>
+                                <textarea id="message" placeholder="Détaillez votre projet ou vos questions ici..."
+                                    required></textarea>
+                            </div>
+
+                            <div class="consent-group">
+                                <input type="checkbox" id="consent" required>
+                                <label for="consent">J'accepte que mes données soient traitées pour répondre à ma
+                                    demande.</label>
+                            </div>
+
+                            <button type="submit" class="submit-btn">Envoyer mon message</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer class="footer">
@@ -227,6 +242,20 @@
     </footer>
 
     <script src="main.js"></script>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const btn = this.querySelector('.submit-btn');
+            const originalText = btn.textContent;
+            btn.textContent = "Message envoyé !";
+            btn.style.backgroundColor = "#10B981";
+            setTimeout(() => {
+                this.reset();
+                btn.textContent = originalText;
+                btn.style.backgroundColor = "";
+            }, 3000);
+        });
+    </script>
 </body>
 
 </html>

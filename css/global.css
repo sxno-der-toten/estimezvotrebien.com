@@ -184,9 +184,16 @@ p {
     z-index: 1000;
 }
 
+/* ✨ NOUVEAU : On élargit UNIQUEMENT le container du header pour faire respirer le menu */
+.header .container {
+    max-width: 1350px;
+    padding: 0 30px;
+    /* Un peu plus de marge sur les bords de l'écran */
+}
+
 .nav {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     padding: 0.75rem 0;
 }
@@ -201,7 +208,8 @@ p {
 .nav-menu {
     display: flex;
     list-style: none;
-    gap: 2rem;
+    gap: 1.8rem;
+    /* Légèrement réduit (était 2rem) pour équilibrer avec la nouvelle largeur */
 }
 
 .nav-menu a {
@@ -213,26 +221,6 @@ p {
 
 .nav-menu a:hover {
     color: var(--primary-blue);
-}
-
-/* Style spécifique pour le bouton Connexion */
-.nav-cta .btn-login {
-    background-color: #F8FAFC !important;
-    color: var(--primary-blue) !important;
-    text-transform: uppercase;
-    font-size: 13px !important;
-    font-weight: 700;
-    padding: 10px 24px !important;
-    border-radius: 50px;
-    border: none;
-    box-shadow: none !important;
-    letter-spacing: 0.5px;
-}
-
-.nav-cta .btn-login:hover {
-    background-color: #EEF2FF !important;
-    color: var(--hover-blue) !important;
-    transform: translateY(-1px);
 }
 
 /* --- 6. Section FAQ (Accordéon) --- */

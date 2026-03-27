@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Espace Client | EstimezVotreBien.com</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/client.css">
+
+    <script async crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_ZmxleGlibGUtd2FydGhvZy03MC5jbGVyay5hY2NvdW50cy5kZXYk"
+        src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="dashboard-body">
+
+    <header class="header" id="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="nav-brand">
+                    <a href="index.html"><img src="images/logo.png" alt="Logo" style="max-height: 45px;"></a>
+                </div>
+                <div class="nav-content">
+                    <ul class="nav-menu">
+                        <li><a href="index.html">Estimer</a></li>
+                        <li><a href="acheter.html">Acheter</a></li>
+                        <li><a href="vendre.html">Vendre</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="client.html" style="color: var(--primary-blue); font-weight: 700;">Espace
+                                client</a></li>
+                    </ul>
+                    <div class="nav-cta">
+                        <div id="auth-container-desktop" class="desktop-only"
+                            style="opacity: 0; min-width: 140px; height: 45px; display: flex; justify-content: flex-end; align-items: center;">
+                            <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <aside class="sidebar">
+        <nav class="sidebar-nav">
+            <a href="#" class="active"><i class="fas fa-th-large"></i> Vue d'ensemble</a>
+            <a href="#ventes"><i class="fas fa-hand-holding-usd"></i> Mes ventes</a>
+            <a href="#estimations"><i class="fas fa-history"></i> Estimations</a>
+            <a href="contact.html"><i class="fas fa-user-tie"></i> Mon conseiller</a>
+        </nav>
+    </aside>
+
+    <main class="dashboard-content">
+        <div class="dashboard-header">
+            <h1 id="dash-greeting">Bonjour 👋</h1>
+            <p>Ravi de vous revoir. Voici le suivi de votre projet immobilier.</p>
+        </div>
+
+        <div id="expert-section" class="dash-card expert-card mb-30">
+            <div class="expert-badge">Message de votre expert</div>
+            <div class="expert-content">
+                <div class="expert-info">
+                    <div class="expert-avatar"><i class="fas fa-user-shield"></i></div>
+                    <div>
+                        <h4 id="expert-name">Sarah - Astella Agency</h4>
+                        <p id="expert-message">Chargement de votre message personnalisé...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title" id="ventes">Mes biens mis en vente</h2>
+        <div id="sales-container" class="dashboard-grid mb-30">
+            <div class="dash-card empty-state">
+                <p>Aucun bien en mandat de vente pour le moment.</p>
+                <a href="contact.html" class="btn-primary-small">Confier un mandat</a>
+            </div>
+        </div>
+
+        <h2 class="section-title" id="estimations">Historique de mes estimations</h2>
+        <div id="estimations-grid" class="dashboard-grid">
+            <div class="dash-card empty-state">
+                <p>Vous n'avez pas encore d'estimations sauvegardées.</p>
+                <a href="vendre.html" class="btn-secondary-small">Lancer une estimation</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="main.js"></script>
+    <script>
+        // Logique de sécurisation et affichage du nom
+        window.addEventListener('load', async () => {
+            if (window.Clerk) {
+                await window.Clerk.load();
+                if (window.Clerk.user) {
+                    document.getElementById('dash-greeting').textContent = `Bonjour, ${window.Clerk.user.firstName} 👋`;
+                } else {
+                    window.location.href = 'connexion.html';
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
