@@ -1,158 +1,280 @@
-/* ====== CLIENT.CSS DASHBOARD PRO ====== */
-.dashboard-body {
-    background-color: #FAFBFE;
+/* ====== CLIENT.CSS DASHBOARD PRO (Optimisé Écran 2K / No Scroll) ====== */
+
+/* 1. RESET STRICT POUR TUER LA SCROLLBAR DU NAVIGATEUR */
+html,
+body {
     margin: 0;
     padding: 0;
-    min-height: 100vh;
+    height: 100%;
+    /* Exactement la taille de l'écran */
+    width: 100%;
+    overflow: hidden;
+    /* Empêche le navigateur de créer une barre de scroll globale */
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+/* 2. BODY EN FLEXBOX POUR UNE ADAPTABILITÉ PARFAITE */
+.dashboard-body {
+    background-color: #FAFBFE;
     font-family: 'Inter', sans-serif;
-}
-
-/* SIDEBAR */
-.sidebar {
-    width: 250px;
-    background: #fff;
-    border-right: 1px solid #E3E8F5;
-    position: fixed;
-    height: calc(100vh - 72px);
-    top: 72px;
-    left: 0;
-    z-index: 100;
-}
-
-.sidebar-nav {
-    padding: 20px 10px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    /* Le header en haut, le contenu en dessous */
 }
 
-.sidebar-nav a {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    color: #6B7280;
-    text-decoration: none;
-    font-weight: 500;
-    border-radius: 10px;
-}
-
-.sidebar-nav a i {
-    margin-right: 12px;
-    font-size: 18px;
-}
-
-.sidebar-nav a.active {
-    background: #EEF2FF;
-    color: #6C83D9;
-    font-weight: 600;
-}
-
-/* CONTENU PRINCIPAL */
+/* 3. CONTENU PRINCIPAL PREND L'ESPACE RESTANT */
 .dashboard-content {
-    margin-left: 250px;
-    padding: 40px;
-    max-width: 1000px;
+    flex: 1 1 auto;
+    /* Prend tout l'espace sous le header sans jamais déborder */
+    width: 100%;
+    max-width: 1800px;
+    /* Très large pour utiliser votre écran 2K */
+    margin: 0 auto;
+    padding: 10px 40px 20px 40px;
+    /* Paddings réduits */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* Espace uniforme entre les sections */
+    overflow: hidden;
+    /* Sécurité anti-débordement */
 }
 
-.dashboard-header {
-    margin-bottom: 30px;
+/* --- ÉLÉMENTS FIXES (Ne rétrécissent pas) --- */
+.dashboard-header,
+.expert-card,
+.section-title {
+    flex: 0 0 auto;
+    margin: 0;
+    /* Les marges sont gérées par le 'gap' du parent */
+}
+
+.dashboard-header h1 {
+    font-size: 20px;
+    /* Très dézoomé */
+    color: #6C83D9;
+    font-weight: 800;
+    margin: 0 0 2px 0;
+}
+
+#dash-greeting {
+    margin-top: 15px;
+}
+
+.dashboard-header p {
+    font-size: 12px;
+    margin: 0;
+    margin-bottom: 15px;
+    color: #6B7280;
 }
 
 .section-title {
-    font-size: 18px;
+    font-size: 14px;
     color: #2E3F84;
-    margin: 30px 0 15px 0;
     font-weight: 700;
+    padding-top: 5px;
 }
 
-h1 {
-    color: #6C83D9;
-    font-weight: 800;
-}
-
+/* --- CARTES GÉNÉRALES --- */
 .dash-card {
     background: #fff;
-    border-radius: 20px;
-    padding: 25px;
+    border-radius: 12px;
+    padding: 12px;
     border: 1px solid #E3E8F5;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 /* CARTE EXPERT */
 .expert-card {
-    border-left: 5px solid #6C83D9;
+    border-left: 4px solid #6C83D9;
     position: relative;
+    padding: 12px 15px 12px 20px;
 }
 
 .expert-badge {
     position: absolute;
-    top: -12px;
+    top: -8px;
     left: 20px;
     background: #6C83D9;
     color: #fff;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
-    padding: 4px 12px;
+    padding: 2px 8px;
     border-radius: 50px;
 }
 
 .expert-info {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
 }
 
 .expert-avatar {
-    width: 50px;
-    height: 50px;
+    width: 32px;
+    height: 32px;
     background: #EEF2FF;
     color: #6C83D9;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 14px;
 }
 
 .expert-info h4 {
     margin: 0;
-    font-size: 15px;
+    font-size: 13px;
     color: #2E3F84;
 }
 
 .expert-info p {
-    margin: 5px 0 0 0;
-    font-size: 13px;
+    margin: 2px 0 0 0;
+    font-size: 11px;
     font-style: italic;
+    color: #4B5563;
 }
 
-/* GRILLE ET ETATS VIDES */
+/* --- ZONES DE GRILLES (Ventes et Estimations) --- */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
+    /* Aligne un maximum de cartes en largeur (220px min) */
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    flex: 1 1 auto;
+    /* S'adapte à l'espace restant */
+    min-height: 0;
+    /* CRUCIAL : Empêche le conteneur de casser la page */
+    overflow-y: auto;
+    /* Scroll INTERNE invisible si beaucoup de cartes */
+    align-content: flex-start;
+    padding-right: 5px;
+}
+
+#sales-container {
+    flex: 0 1 auto;
+    /* Prend juste la place de ses cartes */
+    max-height: 30%;
+    /* Limite sa taille pour ne pas écraser l'historique */
+}
+
+/* --- STYLES INTERNES DES CARTES DE DONNÉES --- */
+.sale-header {
+    font-size: 12px;
+    color: #2E3F84;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.sale-header i {
+    color: #6C83D9;
+    margin-top: 2px;
+}
+
+.sale-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: #6C83D9;
+    margin-bottom: 8px;
+}
+
+.sale-status {
+    font-size: 11px;
+    color: #4B5563;
+    margin-bottom: 8px;
+}
+
+.progress-bar {
+    height: 4px;
+    background: #F3F4F6;
+    border-radius: 10px;
+    margin-top: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #6C83D9;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.sale-agent {
+    font-size: 10px;
+    color: #6B7280;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-top: 8px;
+    border-top: 1px solid #E3E8F5;
+}
+
+/* Carte Estimations */
+.estimation-card .est-date {
+    font-size: 9px;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.estimation-card .est-address {
+    font-weight: 600;
+    color: #2E3F84;
+    margin-bottom: 6px;
+    font-size: 12px;
+    line-height: 1.3;
+}
+
+.estimation-card .est-address i {
+    color: #6C83D9;
+}
+
+.estimation-card .est-details {
+    font-size: 11px;
+    color: #6B7280;
+    margin-bottom: 8px;
+}
+
+.estimation-card .est-price-range {
+    background: #EEF2FF;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    color: #4B5563;
+}
+
+.estimation-card .est-price-range strong {
+    color: #6C83D9;
+    display: block;
+    font-size: 14px;
+    margin-top: 2px;
 }
 
 .empty-state {
     text-align: center;
-    padding: 40px;
+    padding: 15px;
     color: #9CA3AF;
 }
 
 .empty-state p {
-    margin-bottom: 15px;
-}
-
-.mb-30 {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
+    font-size: 12px;
 }
 
 /* BOUTONS */
 .btn-primary-small,
 .btn-secondary-small {
-    padding: 8px 18px;
+    padding: 6px 12px;
     border-radius: 50px;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 600;
     text-decoration: none;
     display: inline-block;
@@ -168,113 +290,42 @@ h1 {
     color: #4B5563;
 }
 
-/* ====== NOUVEAUX STYLES DES CARTES (VENTE ET ESTIMATION) SUPABASE ====== */
-
-/* Carte Bien en Vente */
-.sale-header {
-    font-size: 15px;
-    color: #2E3F84;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
+/* --- SCROLLBAR INVISIBLE POUR LES GRILLES --- */
+/* (Permet de scroller les cartes si vous en avez 50, sans voir de barre grise) */
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
 }
 
-.sale-header i {
-    color: #6C83D9;
-    margin-top: 3px;
+::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-.sale-price {
-    font-size: 22px;
-    font-weight: 700;
-    color: #6C83D9;
-    margin-bottom: 15px;
+::-webkit-scrollbar-thumb {
+    background: transparent;
 }
-
-.sale-status {
-    font-size: 13px;
-    color: #4B5563;
-    margin-bottom: 15px;
-}
-
-.progress-bar {
-    height: 6px;
-    background: #F3F4F6;
-    border-radius: 10px;
-    margin-top: 8px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background: #6C83D9;
-    border-radius: 10px;
-    transition: width 0.3s ease;
-}
-
-.sale-agent {
-    font-size: 12px;
-    color: #6B7280;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding-top: 15px;
-    border-top: 1px solid #E3E8F5;
-}
-
-/* Carte Historique des Estimations */
-.estimation-card .est-date {
-    font-size: 11px;
-    color: #9CA3AF;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
-}
-
-.estimation-card .est-address {
-    font-weight: 600;
-    color: #2E3F84;
-    margin-bottom: 10px;
-    font-size: 15px;
-    line-height: 1.4;
-}
-
-.estimation-card .est-address i {
-    color: #6C83D9;
-}
-
-.estimation-card .est-details {
-    font-size: 13px;
-    color: #6B7280;
-    margin-bottom: 15px;
-}
-
-.estimation-card .est-price-range {
-    background: #EEF2FF;
-    padding: 12px;
-    border-radius: 10px;
-    font-size: 13px;
-    color: #4B5563;
-}
-
-.estimation-card .est-price-range strong {
-    color: #6C83D9;
-    display: block;
-    font-size: 17px;
-    margin-top: 4px;
-}
-
 
 /* RESPONSIVE */
 @media (max-width: 992px) {
-    .sidebar {
-        display: none;
+
+    html,
+    body {
+        height: auto;
+        overflow: auto;
+        /* Restaure le scroll classique sur téléphone */
     }
 
     .dashboard-content {
-        margin-left: 0;
-        padding: 20px;
-        padding-bottom: 80px;
+        height: auto;
+        padding: 15px;
+        overflow: visible;
+    }
+
+    .dashboard-grid {
+        overflow-y: visible;
+    }
+
+    #sales-container {
+        max-height: none;
     }
 }

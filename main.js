@@ -1,5 +1,5 @@
 // ==========================================
-// CONFIGURATION SUPABASE (Correction)
+// CONFIGURATION SUPABASE
 // ==========================================
 const supabaseUrl = 'https://crswkagawmfksizojgsf.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNyc3drYWdhd21ma3Npem9qZ3NmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MDgyMjAsImV4cCI6MjA5MDE4NDIyMH0.hymLWw0vjv0HW_5DX5xE9DXJdbEo_OOyjIZ9qagWRnw';
@@ -21,7 +21,6 @@ async function loadClientDashboard(userId) {
 
     try {
         // 1. Récupération du message de l'expert
-        // On utilise .maybeSingle() au lieu de .single() pour éviter l'erreur 406
         const { data: msgData, error: msgError } = await window.supabaseClient
             .from('expert_messages')
             .select('agent_name, content')
@@ -32,24 +31,89 @@ async function loadClientDashboard(userId) {
             console.error("Erreur lors de la requête expert_messages:", msgError.message);
         }
 
-        // MISE À JOUR DE L'INTERFACE
         const nameEl = document.getElementById('expert-name');
         const msgEl = document.getElementById('expert-message');
 
-        if (msgData) {
-            // Si on trouve une ligne dans la BDD, on applique les données (ex: Mael)
+        if (msgData && nameEl && msgEl) {
             nameEl.textContent = msgData.agent_name;
             msgEl.textContent = msgData.content;
-        } else {
-            // Si aucune ligne n'est trouvée pour cet ID Clerk, on met un message par défaut
+        } else if (nameEl && msgEl) {
             nameEl.textContent = "Sarah - Astella Agency";
             msgEl.textContent = "Bienvenue ! Je prépare actuellement votre dossier. N'hésitez pas à me contacter si vous avez des questions.";
+        }
+
+        // 2. Récupération des biens mis en vente (Filtré par utilisateur)
+        const { data: salesData } = await window.supabaseClient
+            .from('properties_for_sale')
+            .select('*')
+            .eq('clerk_user_id', userId)
+            .order('created_at', { ascending: false });
+
+        const salesContainer = document.getElementById('sales-container');
+
+        if (salesContainer && salesData && salesData.length > 0) {
+            salesContainer.innerHTML = '';
+            salesData.forEach(sale => {
+                const step = sale.status_step || 1;
+                const progressPct = (step / 5) * 100;
+                const priceFormatted = sale.listing_price
+                    ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(sale.listing_price)
+                    : 'Prix en cours d\'évaluation';
+
+                // Condition pour afficher ou masquer dynamiquement la ligne de l'agent
+                const agentHtml = (sale.agent_assigned && sale.agent_assigned.trim() !== '')
+                    ? `<div class="sale-agent"><i class="fas fa-user"></i> Agent : ${sale.agent_assigned}</div>`
+                    : '';
+
+                salesContainer.innerHTML += `
+                    <div class="dash-card">
+                        <div class="sale-header">
+                            <i class="fas fa-home"></i> <strong>${sale.address}</strong>
+                        </div>
+                        <div class="sale-price">${priceFormatted}</div>
+                        <div class="sale-status">
+                            <span>Étape ${step} : ${sale.status_label || 'Constitution du dossier'}</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: ${progressPct}%"></div></div>
+                        </div>
+                        ${agentHtml}
+                    </div>
+                `;
+            });
+        }
+
+        // 3. Récupération de l'historique des estimations (Filtré par utilisateur)
+        const { data: estData } = await window.supabaseClient
+            .from('estimations')
+            .select('*')
+            .eq('clerk_user_id', userId)
+            .order('created_at', { ascending: false });
+
+        const estContainer = document.getElementById('estimations-grid');
+        if (estContainer && estData && estData.length > 0) {
+            estContainer.innerHTML = '';
+            estData.forEach(est => {
+                const dateStr = new Date(est.created_at).toLocaleDateString('fr-FR');
+                const minPrice = est.price_min ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(est.price_min) : '-';
+                const maxPrice = est.price_max ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(est.price_max) : '-';
+
+                estContainer.innerHTML += `
+                    <div class="dash-card estimation-card">
+                        <div class="est-date">Estimé le ${dateStr}</div>
+                        <div class="est-address"><i class="fas fa-map-marker-alt"></i> ${est.address || 'Adresse non renseignée'}</div>
+                        <div class="est-details">
+                            <span>${est.property_type || 'Bien'}</span> • <span>${est.surface || 0} m²</span> • <span>${est.rooms || 0} pièces</span>
+                        </div>
+                        <div class="est-price-range">
+                            Fourchette estimée : <strong>${minPrice} - ${maxPrice}</strong>
+                        </div>
+                    </div>
+                `;
+            });
         }
     } catch (err) {
         console.error("Erreur lors du chargement des données Supabase :", err);
     }
 }
-
 
 // ==========================================
 // OUTIL D'ESTIMATION EXISTANT
@@ -241,53 +305,6 @@ class EstimationTool {
         const isVendrePage = window.location.pathname.includes('vendre.html');
         const isAchat = window.location.pathname.includes('acheter.html');
 
-        // =========================================================
-        // 🚀 NOUVEAU : INSERTION DANS SUPABASE (BDD)
-        // =========================================================
-        if (window.supabaseDb && window.Clerk && window.Clerk.user) {
-            try {
-                if (isVendrePage) {
-                    // Récupération des données du formulaire Vendre
-                    const villeSelectionnee = data.get('ville') || data.get('cp') || "Adresse non précisée";
-                    const prixSaisi = parseFloat(data.get('prix')) || 0;
-
-                    // Envoi vers la table properties_for_sale
-                    const { error } = await window.supabaseDb
-                        .from('properties_for_sale')
-                        .insert([{
-                            clerk_user_id: window.Clerk.user.id,
-                            address: villeSelectionnee,
-                            listing_price: prixSaisi,
-                            status_step: 1,
-                            status_label: 'Constitution du dossier'
-                        }]);
-
-                    if (error) throw error;
-                    console.log("✅ Bien mis en vente sauvegardé dans la BDD Supabase !");
-                } else {
-                    // Optionnel : Sauvegarde pour la page Estimer
-                    const address = data.get('address') || "";
-                    const surface = parseFloat(data.get('surface')) || 0;
-                    const { error } = await window.supabaseDb
-                        .from('estimations')
-                        .insert([{
-                            clerk_user_id: window.Clerk.user.id,
-                            address: address,
-                            property_type: data.get('propertyType'),
-                            surface: surface
-                        }]);
-                    if (error) throw error;
-                }
-            } catch (err) {
-                console.error("❌ Erreur lors de l'insertion dans Supabase :", err);
-            }
-        } else if (!window.Clerk || !window.Clerk.user) {
-            // Si l'utilisateur n'est pas connecté, on le prévient (ou on le redirige)
-            alert("Attention : Vous n'êtes pas connecté. Votre demande sera envoyée à l'agence mais n'apparaîtra pas dans votre espace client.");
-        }
-        // =========================================================
-
-        // === LOGIQUE EXISTANTE (Calculs & EmailJS) ===
         const address = data.get('address') || data.get('ville') || "";
         const addrLower = address.toLowerCase();
         const surface = parseFloat(data.get('surface')) || 0;
@@ -322,8 +339,10 @@ class EstimationTool {
         if (type === 'Appartement' || type === 'appartement') {
             const etage = parseInt(data.get('floorLevel')) || 0;
             const ascenseur = data.get('Ascenseur') || data.get('ascenseur');
-            if (etage === 0) coeff *= 0.85;
-            else if (etage >= 4) {
+
+            if (etage === 0) {
+                coeff *= 0.85;
+            } else if (etage >= 4) {
                 if (!ascenseur || ascenseur === "Non") coeff *= 0.90;
                 else coeff *= 1.05;
             }
@@ -333,12 +352,62 @@ class EstimationTool {
         if (data.get('Garage') || data.get('garage')) extras += 18000;
         if (data.get('Cave') || data.get('cave')) extras += 3500;
         if (data.get('Piscine') || data.get('piscine')) extras += 30000;
-        if (data.get('Balcon') || data.get('balcon')) extras += (6 * (prixM2Base * 0.35));
+
+        if (data.get('Balcon') || data.get('balcon')) {
+            const surfaceBalconMoyenne = 6;
+            extras += (surfaceBalconMoyenne * (prixM2Base * 0.35));
+        }
 
         const prixFinal = (surface * prixM2Base * coeff) + extras;
         const lowPrice = Math.round((prixFinal * 0.94) / 1000) * 1000;
         const highPrice = Math.round((prixFinal * 1.06) / 1000) * 1000;
+
         const format = (p) => p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+        // =========================================================
+        // INSERTION DANS SUPABASE
+        // =========================================================
+        if (window.supabaseClient && window.Clerk && window.Clerk.user) {
+            try {
+                if (isVendrePage) {
+                    const villeSelectionnee = data.get('ville') || data.get('cp') || address;
+                    const prixSaisi = parseFloat(data.get('prix')) || 0;
+
+                    const { error } = await window.supabaseClient
+                        .from('properties_for_sale')
+                        .insert([{
+                            clerk_user_id: window.Clerk.user.id,
+                            address: villeSelectionnee,
+                            listing_price: prixSaisi,
+                            status_step: 1,
+                            status_label: 'Constitution du dossier'
+                        }]);
+
+                    if (error) throw error;
+                    console.log("✅ Bien mis en vente sauvegardé dans la BDD Supabase !");
+                } else {
+                    const { error } = await window.supabaseClient
+                        .from('estimations')
+                        .insert([{
+                            clerk_user_id: window.Clerk.user.id,
+                            address: address,
+                            property_type: type,
+                            surface: surface,
+                            price_min: lowPrice,
+                            price_max: highPrice,
+                            rooms: parseInt(data.get('rooms')) || null,
+                            bedrooms: parseInt(data.get('bedrooms')) || null
+                        }]);
+
+                    if (error) throw error;
+                    console.log("✅ Estimation sauvegardée dans la BDD Supabase !");
+                }
+            } catch (err) {
+                console.error("❌ Erreur lors de l'insertion dans Supabase :", err);
+            }
+        } else if (!window.Clerk || !window.Clerk.user) {
+            console.log("Attention : Vous n'êtes pas connecté. Votre demande ne sera pas liée à l'espace client.");
+        }
 
         const allParams = {
             email: data.get('email'),
@@ -366,8 +435,8 @@ class EstimationTool {
         if (typeof emailjs !== 'undefined') {
             emailjs.send("service_zr2ihqm", "template_yjrnk9t", allParams);
             emailjs.send("service_zr2ihqm", "template_j6mtlqm", allParams)
-                .then(() => console.log('Les mails ont été envoyés !'))
-                .catch(err => console.error("Erreur envoi email agent:", err));
+                .then(() => console.log('Les deux mails ont été envoyés !'))
+                .catch(err => console.error("Erreur envoi agent:", err));
         }
 
         setTimeout(() => {
@@ -410,6 +479,80 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isActive) item.classList.add('active');
         });
     });
+
+    // ==========================================
+    // NOUVEAU : GESTION DE LA PAGE CONTACT
+    // ==========================================
+    if (window.location.pathname.includes('contact.html')) {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Si l'URL contient des informations de redirection
+        if (urlParams.has('projet')) {
+
+            // 1. Remplacement dynamique des titres
+            document.querySelectorAll('h1, h2, h3').forEach(h => {
+                if (h.textContent.includes('Écrivez-nous') || h.textContent.includes('Ecrivez-nous')) {
+                    h.textContent = 'Votre demande a bien été envoyée.';
+                }
+            });
+
+            // 2. Remplacement dynamique des sous-titres
+            document.querySelectorAll('p').forEach(p => {
+                if (p.textContent.includes('Un projet de vente') || p.textContent.includes('estimation')) {
+                    p.textContent = 'Une question ou demande particulière ? Laissez-nous un message.';
+                }
+            });
+
+            // 3. Pré-remplissage des champs du formulaire de contact (si existants)
+            if (urlParams.has('email')) {
+                const emailField = document.querySelector('input[type="email"]');
+                if (emailField) emailField.value = urlParams.get('email');
+            }
+            if (urlParams.has('phone')) {
+                const phoneField = document.querySelector('input[type="tel"]');
+                if (phoneField) phoneField.value = urlParams.get('phone');
+            }
+
+            // 4. Création et affichage du Toast Message de succès
+            const toast = document.createElement('div');
+            toast.innerHTML = '<i class="fas fa-check-circle"></i> Demande envoyée avec succès !';
+
+            Object.assign(toast.style, {
+                position: 'fixed',
+                top: '20px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: '#10B981', // Vert "Succès"
+                color: 'white',
+                padding: '12px 24px',
+                borderRadius: '50px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                fontWeight: '600',
+                fontSize: '15px',
+                zIndex: '99999',
+                opacity: '0',
+                transition: 'all 0.4s ease'
+            });
+
+            document.body.appendChild(toast);
+
+            // Animation d'apparition
+            setTimeout(() => {
+                toast.style.opacity = '1';
+                toast.style.top = '40px';
+            }, 100);
+
+            // Disparition automatique après 5 secondes
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.top = '20px';
+                setTimeout(() => toast.remove(), 400); // Laisse le temps à la transition CSS
+            }, 5000);
+        }
+    }
 });
 
 // ==========================================
@@ -483,7 +626,6 @@ const clerkInterval = setInterval(async () => {
 
             } else {
                 // --- UTILISATEUR DÉCONNECTÉ ---
-                // --- 1. LOGIQUE DE CONNEXION (connexion.html) ---
                 const loginForm = document.getElementById('clerk-login-form');
                 if (loginForm) {
                     const googleBtn = document.getElementById('btn-google');
@@ -647,7 +789,6 @@ const clerkInterval = setInterval(async () => {
                     }
                 }
 
-                // --- 2. LOGIQUE D'INSCRIPTION MULTI-STEP (inscription.html) ---
                 const regForm = document.getElementById('clerk-register-form');
                 if (regForm) {
                     const step1 = document.getElementById('reg-step-1');

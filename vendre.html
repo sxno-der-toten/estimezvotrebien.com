@@ -17,11 +17,12 @@
     <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/vendre.css">
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script async crossorigin="anonymous"
         data-clerk-publishable-key="pk_test_ZmxleGlibGUtd2FydGhvZy03MC5jbGVyay5hY2NvdW50cy5kZXYk"
         src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" type="text/javascript">
         </script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -175,17 +176,16 @@
                                         <input type="number" name="prix" placeholder="Prix souhaité (€) " required>
                                     </div>
                                 </div>
+
                                 <div class="input-wrapper autocomplete-wrapper">
                                     <div style="position: relative;">
                                         <i class="fas fa-search input-icon"
                                             style="position:absolute; left:20px; top:50%; transform:translateY(-50%); color:var(--primary-blue); z-index: 2;"></i>
-                                        <input type="text" id="cityAutocomplete"
-                                            placeholder="Saisissez la ville ou code postal " autocomplete="off" required
-                                            style="padding-left: 50px;">
+                                        <input type="text" name="address" id="addressInput"
+                                            placeholder="Saisissez une adresse postale complète..." autocomplete="off"
+                                            required style="padding-left: 50px;">
                                     </div>
-                                    <ul class="autocomplete-suggestions" id="citySuggestions"></ul>
-                                    <input type="hidden" name="ville" id="hiddenVille">
-                                    <input type="hidden" name="cp" id="hiddenCP">
+                                    <ul class="autocomplete-suggestions" id="addressSuggestions"></ul>
                                 </div>
                             </div>
 
@@ -582,59 +582,7 @@
     </button>
 
     <script>
-        // 1. AUTOCOMPLÉTION DES VILLES (API Gouv.fr)
         document.addEventListener('DOMContentLoaded', () => {
-            const cityInput = document.getElementById('cityAutocomplete');
-            const citySuggestions = document.getElementById('citySuggestions');
-            const hiddenVille = document.getElementById('hiddenVille');
-            const hiddenCP = document.getElementById('hiddenCP');
-
-            if (cityInput) {
-                let timeout = null;
-                cityInput.addEventListener('input', function () {
-                    clearTimeout(timeout);
-                    const query = this.value.trim();
-
-                    if (query.length < 2) {
-                        citySuggestions.style.display = 'none';
-                        return;
-                    }
-
-                    timeout = setTimeout(() => {
-                        fetch(`https://geo.api.gouv.fr/communes?nom=${encodeURIComponent(query)}&fields=nom,codesPostaux&limit=5`)
-                            .then(res => res.json())
-                            .then(data => {
-                                citySuggestions.innerHTML = '';
-                                if (data.length > 0) {
-                                    data.forEach(city => {
-                                        const li = document.createElement('li');
-                                        const cp = city.codesPostaux[0];
-                                        li.innerHTML = `<strong>${city.nom}</strong> <span>(${cp})</span>`;
-
-                                        li.addEventListener('click', () => {
-                                            cityInput.value = `${city.nom} (${cp})`;
-                                            hiddenVille.value = city.nom;
-                                            hiddenCP.value = cp;
-                                            citySuggestions.style.display = 'none';
-                                        });
-
-                                        citySuggestions.appendChild(li);
-                                    });
-                                    citySuggestions.style.display = 'block';
-                                } else {
-                                    citySuggestions.style.display = 'none';
-                                }
-                            }).catch(err => console.error("Erreur API:", err));
-                    }, 300);
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!cityInput.contains(e.target) && !citySuggestions.contains(e.target)) {
-                        citySuggestions.style.display = 'none';
-                    }
-                });
-            }
-
             // GESTION DU RECENTRAGE DU FORMULAIRE A L'ETAPE 2
             const nextBtn = document.getElementById('nextBtn');
             const prevBtn = document.getElementById('prevBtn');
@@ -644,10 +592,8 @@
             // Au clic sur "Continuer"
             if (nextBtn) {
                 nextBtn.addEventListener('click', () => {
-                    // Petit délai pour laisser main.js vérifier les champs et changer l'étape
                     setTimeout(() => {
                         const step1 = document.querySelector('.form-step[data-step="1"]');
-                        // Si l'étape 1 n'est plus active, on centre et on élargit
                         if (step1 && !step1.classList.contains('active')) {
                             heroContainer.classList.add('centered-mode');
                             estimationWrapper.classList.add('expanded');
@@ -661,7 +607,6 @@
                 prevBtn.addEventListener('click', () => {
                     setTimeout(() => {
                         const step1 = document.querySelector('.form-step[data-step="1"]');
-                        // Si on est de retour sur l'étape 1, on remet l'affichage classique à droite
                         if (step1 && step1.classList.contains('active')) {
                             heroContainer.classList.remove('centered-mode');
                             estimationWrapper.classList.remove('expanded');

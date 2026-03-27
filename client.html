@@ -21,41 +21,56 @@
     <header class="header" id="header">
         <div class="container">
             <nav class="nav">
-                <div class="nav-brand">
-                    <a href="index.html"><img src="images/logo.png" alt="Logo" style="max-height: 45px;"></a>
+                <div class="nav-brand" style="white-space: nowrap; display: flex; align-items: center;">
+                    <a href="index.html" class="logo-link">
+                        <img src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
+                            style="max-height: 45px; width: auto; display: block;">
+                    </a>
                 </div>
-                <div class="nav-content">
+                <button class="hamburger-btn" id="hamburger-btn" aria-label="Ouvrir le menu"><i
+                        class="fas fa-bars"></i></button>
+                <div class="nav-content" id="nav-content">
+                    <button class="close-menu-btn" id="close-menu-btn" aria-label="Fermer le menu"><i
+                            class="fas fa-times"></i></button>
+                    <div class="mobile-menu-logo mobile-only">
+                        <a href="index.html" class="logo-link">
+                            <img src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
+                                style="max-height: 40px;">
+                        </a>
+                    </div>
+
                     <ul class="nav-menu">
                         <li><a href="index.html">Estimer</a></li>
-                        <li><a href="acheter.html">Acheter</a></li>
+                        <li><a href="acheter.html">Acheter</a>
+                        </li>
                         <li><a href="vendre.html">Vendre</a></li>
+                        <li><a href="guides.html">Guides</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="a_propos.html">À propos</a></li>
                         <li><a href="contact.html">Contact</a></li>
                         <li><a href="client.html" style="color: var(--primary-blue); font-weight: 700;">Espace
                                 client</a></li>
                     </ul>
+
                     <div class="nav-cta">
+                        <div id="auth-container-mobile" class="mobile-only">
+                            <a href="connexion.html" class="mobile-login-link">Connexion</a>
+                        </div>
+
                         <div id="auth-container-desktop" class="desktop-only"
-                            style="opacity: 0; min-width: 140px; height: 45px; display: flex; justify-content: flex-end; align-items: center;">
+                            style="opacity: 0; transition: opacity 0.4s ease; min-width: 150px; height: 45px; display: flex; justify-content: flex-end; align-items: center;">
                             <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
                         </div>
                     </div>
+
                 </div>
             </nav>
         </div>
     </header>
 
-    <aside class="sidebar">
-        <nav class="sidebar-nav">
-            <a href="#" class="active"><i class="fas fa-th-large"></i> Vue d'ensemble</a>
-            <a href="#ventes"><i class="fas fa-hand-holding-usd"></i> Mes ventes</a>
-            <a href="#estimations"><i class="fas fa-history"></i> Estimations</a>
-            <a href="contact.html"><i class="fas fa-user-tie"></i> Mon conseiller</a>
-        </nav>
-    </aside>
-
     <main class="dashboard-content">
         <div class="dashboard-header">
-            <h1 id="dash-greeting">Bonjour 👋</h1>
+            <h1 class="dash-greeting" id="dash-greeting">Bonjour 👋</h1>
             <p>Ravi de vous revoir. Voici le suivi de votre projet immobilier.</p>
         </div>
 
@@ -65,8 +80,8 @@
                 <div class="expert-info">
                     <div class="expert-avatar"><i class="fas fa-user-shield"></i></div>
                     <div>
-                        <h4 id="expert-name">Sarah - Astella Agency</h4>
-                        <p id="expert-message">Chargement de votre message personnalisé...</p>
+                        <h4 id="expert-name">­</h4>
+                        <p id="expert-message">­</p>
                     </div>
                 </div>
             </div>
@@ -91,12 +106,17 @@
 
     <script src="main.js"></script>
     <script>
-        // Logique de sécurisation et affichage du nom
+        // Logique de sécurisation et affichage
         window.addEventListener('load', async () => {
             if (window.Clerk) {
                 await window.Clerk.load();
                 if (window.Clerk.user) {
                     document.getElementById('dash-greeting').textContent = `Bonjour, ${window.Clerk.user.firstName} 👋`;
+
+                    // On charge les données Supabase spécifiques à cet utilisateur (ventes, estimations...)
+                    if (typeof loadClientDashboard === 'function') {
+                        loadClientDashboard(window.Clerk.user.id);
+                    }
                 } else {
                     window.location.href = 'connexion.html';
                 }
