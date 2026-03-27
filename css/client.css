@@ -1,4 +1,4 @@
-/* ====== CLIENT.CSS DASHBOARD PRO (Optimisé Écran 2K / No Scroll) ====== */
+/* ====== CLIENT.CSS DASHBOARD PRO (Optimisé Écran 2K / No Scroll / Avec Hover) ====== */
 
 /* 1. RESET STRICT POUR TUER LA SCROLLBAR DU NAVIGATEUR */
 html,
@@ -88,6 +88,18 @@ body {
     padding: 12px;
     border: 1px solid #E3E8F5;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    /* Animation fluide */
+}
+
+/* Effet Hover sur les cartes de la grille */
+.dashboard-grid .dash-card:not(.empty-state):hover {
+    transform: translateY(-4px);
+    /* Élévation douce */
+    box-shadow: 0 10px 20px -5px rgba(108, 131, 217, 0.15), 0 4px 10px -3px rgba(108, 131, 217, 0.1);
+    /* Ombre bleutée */
+    border-color: #C3CEF6;
+    /* Bordure légèrement bleutée au survol */
 }
 
 /* CARTE EXPERT */
@@ -95,6 +107,12 @@ body {
     border-left: 4px solid #6C83D9;
     position: relative;
     padding: 12px 15px 12px 20px;
+}
+
+/* Effet Hover spécifique pour la carte expert */
+.expert-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px -3px rgba(108, 131, 217, 0.12);
 }
 
 .expert-badge {
@@ -153,7 +171,8 @@ body {
     overflow-y: auto;
     /* Scroll INTERNE invisible si beaucoup de cartes */
     align-content: flex-start;
-    padding-right: 5px;
+    padding: 5px 5px 15px 5px;
+    /* Padding pour ne pas couper l'effet hover */
 }
 
 #sales-container {

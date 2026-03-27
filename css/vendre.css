@@ -339,6 +339,10 @@
     text-align: left;
 }
 
+.autocomplete-suggestions:not(:empty) {
+    display: block;
+}
+
 .autocomplete-suggestions li {
     padding: 12px 20px;
     cursor: pointer;
