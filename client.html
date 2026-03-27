@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espace client | EstimezVotreBien.com</title>
+    <title>Mon Espace Client | EstimezVotreBien.com</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/global.css">
@@ -106,21 +106,21 @@
 
     <script src="main.js"></script>
     <script>
-        // Logique de sécurisation et affichage
-        window.addEventListener('load', async () => {
-            if (window.Clerk) {
-                await window.Clerk.load();
-                if (window.Clerk.user) {
-                    document.getElementById('dash-greeting').textContent = `Bonjour, ${window.Clerk.user.firstName} 👋`;
-
-                    // On charge les données Supabase spécifiques à cet utilisateur (ventes, estimations...)
-                    if (typeof loadClientDashboard === 'function') {
-                        loadClientDashboard(window.Clerk.user.id);
+        // Logique de sécurisation : on attend que main.js charge Clerk pour éviter les conflits
+        window.addEventListener('load', () => {
+            const checkClerk = setInterval(() => {
+                if (window.Clerk && window.Clerk.user !== undefined) {
+                    clearInterval(checkClerk);
+                    if (window.Clerk.user) {
+                        document.getElementById('dash-greeting').textContent = `Bonjour, ${window.Clerk.user.firstName} 👋`;
+                        if (typeof loadClientDashboard === 'function') {
+                            loadClientDashboard(window.Clerk.user.id);
+                        }
+                    } else {
+                        window.location.href = 'connexion.html';
                     }
-                } else {
-                    window.location.href = 'connexion.html';
                 }
-            }
+            }, 50);
         });
     </script>
 </body>

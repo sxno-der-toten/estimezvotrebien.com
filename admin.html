@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration Pro | EstimezVotreBien.com</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/global.css">
+    <script async crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_ZmxleGlibGUtd2FydGhvZy03MC5jbGVyay5hY2NvdW50cy5kZXYk"
+        src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* Styles conservés de votre version avec quelques ajouts pour les messages */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: #FAFBFE;
+        }
+
+        .admin-body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            flex: 0 0 auto !important;
+        }
+
+        .admin-content {
+            flex: 1 1 auto;
+            width: 100%;
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 15px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow: hidden;
+        }
+
+        .admin-header h1 {
+            font-size: 22px;
+            color: #2E3F84;
+            font-weight: 800;
+            margin: 15px 0 5px 0;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            flex: 0 0 auto;
+        }
+
+        .stat-card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #E3E8F5;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #EEF2FF;
+            color: #6C83D9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-info h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: #6C83D9;
+        }
+
+        .controls-panel {
+            flex: 0 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid #E3E8F5;
+        }
+
+        .tabs-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #6B7280;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .tab-btn.active {
+            background: #EEF2FF;
+            color: #6C83D9;
+        }
+
+        .data-panel {
+            flex: 1 1 auto;
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #E3E8F5;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .tab-content {
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            color: #4B5563;
+        }
+
+        .admin-table thead th {
+            position: sticky;
+            top: 0;
+            background: #FAFBFE;
+            z-index: 5;
+            text-align: left;
+            padding: 12px 15px;
+            color: #2E3F84;
+            border-bottom: 1px solid #E3E8F5;
+        }
+
+        .admin-table tbody tr {
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .admin-table td {
+            padding: 10px 15px;
+        }
+
+        .btn-action {
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn-green {
+            background: #10B981;
+            color: white;
+        }
+
+        .btn-green:hover {
+            background: #059669;
+        }
+
+        .msg-form {
+            max-width: 600px;
+            margin: 30px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .admin-input,
+        .admin-textarea {
+            width: 100%;
+            border: 1px solid #E3E8F5;
+            border-radius: 8px;
+            padding: 10px;
+            font-family: inherit;
+        }
+
+        .admin-textarea {
+            height: 120px;
+            resize: none;
+        }
+    </style>
+</head>
+
+<body class="admin-body">
+
+    <header class="header" id="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="nav-brand"><a href="index.html"><img src="images/logo.png" alt="Logo"
+                            style="max-height: 45px;"></a></div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Estimer</a></li>
+                    <li><a href="vendre.html">Vendre</a></li>
+                    <li><a href="client.html">Espace client</a></li>
+                    <li><a href="admin.html" style="color: #10B981; font-weight: 700;">Administration 👨‍💻</a></li>
+                </ul>
+                <div id="auth-container-desktop" style="margin-left: 20px;"></div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-content">
+        <div class="admin-header">
+            <h1>🛡️ Dashboard Gestion Immobilière</h1>
+            <p>Connecté en tant que : <strong id="admin-name">...</strong></p>
+        </div>
+
+        <section class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <p>Total Leads</p>
+                    <h3 id="stat-leads">0</h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-file-contract"></i></div>
+                <div class="stat-info">
+                    <p>Mandats Actifs</p>
+                    <h3 id="stat-mandats">0</h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#ECFDF5; color:#10B981;"><i class="fas fa-euro-sign"></i></div>
+                <div class="stat-info">
+                    <p>C.A Estimé</p>
+                    <h3 id="stat-value">0 €</h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#FFF7ED; color:#F97316;"><i class="fas fa-clock"></i></div>
+                <div class="stat-info">
+                    <p>À traiter</p>
+                    <h3 id="stat-todo">0</h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="controls-panel">
+            <nav class="tabs-nav">
+                <button class="tab-btn active" data-tab="tab-leads">⚡️ Flux Leads</button>
+                <button class="tab-btn" data-tab="tab-mandats">🏠 Mandats & Étapes</button>
+                <button class="tab-btn" data-tab="tab-messages">💬 Messages Experts</button>
+            </nav>
+        </section>
+
+        <section class="data-panel">
+            <div id="tab-leads" class="tab-content active">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Bien & Adresse</th>
+                            <th>Fourchette</th>
+                            <th>Suivi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leads-body">
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px;">Chargement des leads...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="tab-mandats" class="tab-content">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Adresse</th>
+                            <th>Prix Affiché</th>
+                            <th>Label Statut</th>
+                            <th>Étape / 5</th>
+                            <th>Agent</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mandates-body">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px;">Chargement des mandats...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="tab-messages" class="tab-content">
+                <div class="msg-form">
+                    <h3>Envoyer un message personnalisé</h3>
+                    <label>Choisir un client :</label>
+                    <select id="user-select" class="admin-input">
+                        <option>Chargement des clients...</option>
+                    </select>
+                    <label>Nom de l'agent affiché :</label>
+                    <input type="text" id="agent-display" class="admin-input" placeholder="Sarah - Astella Agency">
+                    <label>Votre message :</label>
+                    <textarea id="msg-content" class="admin-textarea"
+                        placeholder="Ex: Votre dossier est validé, je vous rappelle demain..."></textarea>
+                    <button class="btn-action btn-green" onclick="sendMessage()"
+                        style="padding: 12px; font-size: 14px;">Enregistrer le message</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // ==========================================
+        // 1. GESTION DES ONGLETS (TABS)
+        // ==========================================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+
+                document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+
+                if (tabId === 'tab-leads') loadLeads();
+                if (tabId === 'tab-mandats') loadMandates();
+                if (tabId === 'tab-messages') loadUsersForSelect();
+            });
+        });
+
+        // ==========================================
+        // 2. INITIALISATION ROBUSTE (CLERK & SUPABASE)
+        // ==========================================
+        let supabase;
+
+        const initAdminInterval = setInterval(async () => {
+            // On attend que les bibliothèques Clerk et Supabase soient bien chargées par le navigateur
+            if (window.Clerk && window.supabase) {
+                clearInterval(initAdminInterval);
+
+                // Initialisation de Supabase
+                const supabaseUrl = 'https://crswkagawmfksizojgsf.supabase.co';
+                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNyc3drYWdhd21ma3Npem9qZ3NmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MDgyMjAsImV4cCI6MjA5MDE4NDIyMH0.hymLWw0vjv0HW_5DX5xE9DXJdbEo_OOyjIZ9qagWRnw';
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+                try {
+                    await window.Clerk.load();
+
+                    // Vérification de sécurité Admin
+                    const isMetadataAdmin = window.Clerk.user?.publicMetadata?.role === 'admin';
+                    if (!window.Clerk.user || !isMetadataAdmin) {
+                        alert("Accès refusé : Rôle Admin requis.");
+                        window.location.href = 'index.html';
+                        return;
+                    }
+
+                    // Affichage de l'UI Admin
+                    document.getElementById('admin-name').textContent = window.Clerk.user.firstName;
+                    window.Clerk.mountUserButton(document.getElementById('auth-container-desktop'), { afterSignOutUrl: '/index.html' });
+
+                    // Lancement de la récupération des données
+                    refreshAll();
+                } catch (e) {
+                    console.error("Erreur de chargement Clerk :", e);
+                }
+            }
+        }, 50); // Scanne toutes les 50ms
+
+        // ==========================================
+        // 3. FONCTIONS DE LECTURE/ÉCRITURE SUPABASE
+        // ==========================================
+        async function refreshAll() {
+            await loadStats();
+            await loadLeads();
+            await loadMandates();
+            await loadUsersForSelect();
+        }
+
+        async function loadStats() {
+            try {
+                const { count: leadCount } = await supabase.from('estimations').select('*', { count: 'exact', head: true });
+                const { data: sales } = await supabase.from('properties_for_sale').select('listing_price');
+                const { count: todoCount } = await supabase.from('estimations').select('*', { count: 'exact', head: true }).eq('is_contacted', false);
+
+                let totalValue = 0;
+                (sales || []).forEach(s => totalValue += (s.listing_price || 0));
+
+                document.getElementById('stat-leads').textContent = leadCount || 0;
+                document.getElementById('stat-mandats').textContent = (sales || []).length;
+                document.getElementById('stat-todo').textContent = todoCount || 0;
+                document.getElementById('stat-value').textContent = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(totalValue);
+            } catch (e) { console.error("Erreur stats", e); }
+        }
+
+        async function loadLeads() {
+            try {
+                const { data: leads, error: leadsErr } = await supabase.from('estimations').select('*').order('created_at', { ascending: false });
+                if (leadsErr) throw leadsErr;
+
+                const { data: profiles } = await supabase.from('profiles').select('*');
+                const body = document.getElementById('leads-body');
+
+                if (!leads || leads.length === 0) {
+                    body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">Aucun lead trouvé en base de données.</td></tr>';
+                    return;
+                }
+
+                body.innerHTML = leads.map(l => {
+                    const prof = (profiles || []).find(p => p.id === l.clerk_user_id) || {};
+                    const dateStr = new Date(l.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+                    const minP = l.price_min ? l.price_min.toLocaleString('fr-FR') : '-';
+                    const maxP = l.price_max ? l.price_max.toLocaleString('fr-FR') : '-';
+
+                    return `
+                    <tr style="${l.is_contacted ? 'opacity: 0.6' : 'font-weight: 600'}">
+                        <td>${dateStr}</td>
+                        <td>${prof.first_name || 'Client Web'}<br><small style="color:#6B7280; font-weight:normal;">${prof.email || l.clerk_user_id.substring(0, 8) + '...'}</small></td>
+                        <td>${l.address || 'Adresse inconnue'}<br><small style="color:#9CA3AF; font-weight:normal;">${l.property_type || 'Bien'} • ${l.surface || 0} m²</small></td>
+                        <td style="color:#6C83D9">${minP}€ - ${maxP}€</td>
+                        <td><button class="btn-action ${l.is_contacted ? 'btn-gray' : 'btn-green'}" onclick="markLead('${l.id}', ${!l.is_contacted})">${l.is_contacted ? 'Archiver' : 'Marquer contacté'}</button></td>
+                    </tr>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error("Erreur leads", e);
+                document.getElementById('leads-body').innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:red;">Erreur de chargement. Vérifiez les Policies Supabase.</td></tr>';
+            }
+        }
+
+        window.markLead = async function (id, state) {
+            await supabase.from('estimations').update({ is_contacted: state }).eq('id', id);
+            loadLeads();
+            loadStats();
+        }
+
+        async function loadMandates() {
+            try {
+                const { data, error } = await supabase.from('properties_for_sale').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+
+                const tbody = document.getElementById('mandates-body');
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Aucun mandat actif.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.map(s => {
+                    return `
+                    <tr>
+                        <td><strong>${s.address || 'Inconnue'}</strong></td>
+                        <td><input type="number" class="admin-input" style="width:90px" value="${s.listing_price || 0}" id="price-${s.id}"> €</td>
+                        <td><input type="text" class="admin-input" value="${s.status_label || ''}" id="lbl-${s.id}"></td>
+                        <td><input type="number" class="admin-input" style="width:45px" min="1" max="5" value="${s.status_step || 1}" id="step-${s.id}"> / 5</td>
+                        <td><input type="text" class="admin-input" value="${s.agent_assigned || ''}" id="agent-${s.id}"></td>
+                        <td style="text-align:center;"><button class="btn-action btn-green" onclick="updateMandate('${s.id}', this)">Sauver</button></td>
+                    </tr>
+                    `;
+                }).join('');
+            } catch (e) { console.error("Erreur mandats", e); }
+        }
+
+        window.updateMandate = async function (id, btn) {
+            const origText = btn.textContent;
+            btn.textContent = "...";
+            btn.style.background = "#6B7280";
+
+            const { error } = await supabase.from('properties_for_sale').update({
+                listing_price: document.getElementById(`price-${id}`).value,
+                status_label: document.getElementById(`lbl-${id}`).value,
+                status_step: document.getElementById(`step-${id}`).value,
+                agent_assigned: document.getElementById(`agent-${id}`).value
+            }).eq('id', id);
+
+            if (!error) {
+                btn.textContent = "OK";
+                btn.style.background = "#10B981";
+            } else {
+                btn.textContent = "Erreur";
+                btn.style.background = "#EF4444";
+            }
+            setTimeout(() => { btn.textContent = origText; btn.style.background = ""; loadStats(); }, 2000);
+        }
+
+        async function loadUsersForSelect() {
+            try {
+                const { data } = await supabase.from('profiles').select('*');
+                const select = document.getElementById('user-select');
+                if (!data || data.length === 0) {
+                    select.innerHTML = '<option value="">Aucun client trouvé</option>';
+                    return;
+                }
+                select.innerHTML = data.map(u => `<option value="${u.id}">${u.first_name || 'Client'} ${u.last_name || ''} (${u.email || u.id.substring(0, 8)})</option>`).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        window.sendMessage = async function () {
+            const userId = document.getElementById('user-select').value;
+            const content = document.getElementById('msg-content').value;
+            const agent = document.getElementById('agent-display').value;
+
+            if (!userId || !content) { alert("Le message est vide ou aucun client n'est sélectionné."); return; }
+
+            const { error } = await supabase.from('expert_messages').upsert({
+                clerk_user_id: userId,
+                content: content,
+                agent_name: agent || 'Sarah - Astella Agency'
+            }, { onConflict: 'clerk_user_id' });
+
+            if (!error) {
+                alert("Message envoyé ! Le client le verra sur son espace.");
+                document.getElementById('msg-content').value = "";
+            } else {
+                alert("Erreur lors de l'envoi.");
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -481,29 +481,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // NOUVEAU : GESTION DE LA PAGE CONTACT
+    // GESTION DE LA PAGE CONTACT ET TOAST
     // ==========================================
     if (window.location.pathname.includes('contact.html')) {
         const urlParams = new URLSearchParams(window.location.search);
 
-        // Si l'URL contient des informations de redirection
         if (urlParams.has('projet')) {
-
-            // 1. Remplacement dynamique des titres
             document.querySelectorAll('h1, h2, h3').forEach(h => {
                 if (h.textContent.includes('Écrivez-nous') || h.textContent.includes('Ecrivez-nous')) {
                     h.textContent = 'Votre demande a bien été envoyée.';
                 }
             });
 
-            // 2. Remplacement dynamique des sous-titres
             document.querySelectorAll('p').forEach(p => {
                 if (p.textContent.includes('Un projet de vente') || p.textContent.includes('estimation')) {
                     p.textContent = 'Une question ou demande particulière ? Laissez-nous un message.';
                 }
             });
 
-            // 3. Pré-remplissage des champs du formulaire de contact (si existants)
             if (urlParams.has('email')) {
                 const emailField = document.querySelector('input[type="email"]');
                 if (emailField) emailField.value = urlParams.get('email');
@@ -513,7 +508,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (phoneField) phoneField.value = urlParams.get('phone');
             }
 
-            // 4. Création et affichage du Toast Message de succès
             const toast = document.createElement('div');
             toast.innerHTML = '<i class="fas fa-check-circle"></i> Demande envoyée avec succès !';
 
@@ -539,24 +533,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.body.appendChild(toast);
 
-            // Animation d'apparition
             setTimeout(() => {
                 toast.style.opacity = '1';
                 toast.style.top = '40px';
             }, 100);
 
-            // Disparition automatique après 5 secondes
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.top = '20px';
-                setTimeout(() => toast.remove(), 400); // Laisse le temps à la transition CSS
+                setTimeout(() => toast.remove(), 400);
             }, 5000);
         }
     }
 });
 
 // ==========================================
-// LOGIQUE CLERK ET INITIALISATION DASHBOARD
+// LOGIQUE CLERK, DASHBOARD ET UI CLERK
 // ==========================================
 const clerkInterval = setInterval(async () => {
     if (window.Clerk) {
@@ -564,6 +556,116 @@ const clerkInterval = setInterval(async () => {
 
         try {
             await window.Clerk.load({
+                appearance: {
+                    variables: {
+                        colorPrimary: '#6C83D9',
+                        colorBackground: '#FFFFFF',
+                        colorText: '#2E3F84',
+                        colorTextSecondary: '#6B7280',
+                        colorDanger: '#EF4444',
+                        colorSuccess: '#10B981',
+                        borderRadius: '12px',
+                        fontFamily: "'Inter', sans-serif"
+                    },
+                    elements: {
+                        // --- Modale principale (Gérer le compte) ---
+                        modalContent: {
+                            maxWidth: '850px',
+                            width: '90%',
+                            height: '70vh',
+                            minHeight: '500px',
+                            maxHeight: '90vh',
+                            margin: '0 auto',
+                            borderRadius: '20px',
+                            boxShadow: '0 25px 50px -12px rgba(46, 63, 132, 0.25)'
+                        },
+                        cardBox: {
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '20px',
+                            boxShadow: 'none'
+                        },
+                        scrollBox: {
+                            borderRadius: '20px'
+                        },
+                        navbar: {
+                            background: '#FAFBFE',
+                            borderRight: '1px solid #E3E8F5',
+                            padding: '20px 15px'
+                        },
+                        navbarButton: {
+                            borderRadius: '10px',
+                            color: '#6B7280',
+                            padding: '12px 15px',
+                            marginBottom: '5px'
+                        },
+                        navbarButton__active: {
+                            backgroundColor: '#EEF2FF',
+                            color: '#6C83D9',
+                            fontWeight: '600'
+                        },
+                        headerTitle: {
+                            color: '#2E3F84',
+                            fontSize: '22px',
+                            fontWeight: '800'
+                        },
+                        profileSectionTitleText: {
+                            color: '#2E3F84',
+                            fontWeight: '700',
+                            borderBottom: '1px solid #E3E8F5',
+                            paddingBottom: '10px',
+                            marginBottom: '15px'
+                        },
+                        formButtonPrimary: {
+                            backgroundColor: '#6C83D9',
+                            color: '#fff',
+                            borderRadius: '50px',
+                            padding: '10px 24px',
+                            textTransform: 'none',
+                            fontWeight: '600',
+                            boxShadow: 'none',
+                            "&:hover": {
+                                backgroundColor: '#566DBA'
+                            }
+                        },
+                        profileSectionPrimaryButton: {
+                            color: '#6C83D9',
+                            fontWeight: '600',
+                            "&:hover": {
+                                backgroundColor: '#EEF2FF',
+                                borderRadius: '10px'
+                            }
+                        },
+                        badge: {
+                            backgroundColor: '#EEF2FF',
+                            color: '#6C83D9',
+                            fontWeight: '600',
+                            borderRadius: '50px'
+                        },
+
+                        // --- Menu déroulant de la photo de profil ---
+                        userButtonPopoverActionButton: {
+                            borderRadius: '10px',
+                            "&:hover": {
+                                backgroundColor: '#EEF2FF'
+                            }
+                        },
+                        userButtonPopoverActionButtonText: {
+                            color: '#2E3F84',
+                            fontWeight: '600'
+                        },
+                        userButtonPopoverActionButtonIcon: {
+                            color: '#6C83D9'
+                        },
+                        userPreviewMainIdentifier: {
+                            color: '#2E3F84',
+                            fontWeight: '700'
+                        },
+                        userPreviewSecondaryIdentifier: {
+                            color: '#6B7280'
+                        }
+                    }
+                },
                 localization: {
                     userButton: {
                         action__manageAccount: "Gérer le compte",
@@ -596,11 +698,43 @@ const clerkInterval = setInterval(async () => {
             }
 
             if (window.Clerk.user) {
+
+                const user = window.Clerk.user;
+
+                // On synchronise le profil avec Supabase
+                window.supabaseClient.from('profiles').upsert({
+                    id: user.id,
+                    email: user.primaryEmailAddress.emailAddress,
+                    first_name: user.firstName,
+                    last_name: user.lastName,
+                    updated_at: new Date()
+                }).then(({ error }) => { if (error) console.error("Erreur synchro profil:", error); });
+
                 // --- UTILISATEUR CONNECTÉ ---
                 if (window.location.pathname.includes('connexion.html') || window.location.pathname.includes('inscription.html')) {
                     window.location.href = 'index.html';
                     return;
                 }
+
+                // Vérification du rôle Admin pour révéler le bon texte de façon fluide
+                const isAdmin = window.Clerk.user?.publicMetadata?.role === 'admin';
+
+                document.querySelectorAll('.nav-espace-link').forEach(link => {
+                    const roleSpan = link.querySelector('.nav-espace-role');
+                    if (roleSpan) {
+                        if (isAdmin) {
+                            link.setAttribute('href', 'admin.html');
+                            roleSpan.textContent = 'admin';
+                        } else {
+                            link.setAttribute('href', 'client.html');
+                            roleSpan.textContent = 'client';
+                        }
+                        // Apparition en fondu après l'injection du texte
+                        setTimeout(() => {
+                            roleSpan.style.opacity = '1';
+                        }, 50);
+                    }
+                });
 
                 if (desktopAuthContainer) {
                     const userName = window.Clerk.user.fullName || window.Clerk.user.firstName || "Mon espace";
