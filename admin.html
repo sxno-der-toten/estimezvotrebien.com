@@ -5,30 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administration Pro | EstimezVotreBien.com</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/global.css">
+
     <script async crossorigin="anonymous"
         data-clerk-publishable-key="pk_test_ZmxleGlibGUtd2FydGhvZy03MC5jbGVyay5hY2NvdW50cy5kZXYk"
         src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        /* Styles conservés de votre version avec quelques ajouts pour les messages */
+        /* === STYLES SPÉCIFIQUES ADMIN (LIBÉRÉ ET RESPONSIVE) === */
         html,
         body {
             margin: 0;
             padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
+            min-height: 100vh;
+            /* Permet à la page de grandir */
             font-family: 'Inter', sans-serif;
             background-color: #FAFBFE;
+            color: #4B5563;
         }
 
         .admin-body {
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
         }
 
         .header {
@@ -36,84 +40,113 @@
         }
 
         .admin-content {
-            flex: 1 1 auto;
+            flex: 1;
             width: 100%;
-            max-width: 1800px;
+            max-width: 1600px;
+            /* Légèrement réduit pour un meilleur rendu 2K */
             margin: 0 auto;
-            padding: 15px 40px;
+            padding: 30px 40px 60px 40px;
+            /* Plus d'espace pour respirer */
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            overflow: hidden;
+            gap: 25px;
         }
 
         .admin-header h1 {
-            font-size: 22px;
+            font-size: 26px;
             color: #2E3F84;
             font-weight: 800;
-            margin: 15px 0 5px 0;
+            margin: 0;
         }
 
+        /* Stats Bar Auto-Adaptable */
         .stats-bar {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            flex: 0 0 auto;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            /* S'adapte magiquement */
+            gap: 20px;
         }
 
         .stat-card {
             background: #fff;
-            padding: 15px;
-            border-radius: 12px;
+            padding: 20px;
+            border-radius: 16px;
             border: 1px solid #E3E8F5;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(108, 131, 217, 0.08);
         }
 
         .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
             background: #EEF2FF;
             color: #6C83D9;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 20px;
         }
 
         .stat-info h3 {
             margin: 0;
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 700;
             color: #6C83D9;
         }
 
+        .stat-info p {
+            margin: 0;
+            font-size: 12px;
+            color: #9CA3AF;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* Panel de contrôles */
         .controls-panel {
-            flex: 0 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: #fff;
-            padding: 10px 15px;
-            border-radius: 10px;
+            padding: 15px 20px;
+            border-radius: 14px;
             border: 1px solid #E3E8F5;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .tabs-nav {
             display: flex;
-            gap: 8px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
             background: none;
             border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
+            padding: 10px 18px;
+            border-radius: 10px;
             cursor: pointer;
             color: #6B7280;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: #F3F4F6;
+            color: #2E3F84;
         }
 
         .tab-btn.active {
@@ -121,21 +154,21 @@
             color: #6C83D9;
         }
 
+        /* Panneau de données */
         .data-panel {
-            flex: 1 1 auto;
             background: #fff;
-            border-radius: 12px;
+            border-radius: 14px;
             border: 1px solid #E3E8F5;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
+            /* Juste pour arrondir les coins du tableau */
         }
 
         .tab-content {
             display: none;
-            height: 100%;
-            overflow-y: auto;
+            width: 100%;
+            overflow-x: auto;
+            /* Scroll horizontal sur petits écrans seulement */
         }
 
         .tab-content.active {
@@ -145,35 +178,59 @@
         .admin-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 13px;
             color: #4B5563;
+            min-width: 900px;
+            /* Empêche l'écrasement */
         }
 
         .admin-table thead th {
-            position: sticky;
-            top: 0;
             background: #FAFBFE;
-            z-index: 5;
             text-align: left;
-            padding: 12px 15px;
+            padding: 15px 20px;
             color: #2E3F84;
-            border-bottom: 1px solid #E3E8F5;
+            border-bottom: 2px solid #E3E8F5;
+            font-weight: 600;
         }
 
         .admin-table tbody tr {
             border-bottom: 1px solid #F3F4F6;
+            transition: 0.1s;
+            cursor: pointer;
+        }
+
+        .admin-table tbody tr:hover {
+            background: #FAFBFE;
         }
 
         .admin-table td {
-            padding: 10px 15px;
+            padding: 15px 20px;
+            vertical-align: middle;
+        }
+
+        .admin-input {
+            width: 100%;
+            border: 1px solid #E3E8F5;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-family: inherit;
+            color: #2E3F84;
+            transition: 0.2s;
+        }
+
+        .admin-input:focus {
+            border-color: #6C83D9;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 131, 217, 0.1);
         }
 
         .btn-action {
-            padding: 5px 10px;
-            border-radius: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
             border: none;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             transition: 0.2s;
         }
@@ -187,26 +244,239 @@
             background: #059669;
         }
 
+        .btn-gray {
+            background: #F3F4F6;
+            color: #6B7280;
+        }
+
+        .btn-gray:hover {
+            background: #E5E7EB;
+            color: #4B5563;
+        }
+
         .msg-form {
             max-width: 600px;
-            margin: 30px auto;
+            margin: 40px auto;
             display: flex;
             flex-direction: column;
             gap: 15px;
+            padding: 20px;
         }
 
-        .admin-input,
         .admin-textarea {
             width: 100%;
             border: 1px solid #E3E8F5;
             border-radius: 8px;
-            padding: 10px;
+            padding: 12px;
             font-family: inherit;
+            height: 120px;
+            resize: vertical;
+            color: #2E3F84;
         }
 
-        .admin-textarea {
-            height: 120px;
-            resize: none;
+        .admin-textarea:focus {
+            border-color: #6C83D9;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 131, 217, 0.1);
+        }
+
+        /* === AUTOCOMPLÉTION === */
+        .autocomplete-wrapper {
+            position: relative;
+        }
+
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: #fff;
+            border: 1px solid #E3E8F5;
+            border-radius: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            list-style: none;
+            padding: 0;
+            margin: 5px 0 0 0;
+            display: none;
+        }
+
+        .autocomplete-suggestions:not(:empty) {
+            display: block;
+        }
+
+        .autocomplete-suggestions li {
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .autocomplete-suggestions li:hover {
+            background: #FAFBFE;
+        }
+
+        .client-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #EEF2FF;
+            color: #6C83D9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        .client-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .client-info-auto {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .client-info-auto strong {
+            color: #2E3F84;
+            font-size: 13px;
+        }
+
+        .client-info-auto span {
+            color: #6B7280;
+            font-size: 11px;
+        }
+
+        /* === MODALE === */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 32, 44, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-box {
+            background: #fff;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+            margin: 20px;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #E3E8F5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #2E3F84;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #9CA3AF;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #EF4444;
+        }
+
+        .modal-body {
+            padding: 25px;
+            overflow-y: auto;
+            font-size: 14px;
+            color: #4B5563;
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            background: #FAFBFE;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #E3E8F5;
+        }
+
+        .detail-item span {
+            display: block;
+            font-size: 11px;
+            color: #9CA3AF;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .detail-item strong {
+            color: #2E3F84;
+            font-size: 15px;
+            display: block;
+            word-break: break-word;
+        }
+
+        @media (max-width: 768px) {
+            .admin-content {
+                padding: 15px;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .modal-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -216,15 +486,48 @@
     <header class="header" id="header">
         <div class="container">
             <nav class="nav">
-                <div class="nav-brand"><a href="index.html"><img src="images/logo.png" alt="Logo"
-                            style="max-height: 45px;"></a></div>
-                <ul class="nav-menu">
-                    <li><a href="index.html">Estimer</a></li>
-                    <li><a href="vendre.html">Vendre</a></li>
-                    <li><a href="client.html">Espace client</a></li>
-                    <li><a href="admin.html" style="color: #10B981; font-weight: 700;">Administration 👨‍💻</a></li>
-                </ul>
-                <div id="auth-container-desktop" style="margin-left: 20px;"></div>
+                <div class="nav-brand" style="white-space: nowrap; display: flex; align-items: center;">
+                    <a href="index.html" class="logo-link">
+                        <img src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
+                            style="max-height: 45px; width: auto; display: block;">
+                    </a>
+                </div>
+                <button class="hamburger-btn" id="hamburger-btn" aria-label="Ouvrir le menu"><i
+                        class="fas fa-bars"></i></button>
+                <div class="nav-content" id="nav-content">
+                    <button class="close-menu-btn" id="close-menu-btn" aria-label="Fermer le menu"><i
+                            class="fas fa-times"></i></button>
+                    <div class="mobile-menu-logo mobile-only">
+                        <a href="index.html" class="logo-link"><img src="images/logo.png" alt="Logo"
+                                style="max-height: 40px;"></a>
+                    </div>
+
+                    <ul class="nav-menu">
+                        <li><a href="index.html">Estimer</a></li>
+                        <li><a href="acheter.html">Acheter</a></li>
+                        <li><a href="vendre.html">Vendre</a></li>
+                        <li><a href="guides.html">Guides</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="a_propos.html">À propos</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li>
+                            <a href="client.html" class="nav-espace-link">
+                                Espace <span class="nav-espace-role"
+                                    style="opacity: 0; transition: opacity 0.4s ease; display: inline-block; min-width: 42px;"></span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="nav-cta">
+                        <div id="auth-container-mobile" class="mobile-only">
+                            <a href="connexion.html" class="mobile-login-link">Connexion</a>
+                        </div>
+                        <div id="auth-container-desktop" class="desktop-only"
+                            style="opacity: 0; transition: opacity 0.4s ease; min-width: 150px; height: 45px; display: flex; justify-content: flex-end; align-items: center;">
+                            <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                        </div>
+                    </div>
+                </div>
             </nav>
         </div>
     </header>
@@ -232,7 +535,6 @@
     <main class="admin-content">
         <div class="admin-header">
             <h1>🛡️ Dashboard Gestion Immobilière</h1>
-            <p>Connecté en tant que : <strong id="admin-name">...</strong></p>
         </div>
 
         <section class="stats-bar">
@@ -240,37 +542,40 @@
                 <div class="stat-icon"><i class="fas fa-users"></i></div>
                 <div class="stat-info">
                     <p>Total Leads</p>
-                    <h3 id="stat-leads">0</h3>
+                    <h3 id="stat-leads">...</h3>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon"><i class="fas fa-file-contract"></i></div>
                 <div class="stat-info">
                     <p>Mandats Actifs</p>
-                    <h3 id="stat-mandats">0</h3>
+                    <h3 id="stat-mandats">...</h3>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon" style="background:#ECFDF5; color:#10B981;"><i class="fas fa-euro-sign"></i></div>
                 <div class="stat-info">
                     <p>C.A Estimé</p>
-                    <h3 id="stat-value">0 €</h3>
+                    <h3 id="stat-value">... €</h3>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon" style="background:#FFF7ED; color:#F97316;"><i class="fas fa-clock"></i></div>
                 <div class="stat-info">
-                    <p>À traiter</p>
-                    <h3 id="stat-todo">0</h3>
+                    <p>Leads non traités</p>
+                    <h3 id="stat-todo">...</h3>
                 </div>
             </div>
         </section>
 
         <section class="controls-panel">
             <nav class="tabs-nav">
-                <button class="tab-btn active" data-tab="tab-leads">⚡️ Flux Leads</button>
-                <button class="tab-btn" data-tab="tab-mandats">🏠 Mandats & Étapes</button>
-                <button class="tab-btn" data-tab="tab-messages">💬 Messages Experts</button>
+                <button class="tab-btn active" data-tab="tab-leads"><i class="fas fa-bolt"
+                        style="margin-right: 5px;"></i> Flux Leads</button>
+                <button class="tab-btn" data-tab="tab-mandats"><i class="fas fa-home" style="margin-right: 5px;"></i>
+                    Mandats & Étapes</button>
+                <button class="tab-btn" data-tab="tab-messages"><i class="fas fa-comment-dots"
+                        style="margin-right: 5px;"></i> Messages Experts</button>
             </nav>
         </section>
 
@@ -280,7 +585,7 @@
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Client</th>
+                            <th>Client (Nom, Email, Tél)</th>
                             <th>Bien & Adresse</th>
                             <th>Fourchette</th>
                             <th>Suivi</th>
@@ -288,7 +593,7 @@
                     </thead>
                     <tbody id="leads-body">
                         <tr>
-                            <td colspan="5" style="text-align: center; padding: 40px;">Chargement des leads...</td>
+                            <td colspan="5" style="text-align: center; padding: 40px;">Chargement des données...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -298,17 +603,18 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
+                            <th>Client (Nom, Contact)</th>
                             <th>Adresse</th>
-                            <th>Prix Affiché</th>
+                            <th>Prix Affiché (€)</th>
                             <th>Label Statut</th>
                             <th>Étape / 5</th>
-                            <th>Agent</th>
+                            <th>Agent Assigné</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="mandates-body">
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 40px;">Chargement des mandats...</td>
+                            <td colspan="7" style="text-align: center; padding: 40px;">Chargement des données...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -316,96 +622,109 @@
 
             <div id="tab-messages" class="tab-content">
                 <div class="msg-form">
-                    <h3>Envoyer un message personnalisé</h3>
-                    <label>Choisir un client :</label>
-                    <select id="user-select" class="admin-input">
-                        <option>Chargement des clients...</option>
-                    </select>
-                    <label>Nom de l'agent affiché :</label>
-                    <input type="text" id="agent-display" class="admin-input" placeholder="Sarah - Astella Agency">
-                    <label>Votre message :</label>
+                    <h3 style="color: #2E3F84; margin-bottom: 0;">Envoyer un message au client</h3>
+                    <p style="font-size: 13px; color: #6B7280; margin-top: 0;">Ce message apparaîtra directement sur le
+                        tableau de bord du client sélectionné.</p>
+
+                    <label style="font-size: 13px; font-weight: 600; color: #4B5563;">Rechercher le client (Nom, Email
+                        ou ID) :</label>
+                    <div class="autocomplete-wrapper">
+                        <input type="text" id="user-search" class="admin-input"
+                            placeholder="Tapez un nom, un e-mail ou un ID..." autocomplete="off">
+                        <ul class="autocomplete-suggestions" id="user-suggestions"></ul>
+                        <input type="hidden" id="user-select-id">
+                    </div>
+
+                    <label style="font-size: 13px; font-weight: 600; color: #4B5563;">Nom de l'agent (Signature)
+                        :</label>
+                    <input type="text" id="agent-display" class="admin-input" placeholder="Ex: Sarah - Astella Agency"
+                        value="">
+
+                    <label style="font-size: 13px; font-weight: 600; color: #4B5563;">Message :</label>
                     <textarea id="msg-content" class="admin-textarea"
-                        placeholder="Ex: Votre dossier est validé, je vous rappelle demain..."></textarea>
+                        placeholder="Votre dossier est validé, je vous rappelle demain..."></textarea>
+
                     <button class="btn-action btn-green" onclick="sendMessage()"
-                        style="padding: 12px; font-size: 14px;">Enregistrer le message</button>
+                        style="padding: 14px; font-size: 14px; margin-top: 10px;"><i class="fas fa-paper-plane"
+                            style="margin-right: 5px;"></i> Envoyer au client</button>
                 </div>
             </div>
         </section>
+
+        <div class="modal-overlay" id="details-modal" onclick="closeModal(event)">
+            <div class="modal-box" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h2 id="modal-title">Détails du projet</h2>
+                    <button class="modal-close" onclick="closeModal(event)">&times;</button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                </div>
+            </div>
+        </div>
     </main>
 
+    <script src="main.js"></script>
+
     <script>
-        // ==========================================
-        // 1. GESTION DES ONGLETS (TABS)
-        // ==========================================
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tabId = btn.getAttribute('data-tab');
+        // Variables globales pour stocker les données afin de les afficher dans la modale et l'autocomplétion
+        let globalLeads = [];
+        let globalMandates = [];
+        let globalProfiles = [];
 
-                document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-
-                btn.classList.add('active');
-                document.getElementById(tabId).classList.add('active');
-
-                if (tabId === 'tab-leads') loadLeads();
-                if (tabId === 'tab-mandats') loadMandates();
-                if (tabId === 'tab-messages') loadUsersForSelect();
+        // 1. LOGIQUE UI DES ONGLETS
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabId = btn.getAttribute('data-tab');
+                    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
             });
         });
 
-        // ==========================================
-        // 2. INITIALISATION ROBUSTE (CLERK & SUPABASE)
-        // ==========================================
-        let supabase;
+        // 2. CONNEXION BDD ET VÉRIFICATION ADMIN
+        let adminSupabase;
 
-        const initAdminInterval = setInterval(async () => {
-            // On attend que les bibliothèques Clerk et Supabase soient bien chargées par le navigateur
-            if (window.Clerk && window.supabase) {
-                clearInterval(initAdminInterval);
-
-                // Initialisation de Supabase
-                const supabaseUrl = 'https://crswkagawmfksizojgsf.supabase.co';
-                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNyc3drYWdhd21ma3Npem9qZ3NmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MDgyMjAsImV4cCI6MjA5MDE4NDIyMH0.hymLWw0vjv0HW_5DX5xE9DXJdbEo_OOyjIZ9qagWRnw';
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-                try {
-                    await window.Clerk.load();
-
-                    // Vérification de sécurité Admin
-                    const isMetadataAdmin = window.Clerk.user?.publicMetadata?.role === 'admin';
-                    if (!window.Clerk.user || !isMetadataAdmin) {
-                        alert("Accès refusé : Rôle Admin requis.");
-                        window.location.href = 'index.html';
-                        return;
-                    }
-
-                    // Affichage de l'UI Admin
-                    document.getElementById('admin-name').textContent = window.Clerk.user.firstName;
-                    window.Clerk.mountUserButton(document.getElementById('auth-container-desktop'), { afterSignOutUrl: '/index.html' });
-
-                    // Lancement de la récupération des données
-                    refreshAll();
-                } catch (e) {
-                    console.error("Erreur de chargement Clerk :", e);
-                }
+        const checkReady = setInterval(() => {
+            if (window.supabaseClient && window.Clerk && window.Clerk.user !== undefined) {
+                clearInterval(checkReady);
+                adminSupabase = window.supabaseClient;
+                initAdminPanel();
             }
-        }, 50); // Scanne toutes les 50ms
+        }, 100);
 
-        // ==========================================
-        // 3. FONCTIONS DE LECTURE/ÉCRITURE SUPABASE
-        // ==========================================
-        async function refreshAll() {
-            await loadStats();
-            await loadLeads();
-            await loadMandates();
-            await loadUsersForSelect();
+        async function initAdminPanel() {
+            const isAdmin = window.Clerk.user?.publicMetadata?.role === 'admin';
+            if (!window.Clerk.user || !isAdmin) {
+                alert("Accès interdit : Cette page est réservée aux administrateurs.");
+                window.location.href = 'index.html';
+                return;
+            }
+            refreshAll();
         }
 
+        async function refreshAll() {
+            // Récupérer les profils en premier pour pouvoir les croiser
+            const { data: profilesData } = await adminSupabase.from('profiles').select('*');
+            globalProfiles = profilesData || [];
+
+            setupAutocomplete();
+            loadStats();
+            loadLeads();
+            loadMandates();
+        }
+
+        // 3. FONCTIONS DE RÉCUPÉRATION (SUPABASE)
         async function loadStats() {
             try {
-                const { count: leadCount } = await supabase.from('estimations').select('*', { count: 'exact', head: true });
-                const { data: sales } = await supabase.from('properties_for_sale').select('listing_price');
-                const { count: todoCount } = await supabase.from('estimations').select('*', { count: 'exact', head: true }).eq('is_contacted', false);
+                const { count: leadCount } = await adminSupabase.from('estimations').select('*', { count: 'exact', head: true });
+                const { data: sales } = await adminSupabase.from('properties_for_sale').select('listing_price');
+
+                let todoCount = 0;
+                const { count: tc, error: errTodo } = await adminSupabase.from('estimations').select('*', { count: 'exact', head: true }).eq('is_contacted', false);
+                if (!errTodo) todoCount = tc;
 
                 let totalValue = 0;
                 (sales || []).forEach(s => totalValue += (s.listing_price || 0));
@@ -418,126 +737,293 @@
         }
 
         async function loadLeads() {
+            const tbody = document.getElementById('leads-body');
             try {
-                const { data: leads, error: leadsErr } = await supabase.from('estimations').select('*').order('created_at', { ascending: false });
-                if (leadsErr) throw leadsErr;
+                const { data: leads, error } = await adminSupabase.from('estimations').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
 
-                const { data: profiles } = await supabase.from('profiles').select('*');
-                const body = document.getElementById('leads-body');
+                globalLeads = leads || [];
 
-                if (!leads || leads.length === 0) {
-                    body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">Aucun lead trouvé en base de données.</td></tr>';
+                if (globalLeads.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">Aucune estimation dans la base de données.</td></tr>';
                     return;
                 }
 
-                body.innerHTML = leads.map(l => {
-                    const prof = (profiles || []).find(p => p.id === l.clerk_user_id) || {};
+                tbody.innerHTML = globalLeads.map(l => {
+                    const prof = globalProfiles.find(p => p.id === l.clerk_user_id) || {};
                     const dateStr = new Date(l.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
                     const minP = l.price_min ? l.price_min.toLocaleString('fr-FR') : '-';
                     const maxP = l.price_max ? l.price_max.toLocaleString('fr-FR') : '-';
+                    const isContacted = l.is_contacted === true;
+
+                    // Récupération des infos client avec fallback sécurisé
+                    const clientName = prof.first_name ? `${prof.first_name} ${prof.last_name || ''}` : 'Client Web';
+                    const clientContact = prof.email || l.clerk_user_id.substring(0, 8) + '...';
+                    const clientPhone = prof.phone ? `<br><i class="fas fa-phone" style="color:#6B7280; font-size:10px;"></i> <span style="font-weight:600; color:#4B5563;">${prof.phone}</span>` : '';
 
                     return `
-                    <tr style="${l.is_contacted ? 'opacity: 0.6' : 'font-weight: 600'}">
+                    <tr style="${isContacted ? 'opacity: 0.6' : 'font-weight: 600'}" onclick="openModal('lead', '${l.id}')">
                         <td>${dateStr}</td>
-                        <td>${prof.first_name || 'Client Web'}<br><small style="color:#6B7280; font-weight:normal;">${prof.email || l.clerk_user_id.substring(0, 8) + '...'}</small></td>
+                        <td>
+                            <strong style="color: #2E3F84;">${clientName}</strong><br>
+                            <small style="color:#6B7280; font-weight:normal;">${clientContact}</small>${clientPhone}
+                        </td>
                         <td>${l.address || 'Adresse inconnue'}<br><small style="color:#9CA3AF; font-weight:normal;">${l.property_type || 'Bien'} • ${l.surface || 0} m²</small></td>
                         <td style="color:#6C83D9">${minP}€ - ${maxP}€</td>
-                        <td><button class="btn-action ${l.is_contacted ? 'btn-gray' : 'btn-green'}" onclick="markLead('${l.id}', ${!l.is_contacted})">${l.is_contacted ? 'Archiver' : 'Marquer contacté'}</button></td>
+                        <td><button class="btn-action ${isContacted ? 'btn-gray' : 'btn-green'}" onclick="event.stopPropagation(); markLead('${l.id}', ${!isContacted})">${isContacted ? 'Réafficher' : 'Marquer contacté'}</button></td>
                     </tr>
                     `;
                 }).join('');
             } catch (e) {
-                console.error("Erreur leads", e);
-                document.getElementById('leads-body').innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:red;">Erreur de chargement. Vérifiez les Policies Supabase.</td></tr>';
+                console.error(e);
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Erreur de connexion à Supabase. Vérifiez vos permissions (RLS).</td></tr>`;
             }
         }
 
-        window.markLead = async function (id, state) {
-            await supabase.from('estimations').update({ is_contacted: state }).eq('id', id);
-            loadLeads();
-            loadStats();
-        }
-
         async function loadMandates() {
+            const tbody = document.getElementById('mandates-body');
             try {
-                const { data, error } = await supabase.from('properties_for_sale').select('*').order('created_at', { ascending: false });
+                const { data, error } = await adminSupabase.from('properties_for_sale').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
 
-                const tbody = document.getElementById('mandates-body');
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Aucun mandat actif.</td></tr>';
+                globalMandates = data || [];
+
+                if (globalMandates.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px;">Aucun bien en vente.</td></tr>';
                     return;
                 }
 
-                tbody.innerHTML = data.map(s => {
+                const statusConfig = [
+                    { label: "Constitution du dossier", step: 1 },
+                    { label: "Mise en valeur & Photos", step: 2 },
+                    { label: "Visites en cours", step: 3 },
+                    { label: "Compromis de vente signé", step: 4 },
+                    { label: "Autre (Préciser par message au client)", step: 1 }
+                ];
+
+                tbody.innerHTML = globalMandates.map(s => {
+                    const prof = globalProfiles.find(p => p.id === s.clerk_user_id) || {};
+                    const clientName = prof.first_name ? `${prof.first_name} ${prof.last_name || ''}` : 'Client Web';
+                    const clientContact = prof.email || s.clerk_user_id.substring(0, 8) + '...';
+                    const clientPhone = prof.phone ? `<br><i class="fas fa-phone" style="color:#6B7280; font-size:10px;"></i> <span style="font-weight:600; color:#4B5563;">${prof.phone}</span>` : '';
+
+                    const optionsHtml = statusConfig.map(conf =>
+                        `<option value="${conf.label}" data-step="${conf.step}" ${s.status_label === conf.label ? 'selected' : ''}>${conf.label}</option>`
+                    ).join('');
+
                     return `
-                    <tr>
+                    <tr onclick="openModal('mandate', '${s.id}')">
+                        <td>
+                            <strong style="color: #2E3F84;">${clientName}</strong><br>
+                            <small style="color:#6B7280; font-weight:normal;">${clientContact}</small>${clientPhone}
+                        </td>
                         <td><strong>${s.address || 'Inconnue'}</strong></td>
-                        <td><input type="number" class="admin-input" style="width:90px" value="${s.listing_price || 0}" id="price-${s.id}"> €</td>
-                        <td><input type="text" class="admin-input" value="${s.status_label || ''}" id="lbl-${s.id}"></td>
-                        <td><input type="number" class="admin-input" style="width:45px" min="1" max="5" value="${s.status_step || 1}" id="step-${s.id}"> / 5</td>
-                        <td><input type="text" class="admin-input" value="${s.agent_assigned || ''}" id="agent-${s.id}"></td>
-                        <td style="text-align:center;"><button class="btn-action btn-green" onclick="updateMandate('${s.id}', this)">Sauver</button></td>
+                        <td onclick="event.stopPropagation()"><input type="number" class="admin-input" style="width:100px" value="${s.listing_price || 0}" id="price-${s.id}"></td>
+                        <td onclick="event.stopPropagation()">
+                            <select class="admin-input" id="lbl-${s.id}" onchange="document.getElementById('step-${s.id}').value = this.options[this.selectedIndex].dataset.step">
+                                ${optionsHtml}
+                                ${!statusConfig.find(c => c.label === s.status_label) && s.status_label ? `<option value="${s.status_label}" selected>${s.status_label}</option>` : ''}
+                            </select>
+                        </td>
+                        <td onclick="event.stopPropagation()"><input type="number" class="admin-input" style="width:60px" min="1" max="5" value="${s.status_step || 1}" id="step-${s.id}"></td>
+                        <td onclick="event.stopPropagation()"><input type="text" class="admin-input" value="${s.agent_assigned || ''}" id="agent-${s.id}" placeholder="Nom de l'agent"></td>
+                        <td style="text-align:center;" onclick="event.stopPropagation()"><button class="btn-action btn-green" onclick="updateMandate('${s.id}', this)">Sauvegarder</button></td>
                     </tr>
                     `;
                 }).join('');
-            } catch (e) { console.error("Erreur mandats", e); }
+            } catch (e) { console.error("Erreur chargement mandats:", e); }
         }
+
+        // ==========================================
+        // 4. AUTOCOMPLÉTION MESSAGERIE
+        // ==========================================
+        function setupAutocomplete() {
+            const input = document.getElementById('user-search');
+            const suggestionsBox = document.getElementById('user-suggestions');
+            const hiddenIdInput = document.getElementById('user-select-id');
+
+            input.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                suggestionsBox.innerHTML = '';
+                hiddenIdInput.value = '';
+
+                if (query.length < 2) return;
+
+                const filtered = globalProfiles.filter(p => {
+                    const fullName = `${p.first_name || ''} ${p.last_name || ''}`.toLowerCase();
+                    const email = (p.email || '').toLowerCase();
+                    const id = (p.id || '').toLowerCase();
+                    return fullName.includes(query) || email.includes(query) || id.includes(query);
+                });
+
+                if (filtered.length === 0) {
+                    suggestionsBox.innerHTML = '<li style="color:#9CA3AF; justify-content:center;">Aucun client trouvé</li>';
+                    return;
+                }
+
+                suggestionsBox.innerHTML = filtered.map(p => {
+                    const initial = p.first_name ? p.first_name.charAt(0).toUpperCase() : 'C';
+                    const avatarHtml = p.image_url ? `<img src="${p.image_url}">` : initial;
+
+                    return `
+                    <li data-id="${p.id}" data-name="${p.first_name || ''} ${p.last_name || ''}">
+                        <div class="client-avatar">${avatarHtml}</div>
+                        <div class="client-info-auto">
+                            <strong>${p.first_name || 'Client'} ${p.last_name || ''}</strong>
+                            <span>${p.email || p.id}</span>
+                        </div>
+                    </li>
+                    `;
+                }).join('');
+
+                suggestionsBox.querySelectorAll('li[data-id]').forEach(li => {
+                    li.addEventListener('click', () => {
+                        input.value = li.getAttribute('data-name').trim() || li.getAttribute('data-id');
+                        hiddenIdInput.value = li.getAttribute('data-id');
+                        suggestionsBox.innerHTML = '';
+                    });
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (e.target !== input && !suggestionsBox.contains(e.target)) {
+                    suggestionsBox.innerHTML = '';
+                }
+            });
+        }
+
+        // ==========================================
+        // 5. TOAST NOTIFICATION MODERNE
+        // ==========================================
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            Object.assign(toast.style, {
+                position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)',
+                background: '#10B981', color: 'white', padding: '14px 28px', borderRadius: '50px',
+                boxShadow: '0 10px 25px rgba(16, 185, 129, 0.3)', display: 'flex', alignItems: 'center', gap: '12px',
+                fontWeight: '600', fontSize: '14px', zIndex: '99999', opacity: '0', transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+            });
+
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '1'; toast.style.top = '40px'; }, 10);
+            setTimeout(() => {
+                toast.style.opacity = '0'; toast.style.top = '20px';
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
+        }
+
+        // ==========================================
+        // 6. MODALE DE DÉTAILS
+        // ==========================================
+        window.openModal = function (type, id) {
+            const modal = document.getElementById('details-modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+
+            let data, prof;
+
+            if (type === 'lead') {
+                data = globalLeads.find(l => l.id === id);
+                prof = globalProfiles.find(p => p.id === data.clerk_user_id) || {};
+                title.innerHTML = `<i class="fas fa-bolt" style="color:#FBBF24;"></i> Détails de l'Estimation`;
+
+                body.innerHTML = `
+                    <div class="modal-grid">
+                        <div class="detail-item"><span>Client</span><strong>${prof.first_name || 'Inconnu'} ${prof.last_name || ''}</strong></div>
+                        <div class="detail-item"><span>Contact</span><strong>${prof.email || 'N/A'} <br> ${prof.phone || 'Non renseigné'}</strong></div>
+                    </div>
+                    <div class="modal-grid">
+                        <div class="detail-item"><span>Adresse</span><strong>${data.address || 'N/A'}</strong></div>
+                        <div class="detail-item"><span>Type de Bien</span><strong>${data.property_type || 'N/A'}</strong></div>
+                        <div class="detail-item"><span>Surface</span><strong>${data.surface || 0} m²</strong></div>
+                        <div class="detail-item"><span>Pièces / Chambres</span><strong>${data.rooms || '-'} / ${data.bedrooms || '-'}</strong></div>
+                    </div>
+                    <div class="detail-item" style="background:#EEF2FF; border-color:#C3CEF6;">
+                        <span style="color:#6C83D9;">Fourchette Estimée Algorithme</span>
+                        <strong style="color:#6C83D9; font-size:20px;">${data.price_min ? data.price_min.toLocaleString() : '-'} € — ${data.price_max ? data.price_max.toLocaleString() : '-'} €</strong>
+                    </div>
+                `;
+            } else if (type === 'mandate') {
+                data = globalMandates.find(m => m.id === id);
+                prof = globalProfiles.find(p => p.id === data.clerk_user_id) || {};
+                title.innerHTML = `<i class="fas fa-home" style="color:#6C83D9;"></i> Détails du Mandat`;
+
+                body.innerHTML = `
+                    <div class="modal-grid">
+                        <div class="detail-item"><span>Client</span><strong>${prof.first_name || 'Inconnu'} ${prof.last_name || ''}</strong></div>
+                        <div class="detail-item"><span>Contact</span><strong>${prof.email || 'N/A'} <br> ${prof.phone || 'Non renseigné'}</strong></div>
+                    </div>
+                    <div class="detail-item" style="margin-bottom:20px;"><span>Adresse Complète</span><strong>${data.address || 'N/A'}</strong></div>
+                    <div class="modal-grid">
+                        <div class="detail-item"><span>Prix Souhaité</span><strong style="color:#10B981; font-size: 18px;">${data.listing_price ? data.listing_price.toLocaleString() + ' €' : 'En attente'}</strong></div>
+                        <div class="detail-item"><span>Agent Assigné</span><strong>${data.agent_assigned || 'Aucun'}</strong></div>
+                        <div class="detail-item"><span>Étape Actuelle</span><strong>Étape ${data.status_step || 1} / 5</strong></div>
+                        <div class="detail-item"><span>Statut Visible Client</span><strong>${data.status_label || 'Constitution du dossier'}</strong></div>
+                    </div>
+                `;
+            }
+
+            modal.classList.add('active');
+        }
+
+        window.closeModal = function (e) {
+            if (e && e.target.classList.contains('modal-box')) return;
+            document.getElementById('details-modal').classList.remove('active');
+        }
+
+        // ==========================================
+        // 7. ACTIONS D'ÉCRITURE (BOUTONS)
+        // ==========================================
+        window.markLead = async function (id, state) {
+            await adminSupabase.from('estimations').update({ is_contacted: state }).eq('id', id);
+            loadLeads();
+            loadStats();
+        };
 
         window.updateMandate = async function (id, btn) {
             const origText = btn.textContent;
-            btn.textContent = "...";
-            btn.style.background = "#6B7280";
+            btn.textContent = "..."; btn.style.background = "#6B7280";
 
-            const { error } = await supabase.from('properties_for_sale').update({
+            const { error } = await adminSupabase.from('properties_for_sale').update({
                 listing_price: document.getElementById(`price-${id}`).value,
                 status_label: document.getElementById(`lbl-${id}`).value,
                 status_step: document.getElementById(`step-${id}`).value,
                 agent_assigned: document.getElementById(`agent-${id}`).value
             }).eq('id', id);
 
-            if (!error) {
-                btn.textContent = "OK";
-                btn.style.background = "#10B981";
-            } else {
-                btn.textContent = "Erreur";
-                btn.style.background = "#EF4444";
-            }
-            setTimeout(() => { btn.textContent = origText; btn.style.background = ""; loadStats(); }, 2000);
-        }
+            if (!error) { btn.textContent = "Confirmé !"; btn.style.background = "#10B981"; }
+            else { btn.textContent = "Erreur"; btn.style.background = "#EF4444"; }
 
-        async function loadUsersForSelect() {
-            try {
-                const { data } = await supabase.from('profiles').select('*');
-                const select = document.getElementById('user-select');
-                if (!data || data.length === 0) {
-                    select.innerHTML = '<option value="">Aucun client trouvé</option>';
-                    return;
-                }
-                select.innerHTML = data.map(u => `<option value="${u.id}">${u.first_name || 'Client'} ${u.last_name || ''} (${u.email || u.id.substring(0, 8)})</option>`).join('');
-            } catch (e) { console.error(e); }
-        }
+            setTimeout(() => { btn.textContent = origText; btn.style.background = ""; loadStats(); }, 2000);
+        };
 
         window.sendMessage = async function () {
-            const userId = document.getElementById('user-select').value;
+            const userId = document.getElementById('user-select-id').value;
             const content = document.getElementById('msg-content').value;
             const agent = document.getElementById('agent-display').value;
 
-            if (!userId || !content) { alert("Le message est vide ou aucun client n'est sélectionné."); return; }
+            if (!userId || !content) {
+                alert("Erreur: Le message est vide ou aucun client n'a été sélectionné dans la liste.");
+                return;
+            }
 
-            const { error } = await supabase.from('expert_messages').upsert({
+            const { error } = await adminSupabase.from('expert_messages').upsert({
                 clerk_user_id: userId,
                 content: content,
-                agent_name: agent || 'Sarah - Astella Agency'
+                agent_name: agent || '' // Laisse la valeur vide si rien n'est saisi
             }, { onConflict: 'clerk_user_id' });
 
             if (!error) {
-                alert("Message envoyé ! Le client le verra sur son espace.");
+                showToast("Le message a été envoyé sur l'espace du client !");
+                document.getElementById('user-search').value = "";
+                document.getElementById('user-select-id').value = "";
                 document.getElementById('msg-content').value = "";
+                document.getElementById('agent-display').value = ""; // Reset du champ agent
             } else {
                 alert("Erreur lors de l'envoi.");
             }
-        }
+        };
     </script>
 </body>
 
