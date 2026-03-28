@@ -701,14 +701,16 @@ const clerkInterval = setInterval(async () => {
 
                 const user = window.Clerk.user;
 
-                // On synchronise le profil avec Supabase
-                window.supabaseClient.from('profiles').upsert({
-                    id: user.id,
-                    email: user.primaryEmailAddress.emailAddress,
-                    first_name: user.firstName,
-                    last_name: user.lastName,
-                    updated_at: new Date()
-                }).then(({ error }) => { if (error) console.error("Erreur synchro profil:", error); });
+                // On synchronise le profil avec Supabase SEULEMENT si Supabase est présent sur la page
+                if (window.supabaseClient) {
+                    window.supabaseClient.from('profiles').upsert({
+                        id: user.id,
+                        email: user.primaryEmailAddress?.emailAddress,
+                        first_name: user.firstName,
+                        last_name: user.lastName,
+                        updated_at: new Date()
+                    }).then(({ error }) => { if (error) console.error("Erreur synchro profil:", error); });
+                }
 
                 // --- UTILISATEUR CONNECTÉ ---
                 if (window.location.pathname.includes('connexion.html') || window.location.pathname.includes('inscription.html')) {

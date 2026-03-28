@@ -17,13 +17,14 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* === STYLES SPÉCIFIQUES ADMIN (LIBÉRÉ ET RESPONSIVE) === */
+        /* === ARCHITECTURE STRICTE "SPA" (Zéro scroll global) === */
         html,
         body {
             margin: 0;
             padding: 0;
-            min-height: 100vh;
-            /* Permet à la page de grandir */
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
             font-family: 'Inter', sans-serif;
             background-color: #FAFBFE;
             color: #4B5563;
@@ -32,7 +33,7 @@
         .admin-body {
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            height: 100vh;
         }
 
         .header {
@@ -40,106 +41,103 @@
         }
 
         .admin-content {
-            flex: 1;
+            flex: 1 1 0;
             width: 100%;
             max-width: 1600px;
-            /* Légèrement réduit pour un meilleur rendu 2K */
             margin: 0 auto;
-            padding: 30px 40px 60px 40px;
-            /* Plus d'espace pour respirer */
+            padding: 20px 40px;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        .admin-header {
+            flex: 0 0 auto;
         }
 
         .admin-header h1 {
-            font-size: 26px;
+            font-size: 24px;
             color: #2E3F84;
             font-weight: 800;
             margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        /* Stats Bar Auto-Adaptable */
         .stats-bar {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            /* S'adapte magiquement */
-            gap: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            flex: 0 0 auto;
         }
 
         .stat-card {
             background: #fff;
-            padding: 20px;
-            border-radius: 16px;
+            padding: 15px 20px;
+            border-radius: 12px;
             border: 1px solid #E3E8F5;
             display: flex;
             align-items: center;
-            gap: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -3px rgba(108, 131, 217, 0.08);
+            gap: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
         .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
             background: #EEF2FF;
             color: #6C83D9;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
         }
 
         .stat-info h3 {
             margin: 0;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             color: #6C83D9;
+            line-height: 1.2;
         }
 
         .stat-info p {
             margin: 0;
-            font-size: 12px;
+            font-size: 11px;
             color: #9CA3AF;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-weight: 600;
         }
 
-        /* Panel de contrôles */
         .controls-panel {
+            flex: 0 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: #fff;
-            padding: 15px 20px;
-            border-radius: 14px;
+            padding: 10px 15px;
+            border-radius: 10px;
             border: 1px solid #E3E8F5;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-            flex-wrap: wrap;
-            gap: 15px;
         }
 
         .tabs-nav {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .tab-btn {
             background: none;
             border: none;
-            padding: 10px 18px;
-            border-radius: 10px;
+            padding: 8px 15px;
+            border-radius: 8px;
             cursor: pointer;
             color: #6B7280;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             transition: 0.2s;
         }
@@ -154,21 +152,23 @@
             color: #6C83D9;
         }
 
-        /* Panneau de données */
         .data-panel {
+            flex: 1 1 0;
             background: #fff;
-            border-radius: 14px;
+            border-radius: 12px;
             border: 1px solid #E3E8F5;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
             overflow: hidden;
-            /* Juste pour arrondir les coins du tableau */
         }
 
         .tab-content {
             display: none;
-            width: 100%;
-            overflow-x: auto;
-            /* Scroll horizontal sur petits écrans seulement */
+            flex: 1 1 0;
+            overflow-y: auto;
+            height: 100%;
         }
 
         .tab-content.active {
@@ -181,16 +181,18 @@
             font-size: 13px;
             color: #4B5563;
             min-width: 900px;
-            /* Empêche l'écrasement */
         }
 
         .admin-table thead th {
+            position: sticky;
+            top: 0;
             background: #FAFBFE;
             text-align: left;
-            padding: 15px 20px;
+            padding: 12px 20px;
             color: #2E3F84;
-            border-bottom: 2px solid #E3E8F5;
+            border-bottom: 1px solid #E3E8F5;
             font-weight: 600;
+            z-index: 5;
         }
 
         .admin-table tbody tr {
@@ -200,19 +202,19 @@
         }
 
         .admin-table tbody tr:hover {
-            background: #FAFBFE;
+            background: #EEF2FF;
         }
 
         .admin-table td {
-            padding: 15px 20px;
+            padding: 12px 20px;
             vertical-align: middle;
         }
 
         .admin-input {
             width: 100%;
             border: 1px solid #E3E8F5;
-            border-radius: 8px;
-            padding: 8px 12px;
+            border-radius: 6px;
+            padding: 8px 10px;
             font-size: 12px;
             font-family: inherit;
             color: #2E3F84;
@@ -226,13 +228,16 @@
         }
 
         .btn-action {
-            padding: 8px 16px;
-            border-radius: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
             border: none;
             cursor: pointer;
             font-size: 12px;
             font-weight: 600;
             transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-green {
@@ -254,13 +259,32 @@
             color: #4B5563;
         }
 
+        .btn-danger {
+            background: #EF4444;
+            color: white;
+            padding: 6px 10px;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+
+        /* === MESSAGES EXPERT === */
+        #tab-messages.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
         .msg-form {
-            max-width: 600px;
-            margin: 40px auto;
+            width: 100%;
+            max-width: 550px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            padding: 20px;
+            margin: 0;
+            padding: 0;
         }
 
         .admin-textarea {
@@ -270,8 +294,9 @@
             padding: 12px;
             font-family: inherit;
             height: 120px;
-            resize: vertical;
+            resize: none;
             color: #2E3F84;
+            transition: 0.2s;
         }
 
         .admin-textarea:focus {
@@ -280,7 +305,23 @@
             box-shadow: 0 0 0 3px rgba(108, 131, 217, 0.1);
         }
 
-        /* === AUTOCOMPLÉTION === */
+        .msg-step {
+            animation: fadeIn 0.3s ease-out;
+            width: 100%;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .autocomplete-wrapper {
             position: relative;
         }
@@ -294,7 +335,7 @@
             background: #fff;
             border: 1px solid #E3E8F5;
             border-radius: 8px;
-            max-height: 250px;
+            max-height: 200px;
             overflow-y: auto;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             list-style: none;
@@ -355,7 +396,6 @@
             font-size: 11px;
         }
 
-        /* === MODALE === */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -465,9 +505,40 @@
             word-break: break-word;
         }
 
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9CA3AF;
+        }
+
         @media (max-width: 768px) {
+
+            html,
+            body {
+                height: auto;
+                overflow: auto;
+            }
+
+            .admin-body {
+                height: auto;
+            }
+
             .admin-content {
                 padding: 15px;
+                height: auto;
+                overflow: visible;
             }
 
             .stats-bar {
@@ -476,6 +547,19 @@
 
             .modal-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .data-panel {
+                overflow: visible;
+            }
+
+            .tab-content {
+                overflow-x: auto;
+            }
+
+            #tab-messages.active {
+                display: block;
+                padding: 15px;
             }
         }
     </style>
@@ -511,7 +595,8 @@
                         <li><a href="a_propos.html">À propos</a></li>
                         <li><a href="contact.html">Contact</a></li>
                         <li>
-                            <a href="client.html" class="nav-espace-link">
+                            <a href="client.html" class="nav-espace-link"
+                                style="color: var(--primary-blue); font-weight: 700;">
                                 Espace <span class="nav-espace-role"
                                     style="opacity: 0; transition: opacity 0.4s ease; display: inline-block; min-width: 42px;"></span>
                             </a>
@@ -534,7 +619,7 @@
 
     <main class="admin-content">
         <div class="admin-header">
-            <h1>🛡️ Dashboard Gestion Immobilière</h1>
+            <h1><i class="fas fa-shield-alt" style="color:#6C83D9;"></i> Dashboard Gestion Immobilière</h1>
         </div>
 
         <section class="stats-bar">
@@ -585,10 +670,10 @@
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Client (Nom, Email, Tél)</th>
-                            <th>Bien & Adresse</th>
-                            <th>Fourchette</th>
-                            <th>Suivi</th>
+                            <th>Client</th>
+                            <th>Adresse & Bien</th>
+                            <th>Fourchette de prix</th>
+                            <th style="text-align: center;">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="leads-body">
@@ -603,13 +688,13 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>Client (Nom, Contact)</th>
+                            <th>Client</th>
                             <th>Adresse</th>
-                            <th>Prix Affiché (€)</th>
-                            <th>Label Statut</th>
-                            <th>Étape / 5</th>
+                            <th>Prix (€)</th>
+                            <th>Statut du dossier</th>
+                            <th>Étape</th>
                             <th>Agent Assigné</th>
-                            <th>Action</th>
+                            <th style="text-align: center;">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="mandates-body">
@@ -622,31 +707,65 @@
 
             <div id="tab-messages" class="tab-content">
                 <div class="msg-form">
-                    <h3 style="color: #2E3F84; margin-bottom: 0;">Envoyer un message au client</h3>
-                    <p style="font-size: 13px; color: #6B7280; margin-top: 0;">Ce message apparaîtra directement sur le
-                        tableau de bord du client sélectionné.</p>
 
-                    <label style="font-size: 13px; font-weight: 600; color: #4B5563;">Rechercher le client (Nom, Email
-                        ou ID) :</label>
-                    <div class="autocomplete-wrapper">
-                        <input type="text" id="user-search" class="admin-input"
-                            placeholder="Tapez un nom, un e-mail ou un ID..." autocomplete="off">
-                        <ul class="autocomplete-suggestions" id="user-suggestions"></ul>
-                        <input type="hidden" id="user-select-id">
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <h3 style="color: #2E3F84; margin: 0 0 5px 0;">Envoyer un message</h3>
+                        <p style="font-size: 12px; color: #6B7280; margin: 0;">Ce message apparaîtra sur le tableau de
+                            bord du client.</p>
                     </div>
 
-                    <label style="font-size: 13px; font-weight: 600; color: #4B5563;">Nom de l'agent (Signature)
-                        :</label>
-                    <input type="text" id="agent-display" class="admin-input" placeholder="Ex: Sarah - Astella Agency"
-                        value="">
+                    <div id="msg-step-1" class="msg-step">
+                        <label
+                            style="font-size: 13px; font-weight: 600; color: #4B5563; margin-bottom: 6px; display: block;">1.
+                            Rechercher le client :</label>
+                        <div class="autocomplete-wrapper" style="margin-bottom: 20px;">
+                            <input type="text" id="user-search" class="admin-input" placeholder="Nom, e-mail ou ID..."
+                                autocomplete="off">
+                            <ul class="autocomplete-suggestions" id="user-suggestions"></ul>
+                            <input type="hidden" id="user-select-id">
+                        </div>
+                        <div style="display: flex; justify-content: flex-end;">
+                            <button class="btn-action btn-gray" onclick="goToMsgStep(2)" type="button"
+                                style="padding: 10px 16px; font-size: 13px;">Continuer <i class="fas fa-arrow-right"
+                                    style="margin-left: 5px;"></i></button>
+                        </div>
+                    </div>
 
-                    <label style="font-size: 13px; font-weight: 600; color: #4B5563;">Message :</label>
-                    <textarea id="msg-content" class="admin-textarea"
-                        placeholder="Votre dossier est validé, je vous rappelle demain..."></textarea>
+                    <div id="msg-step-2" class="msg-step" style="display: none;">
+                        <label
+                            style="font-size: 13px; font-weight: 600; color: #4B5563; margin-bottom: 6px; display: block;">2.
+                            Nom de l'agent (Signature) :</label>
+                        <input type="text" id="agent-display" class="admin-input" placeholder="Ex: Sarah" value=""
+                            style="margin-bottom: 20px;">
 
-                    <button class="btn-action btn-green" onclick="sendMessage()"
-                        style="padding: 14px; font-size: 14px; margin-top: 10px;"><i class="fas fa-paper-plane"
-                            style="margin-right: 5px;"></i> Envoyer au client</button>
+                        <div style="display: flex; justify-content: space-between;">
+                            <button class="btn-action btn-gray" onclick="goToMsgStep(1)" type="button"
+                                style="padding: 10px 16px; font-size: 13px;"><i class="fas fa-arrow-left"
+                                    style="margin-right: 5px;"></i> Retour</button>
+                            <button class="btn-action btn-gray" onclick="goToMsgStep(3)" type="button"
+                                style="padding: 10px 16px; font-size: 13px;">Continuer <i class="fas fa-arrow-right"
+                                    style="margin-left: 5px;"></i></button>
+                        </div>
+                    </div>
+
+                    <div id="msg-step-3" class="msg-step" style="display: none;">
+                        <label
+                            style="font-size: 13px; font-weight: 600; color: #4B5563; margin-bottom: 6px; display: block;">3.
+                            Message :</label>
+                        <textarea id="msg-content" class="admin-textarea"
+                            placeholder="Votre dossier est validé, je vous rappelle demain..."
+                            style="margin-bottom: 15px;"></textarea>
+
+                        <div style="display: flex; justify-content: space-between;">
+                            <button class="btn-action btn-gray" onclick="goToMsgStep(2)" type="button"
+                                style="padding: 10px 16px; font-size: 13px;"><i class="fas fa-arrow-left"
+                                    style="margin-right: 5px;"></i> Retour</button>
+                            <button class="btn-action btn-green" onclick="sendMessage()" type="button"
+                                style="padding: 10px 16px; font-size: 13px;"><i class="fas fa-paper-plane"
+                                    style="margin-right: 5px;"></i> Envoyer</button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -661,17 +780,35 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal-overlay" id="delete-modal" onclick="closeDeleteModal(event)">
+            <div class="modal-box" style="max-width: 400px; text-align: center;" onclick="event.stopPropagation()">
+                <div class="modal-body" style="padding: 30px 20px;">
+                    <i class="fas fa-exclamation-triangle"
+                        style="font-size: 40px; color: #EF4444; margin-bottom: 15px;"></i>
+                    <h2 style="margin: 0 0 10px 0; color: #2E3F84; font-size: 18px;">Confirmer la suppression</h2>
+                    <p style="color: #6B7280; font-size: 13px; margin: 0 0 25px 0;" id="delete-modal-text">Voulez-vous
+                        vraiment supprimer cet élément ? Cette action est irréversible.</p>
+                    <div style="display: flex; justify-content: center; gap: 15px;">
+                        <button class="btn-action btn-gray" onclick="closeDeleteModal()"
+                            style="padding: 10px 20px; font-size: 13px;">Annuler</button>
+                        <button class="btn-action btn-danger" onclick="confirmDelete()"
+                            style="padding: 10px 20px; font-size: 13px;">Confirmer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script src="main.js"></script>
 
     <script>
-        // Variables globales pour stocker les données afin de les afficher dans la modale et l'autocomplétion
         let globalLeads = [];
         let globalMandates = [];
         let globalProfiles = [];
+        let itemToDeleteId = null;
+        let itemToDeleteType = null;
 
-        // 1. LOGIQUE UI DES ONGLETS
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -684,9 +821,7 @@
             });
         });
 
-        // 2. CONNEXION BDD ET VÉRIFICATION ADMIN
         let adminSupabase;
-
         const checkReady = setInterval(() => {
             if (window.supabaseClient && window.Clerk && window.Clerk.user !== undefined) {
                 clearInterval(checkReady);
@@ -706,7 +841,6 @@
         }
 
         async function refreshAll() {
-            // Récupérer les profils en premier pour pouvoir les croiser
             const { data: profilesData } = await adminSupabase.from('profiles').select('*');
             globalProfiles = profilesData || [];
 
@@ -716,7 +850,6 @@
             loadMandates();
         }
 
-        // 3. FONCTIONS DE RÉCUPÉRATION (SUPABASE)
         async function loadStats() {
             try {
                 const { count: leadCount } = await adminSupabase.from('estimations').select('*', { count: 'exact', head: true });
@@ -739,7 +872,7 @@
         async function loadLeads() {
             const tbody = document.getElementById('leads-body');
             try {
-                const { data: leads, error } = await adminSupabase.from('estimations').select('*').order('created_at', { ascending: false });
+                const { data: leads, error } = await adminSupabase.from('estimations').select('*');
                 if (error) throw error;
 
                 globalLeads = leads || [];
@@ -749,14 +882,20 @@
                     return;
                 }
 
-                tbody.innerHTML = globalLeads.map(l => {
+                let sortedLeads = [...globalLeads].sort((a, b) => {
+                    if (a.is_contacted === b.is_contacted) {
+                        return new Date(b.created_at) - new Date(a.created_at);
+                    }
+                    return a.is_contacted ? 1 : -1;
+                });
+
+                tbody.innerHTML = sortedLeads.map(l => {
                     const prof = globalProfiles.find(p => p.id === l.clerk_user_id) || {};
                     const dateStr = new Date(l.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
                     const minP = l.price_min ? l.price_min.toLocaleString('fr-FR') : '-';
                     const maxP = l.price_max ? l.price_max.toLocaleString('fr-FR') : '-';
                     const isContacted = l.is_contacted === true;
 
-                    // Récupération des infos client avec fallback sécurisé
                     const clientName = prof.first_name ? `${prof.first_name} ${prof.last_name || ''}` : 'Client Web';
                     const clientContact = prof.email || l.clerk_user_id.substring(0, 8) + '...';
                     const clientPhone = prof.phone ? `<br><i class="fas fa-phone" style="color:#6B7280; font-size:10px;"></i> <span style="font-weight:600; color:#4B5563;">${prof.phone}</span>` : '';
@@ -770,7 +909,12 @@
                         </td>
                         <td>${l.address || 'Adresse inconnue'}<br><small style="color:#9CA3AF; font-weight:normal;">${l.property_type || 'Bien'} • ${l.surface || 0} m²</small></td>
                         <td style="color:#6C83D9">${minP}€ - ${maxP}€</td>
-                        <td><button class="btn-action ${isContacted ? 'btn-gray' : 'btn-green'}" onclick="event.stopPropagation(); markLead('${l.id}', ${!isContacted})">${isContacted ? 'Réafficher' : 'Marquer contacté'}</button></td>
+                        <td style="text-align: center; white-space: nowrap;" onclick="event.stopPropagation()">
+                            <div style="display: flex; justify-content: center; gap: 8px;">
+                                <button class="btn-action ${isContacted ? 'btn-gray' : 'btn-green'}" onclick="markLead('${l.id}', ${!isContacted})">${isContacted ? 'Afficher' : 'Archiver'}</button>
+                                <button class="btn-action btn-danger" onclick="openDeleteModal('lead', '${l.id}')" title="Supprimer définitivement"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
                     </tr>
                     `;
                 }).join('');
@@ -783,7 +927,7 @@
         async function loadMandates() {
             const tbody = document.getElementById('mandates-body');
             try {
-                const { data, error } = await adminSupabase.from('properties_for_sale').select('*').order('created_at', { ascending: false });
+                const { data, error } = await adminSupabase.from('properties_for_sale').select('*');
                 if (error) throw error;
 
                 globalMandates = data || [];
@@ -793,6 +937,15 @@
                     return;
                 }
 
+                let sortedMandates = [...globalMandates].sort((a, b) => {
+                    const aDone = parseInt(a.status_step) === 5;
+                    const bDone = parseInt(b.status_step) === 5;
+                    if (aDone === bDone) {
+                        return new Date(b.created_at) - new Date(a.created_at);
+                    }
+                    return aDone ? 1 : -1;
+                });
+
                 const statusConfig = [
                     { label: "Constitution du dossier", step: 1 },
                     { label: "Mise en valeur & Photos", step: 2 },
@@ -801,7 +954,7 @@
                     { label: "Autre (Préciser par message au client)", step: 1 }
                 ];
 
-                tbody.innerHTML = globalMandates.map(s => {
+                tbody.innerHTML = sortedMandates.map(s => {
                     const prof = globalProfiles.find(p => p.id === s.clerk_user_id) || {};
                     const clientName = prof.first_name ? `${prof.first_name} ${prof.last_name || ''}` : 'Client Web';
                     const clientContact = prof.email || s.clerk_user_id.substring(0, 8) + '...';
@@ -811,8 +964,10 @@
                         `<option value="${conf.label}" data-step="${conf.step}" ${s.status_label === conf.label ? 'selected' : ''}>${conf.label}</option>`
                     ).join('');
 
+                    const isDone = parseInt(s.status_step) === 5;
+
                     return `
-                    <tr onclick="openModal('mandate', '${s.id}')">
+                    <tr style="${isDone ? 'opacity: 0.6' : ''}" onclick="openModal('mandate', '${s.id}')">
                         <td>
                             <strong style="color: #2E3F84;">${clientName}</strong><br>
                             <small style="color:#6B7280; font-weight:normal;">${clientContact}</small>${clientPhone}
@@ -827,16 +982,35 @@
                         </td>
                         <td onclick="event.stopPropagation()"><input type="number" class="admin-input" style="width:60px" min="1" max="5" value="${s.status_step || 1}" id="step-${s.id}"></td>
                         <td onclick="event.stopPropagation()"><input type="text" class="admin-input" value="${s.agent_assigned || ''}" id="agent-${s.id}" placeholder="Nom de l'agent"></td>
-                        <td style="text-align:center;" onclick="event.stopPropagation()"><button class="btn-action btn-green" onclick="updateMandate('${s.id}', this)">Sauvegarder</button></td>
+                        <td style="text-align:center; white-space: nowrap;" onclick="event.stopPropagation()">
+                            <div style="display: flex; justify-content: center; gap: 8px;">
+                                <button class="btn-action btn-green" onclick="updateMandate('${s.id}', this)">Sauvegarder</button>
+                                <button class="btn-action btn-danger" onclick="openDeleteModal('mandate', '${s.id}')" title="Supprimer définitivement"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
                     </tr>
                     `;
                 }).join('');
             } catch (e) { console.error("Erreur chargement mandats:", e); }
         }
 
-        // ==========================================
-        // 4. AUTOCOMPLÉTION MESSAGERIE
-        // ==========================================
+        window.goToMsgStep = function (step) {
+            if (step === 2) {
+                const searchInput = document.getElementById('user-search').value;
+                if (!searchInput) {
+                    alert("Veuillez saisir ou sélectionner un client avant de continuer.");
+                    return;
+                }
+
+                if (!document.getElementById('user-select-id').value) {
+                    document.getElementById('user-select-id').value = searchInput;
+                }
+            }
+
+            document.querySelectorAll('.msg-step').forEach(el => el.style.display = 'none');
+            document.getElementById(`msg-step-${step}`).style.display = 'block';
+        };
+
         function setupAutocomplete() {
             const input = document.getElementById('user-search');
             const suggestionsBox = document.getElementById('user-suggestions');
@@ -892,9 +1066,6 @@
             });
         }
 
-        // ==========================================
-        // 5. TOAST NOTIFICATION MODERNE
-        // ==========================================
         function showToast(message) {
             const toast = document.createElement('div');
             toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
@@ -913,9 +1084,6 @@
             }, 4000);
         }
 
-        // ==========================================
-        // 6. MODALE DE DÉTAILS
-        // ==========================================
         window.openModal = function (type, id) {
             const modal = document.getElementById('details-modal');
             const title = document.getElementById('modal-title');
@@ -931,7 +1099,7 @@
                 body.innerHTML = `
                     <div class="modal-grid">
                         <div class="detail-item"><span>Client</span><strong>${prof.first_name || 'Inconnu'} ${prof.last_name || ''}</strong></div>
-                        <div class="detail-item"><span>Contact</span><strong>${prof.email || 'N/A'} <br> ${prof.phone || 'Non renseigné'}</strong></div>
+                        <div class="detail-item"><span>Contact</span><strong>${prof.email || 'N/A'} <br> ${prof.phone || ' '}</strong></div>
                     </div>
                     <div class="modal-grid">
                         <div class="detail-item"><span>Adresse</span><strong>${data.address || 'N/A'}</strong></div>
@@ -952,7 +1120,7 @@
                 body.innerHTML = `
                     <div class="modal-grid">
                         <div class="detail-item"><span>Client</span><strong>${prof.first_name || 'Inconnu'} ${prof.last_name || ''}</strong></div>
-                        <div class="detail-item"><span>Contact</span><strong>${prof.email || 'N/A'} <br> ${prof.phone || 'Non renseigné'}</strong></div>
+                        <div class="detail-item"><span>Contact</span><strong>${prof.email || 'N/A'} <br> ${prof.phone || ''}</strong></div>
                     </div>
                     <div class="detail-item" style="margin-bottom:20px;"><span>Adresse Complète</span><strong>${data.address || 'N/A'}</strong></div>
                     <div class="modal-grid">
@@ -972,9 +1140,42 @@
             document.getElementById('details-modal').classList.remove('active');
         }
 
-        // ==========================================
-        // 7. ACTIONS D'ÉCRITURE (BOUTONS)
-        // ==========================================
+        window.openDeleteModal = function (type, id) {
+            itemToDeleteType = type;
+            itemToDeleteId = id;
+            const text = type === 'lead'
+                ? "Voulez-vous vraiment supprimer définitivement cette estimation ?"
+                : "Voulez-vous vraiment supprimer définitivement ce mandat ?";
+            document.getElementById('delete-modal-text').textContent = text;
+            document.getElementById('delete-modal').classList.add('active');
+        };
+
+        window.closeDeleteModal = function (e) {
+            if (e && e.target.classList.contains('modal-box')) return;
+            document.getElementById('delete-modal').classList.remove('active');
+            itemToDeleteId = null;
+            itemToDeleteType = null;
+        };
+
+        window.confirmDelete = async function () {
+            if (!itemToDeleteId || !itemToDeleteType) return;
+
+            const table = itemToDeleteType === 'lead' ? 'estimations' : 'properties_for_sale';
+            const { error } = await adminSupabase.from(table).delete().eq('id', itemToDeleteId);
+
+            if (error) {
+                alert("Erreur lors de la suppression.");
+                console.error(error);
+            } else {
+                showToast(itemToDeleteType === 'lead' ? "Estimation supprimée avec succès." : "Mandat supprimé avec succès.");
+                if (itemToDeleteType === 'lead') loadLeads();
+                if (itemToDeleteType === 'mandate') loadMandates();
+                loadStats();
+            }
+
+            closeDeleteModal();
+        };
+
         window.markLead = async function (id, state) {
             await adminSupabase.from('estimations').update({ is_contacted: state }).eq('id', id);
             loadLeads();
@@ -1011,7 +1212,7 @@
             const { error } = await adminSupabase.from('expert_messages').upsert({
                 clerk_user_id: userId,
                 content: content,
-                agent_name: agent || '' // Laisse la valeur vide si rien n'est saisi
+                agent_name: agent || ''
             }, { onConflict: 'clerk_user_id' });
 
             if (!error) {
@@ -1019,7 +1220,9 @@
                 document.getElementById('user-search').value = "";
                 document.getElementById('user-select-id').value = "";
                 document.getElementById('msg-content').value = "";
-                document.getElementById('agent-display').value = ""; // Reset du champ agent
+                document.getElementById('agent-display').value = "";
+
+                goToMsgStep(1);
             } else {
                 alert("Erreur lors de l'envoi.");
             }
