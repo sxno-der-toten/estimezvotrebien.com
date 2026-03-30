@@ -69,6 +69,96 @@ p {
     margin-bottom: 1rem;
 }
 
+/* ==========================================
+   BANDEAU COOKIES RGPD
+   ========================================== */
+.cookie-banner {
+    position: fixed;
+    bottom: -100%;
+    /* Caché en bas par défaut */
+    left: 20px;
+    max-width: 380px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(46, 63, 132, 0.15);
+    padding: 20px;
+    z-index: 999999;
+    /* Toujours au-dessus de tout */
+    transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid #E3E8F5;
+    font-family: 'Inter', sans-serif;
+}
+
+.cookie-banner.show {
+    bottom: 20px;
+    /* Remonte avec l'animation */
+}
+
+.cookie-banner h3 {
+    margin: 0 0 10px 0;
+    color: #2E3F84;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cookie-banner p {
+    color: #6B7280;
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0 0 15px 0;
+}
+
+.cookie-btns {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.cookie-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.cookie-btn.accept {
+    background-color: var(--primary-blue, #6C83D9);
+    color: white;
+}
+
+.cookie-btn.accept:hover {
+    background-color: #566DBA;
+}
+
+.cookie-btn.reject {
+    background-color: #F3F4F6;
+    color: #4B5563;
+}
+
+.cookie-btn.reject:hover {
+    background-color: #E5E7EB;
+}
+
+/* Version Mobile */
+@media (max-width: 480px) {
+    .cookie-banner {
+        left: 10px;
+        right: 10px;
+        max-width: none;
+    }
+
+    .cookie-banner.show {
+        bottom: 10px;
+    }
+}
+
 .rounded-image {
     border-radius: var(--border-radius);
     overflow: hidden;

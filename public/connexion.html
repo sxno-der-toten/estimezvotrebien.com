@@ -214,6 +214,12 @@
 
         /* --- MOT DE PASSE OUBLIÉ ET MULTI-STEP --- */
         .forgot-password-link {
+            display: block;
+            /* Permet de prendre toute la largeur pour l'alignement */
+            text-align: right;
+            /* Aligne le texte à droite */
+            margin-top: 8px;
+            /* Ajoute l'espacement au-dessus */
             font-size: 12px;
             color: var(--primary-blue);
             text-decoration: none;
@@ -298,6 +304,80 @@
             padding: 10px 0;
         }
     </style>
+    <link rel="canonical" href="https://estimez-votre-bien.com/connexion.html">
+    <meta property="og:url" content="https://estimez-votre-bien.com/connexion.html">
+    <meta property="og:title" content="Connexion | EstimezVotreBien.com">
+    <meta property="og:description" content="Connectez-vous à votre espace personnel pour retrouver vos estimations immobilières et gérer votre projet de vente.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://estimez-votre-bien.com/images/logo.png">
+    <meta property="og:site_name" content="estimez-votre-bien.com">
+    <meta property="og:locale" content="fr_FR">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Connexion | EstimezVotreBien.com">
+    <meta name="twitter:description" content="Connectez-vous à votre espace personnel pour retrouver vos estimations immobilières et gérer votre projet de vente.">
+    <meta name="twitter:image" content="https://estimez-votre-bien.com/images/logo.png">
+    <meta name="twitter:site" content="@estimezvotrebien">
+    <meta name="robots" content="index, follow">
+    <!-- IA SEO schema for ChatGPT, Gemini and other agents -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "url": "https://estimez-votre-bien.com",
+      "name": "estimez-votre-bien.com",
+      "description": "Agence immobilière à Orléans spécialisée en estimation, vente et achat de biens immobiliers."
+    },
+    {
+      "@type": "Organization",
+      "name": "estimez-votre-bien.com",
+      "url": "https://estimez-votre-bien.com",
+      "logo": "https://estimez-votre-bien.com/images/logo.png",
+      "sameAs": [
+        "https://www.facebook.com/estimezvotrebien",
+        "https://www.instagram.com/estimezvotrebien",
+        "https://twitter.com/estimezvotrebien"
+      ],
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "telephone": "+33238698277",
+          "contactType": "customer service",
+          "areaServed": "FR",
+          "availableLanguage": [
+            "Français"
+          ]
+        }
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Lab'O Village, 1 Avenue du Champ de Mars",
+        "addressLocality": "Orléans",
+        "postalCode": "45000",
+        "addressCountry": "FR"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "headline": "Connexion | EstimezVotreBien.com",
+      "description": "Connectez-vous à votre espace personnel pour retrouver vos estimations immobilières et gérer votre projet de vente.",
+      "url": "https://estimez-votre-bien.com/connexion.html",
+      "inLanguage": "fr-FR",
+      "mainEntity": {
+        "@type": "WebPageElement",
+        "name": "Connexion | EstimezVotreBien.com",
+        "description": "Connectez-vous à votre espace personnel pour retrouver vos estimations immobilières et gérer votre projet de vente."
+      },
+      "isPartOf": {
+        "@type": "WebSite",
+        "url": "https://estimez-votre-bien.com",
+        "name": "estimez-votre-bien.com"
+      }
+    }
+  ]
+}
+    </script>
 </head>
 
 <body>
@@ -381,13 +461,10 @@
                             </div>
 
                             <div class="input-group">
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-                                    <label for="password" style="margin-bottom: 0;">Mot de passe</label>
-                                    <a href="#" id="btn-forgot-password" class="forgot-password-link">Mot de passe
-                                        oublié ?</a>
-                                </div>
+                                <label for="password">Mot de passe</label>
                                 <input type="password" id="password" placeholder="••••••••" required>
+                                <a href="#" id="btn-forgot-password" class="forgot-password-link">Mot de passe oublié
+                                    ?</a>
                             </div>
 
                             <button type="submit" class="btn-submit">Se connecter</button>

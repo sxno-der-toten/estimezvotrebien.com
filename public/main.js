@@ -1056,4 +1056,80 @@ const clerkInterval = setInterval(async () => {
             console.error("Erreur de chargement Clerk :", error);
         }
     }
-}, 50);
+}
+
+    , 50);
+
+// ==========================================
+// GESTIONNAIRE DE COOKIES (Bandeau RGPD Fonctionnel)
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. On vérifie si l'utilisateur a déjà fait un choix dans le passé
+    const consent = localStorage.getItem('estimez_cookie_consent');
+
+    // 2. S'il a déjà "Tout accepté", on charge les scripts de suivi directement
+    if (consent === 'all') {
+        loadOptionalScripts();
+    }
+
+    // 3. S'il n'a jamais fait de choix, on crée et on affiche le bandeau
+    if (!consent) {
+        initCookieBanner();
+    }
+});
+
+function initCookieBanner() {
+    // Création de la modale en HTML
+    const banner = document.createElement('div');
+    banner.className = 'cookie-banner';
+    banner.innerHTML = `
+        <h3><i class="fas fa-cookie-bite" style="color: #F59E0B;"></i> Respect de votre vie privée</h3>
+        <p>Nous utilisons des cookies "essentiels" pour la connexion à votre espace. Nous souhaitons également utiliser des cookies optionnels pour analyser notre trafic de façon anonyme. Vous avez le choix !</p>
+        <div class="cookie-btns">
+            <button class="cookie-btn reject" id="cookie-reject">Refuser</button>
+            <button class="cookie-btn accept" id="cookie-accept">Tout accepter</button>
+        </div>
+    `;
+
+    // On l'injecte dans la page
+    document.body.appendChild(banner);
+
+    // Léger délai pour déclencher l'animation d'apparition fluide
+    setTimeout(() => {
+        banner.classList.add('show');
+    }, 800);
+
+    // ACTION : L'utilisateur clique sur "Tout accepter"
+    document.getElementById('cookie-accept').addEventListener('click', () => {
+        localStorage.setItem('estimez_cookie_consent', 'all'); // On sauvegarde son choix
+        banner.classList.remove('show'); // On cache le bandeau
+
+        loadOptionalScripts(); // On déclenche Google Analytics / Pixels
+
+        setTimeout(() => banner.remove(), 500); // On supprime le HTML de la page
+    });
+
+    // ACTION : L'utilisateur clique sur "Refuser"
+    document.getElementById('cookie-reject').addEventListener('click', () => {
+        localStorage.setItem('estimez_cookie_consent', 'essential_only'); // On sauvegarde son refus
+        banner.classList.remove('show');
+
+        // On NE DÉCLENCHE PAS loadOptionalScripts()
+
+        setTimeout(() => banner.remove(), 500);
+    });
+}
+
+// Fonction "conteneur" pour tes futurs scripts de suivi
+function loadOptionalScripts() {
+    console.log("✅ Consentement accordé : Chargement des cookies de suivi et statistiques.");
+
+    // C'est ICI que tu copieras/colleras tes scripts Google Analytics ou Meta Pixel plus tard.
+    // Exemple de format :
+    /*
+    const script = document.createElement('script');
+    script.src = "https://www.googletagmanager.com/gtag/js?id=TON_ID_GOOGLE";
+    script.async = true;
+    document.head.appendChild(script);
+    */
+}
