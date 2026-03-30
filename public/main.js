@@ -444,6 +444,12 @@ class EstimationTool {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // === NOUVEAUTÉ : Cacher l'Espace Admin/Client par défaut au chargement de la page ===
+    document.querySelectorAll('.nav-espace-link').forEach(link => {
+        const parentLi = link.closest('li');
+        if (parentLi) parentLi.style.display = 'none';
+    });
+
     new EstimationTool();
 
     const hamburgerBtn = document.getElementById('hamburger-btn');
@@ -633,7 +639,6 @@ const clerkInterval = setInterval(async () => {
 
                 // --- UTILISATEUR CONNECTÉ ---
                 if (window.location.pathname.includes('connexion.html') || window.location.pathname.includes('inscription.html')) {
-                    // Utilisation d'une URL dynamique relative pour éviter les bugs de dossier "public"
                     window.location.href = new URL('index.html', window.location.href).href;
                     return;
                 }
@@ -641,7 +646,11 @@ const clerkInterval = setInterval(async () => {
                 // Vérification du rôle Admin
                 const isAdmin = window.Clerk.user?.publicMetadata?.role === 'admin';
 
+                // === NOUVEAUTÉ : On affiche l'Espace (car l'utilisateur est connecté) ===
                 document.querySelectorAll('.nav-espace-link').forEach(link => {
+                    const parentLi = link.closest('li');
+                    if (parentLi) parentLi.style.display = 'block';
+
                     const roleSpan = link.querySelector('.nav-espace-role');
                     if (roleSpan) {
                         if (isAdmin) {
@@ -666,7 +675,6 @@ const clerkInterval = setInterval(async () => {
                         </div>
                     `;
                     window.Clerk.mountUserButton(document.getElementById('user-button-desktop'), {
-                        // Résout le problème du bouton déconnexion cassé
                         afterSignOutUrl: new URL('index.html', window.location.href).href
                     });
                 }
@@ -675,7 +683,6 @@ const clerkInterval = setInterval(async () => {
                 if (mobileAuth) {
                     mobileAuth.innerHTML = '<div id="user-button-mobile"></div>';
                     window.Clerk.mountUserButton(document.getElementById('user-button-mobile'), {
-                        // Résout le problème du bouton déconnexion cassé
                         afterSignOutUrl: new URL('index.html', window.location.href).href
                     });
                 }
@@ -685,25 +692,30 @@ const clerkInterval = setInterval(async () => {
                     loadClientDashboard(window.Clerk.user.id);
                 }
 
-                // === NOUVEAU : AJOUT DE L'OPTION DANS LA MODALE CLERK ===
-                const observer = new MutationObserver((mutations) => {
+                // === NOUVEAU : AJOUT DE L'OPTION DANS LA MODALE CLERK (CLONE PARFAIT) ===
+                setInterval(() => {
                     const popover = document.querySelector('.cl-userButtonPopoverCard');
+                    // On vérifie si la modale est ouverte et si on n'a pas déjà ajouté notre bouton
                     if (popover && !document.getElementById('custom-clerk-link')) {
+                        // On cherche le premier bouton d'action existant (Gérer le compte)
                         const firstButton = popover.querySelector('button');
 
                         if (firstButton && firstButton.parentNode) {
                             const linkText = isAdmin ? 'Espace admin' : 'Espace client';
                             const linkHref = isAdmin ? 'admin.html' : 'client.html';
 
+                            // On clone le bouton pour récupérer 100% de son style Clerk React
                             const customBtn = firstButton.cloneNode(true);
                             customBtn.id = 'custom-clerk-link';
 
+                            // On remplace l'icône proprement
                             const oldSvg = customBtn.querySelector('svg');
                             if (oldSvg) {
                                 const svgClass = oldSvg.getAttribute('class') || '';
                                 oldSvg.outerHTML = `<svg class="${svgClass}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`;
                             }
 
+                            // Scanner et remplacer le texte sans toucher aux classes générées par Clerk
                             const walkAndReplaceText = (node) => {
                                 if (node.nodeType === Node.TEXT_NODE) {
                                     if (node.textContent.trim() !== '') {
@@ -717,26 +729,33 @@ const clerkInterval = setInterval(async () => {
                             };
                             walkAndReplaceText(customBtn);
 
+                            // On désactive les actions par défaut et on met notre redirection
                             customBtn.onclick = (e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 window.location.href = new URL(linkHref, window.location.href).href;
                             };
 
+                            // On ajoute un effet au survol (car les pseudo-classes React ne sont pas clonées)
                             customBtn.style.backgroundColor = 'transparent';
                             customBtn.addEventListener('mouseenter', () => customBtn.style.backgroundColor = '#F3F4F6');
                             customBtn.addEventListener('mouseleave', () => customBtn.style.backgroundColor = 'transparent');
 
+                            // On l'insère juste avant le bouton "Gérer le compte"
                             firstButton.parentNode.insertBefore(customBtn, firstButton);
                         }
                     }
-                });
-
-                observer.observe(document.body, { childList: true, subtree: true });
+                }, 200); // Check régulier (invisible pour les performances)
                 // =========================================================
 
             } else {
                 // --- UTILISATEUR DÉCONNECTÉ ---
+                // === NOUVEAUTÉ : On s'assure que l'onglet Espace reste bien caché ! ===
+                document.querySelectorAll('.nav-espace-link').forEach(link => {
+                    const parentLi = link.closest('li');
+                    if (parentLi) parentLi.style.display = 'none';
+                });
+
                 const loginForm = document.getElementById('clerk-login-form');
                 if (loginForm) {
                     const googleBtn = document.getElementById('btn-google');
