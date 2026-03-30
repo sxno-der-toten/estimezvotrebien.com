@@ -10,7 +10,7 @@
     justify-content: center;
     padding: 10px 20px;
     box-sizing: border-box;
-    background-image: url('/public/images/home.webp');
+    background-image: url('../images/home.webp');
     background-size: cover;
     background-position: center;
 }

@@ -323,7 +323,7 @@
                     </div>
 
                     <ul class="nav-menu">
-                        <li><a href="index.html">Estimer</a></li>
+                        <li><a href="index.html" style="color: var(--primary-blue); font-weight: 700;">Estimer</a></li>
                         <li><a href="acheter.html">Acheter</a></li>
                         <li><a href="vendre.html">Vendre</a></li>
                         <li><a href="guides.html">Guides</a></li>
@@ -340,12 +340,17 @@
 
                     <div class="nav-cta">
                         <div id="auth-container-mobile" class="mobile-only">
-                            <a href="connexion.html" class="mobile-login-link">Connexion</a>
+                            <a href="connexion.html"
+                                style="display: block; background-color: #6C83D9; color: white; text-align: center; padding: 12px; border-radius: 10px; font-weight: 600; text-decoration: none; margin-top: 10px;">Connexion</a>
                         </div>
 
                         <div id="auth-container-desktop" class="desktop-only"
-                            style="opacity: 0; transition: opacity 0.4s ease; min-width: 150px; height: 45px; display: flex; justify-content: flex-end; align-items: center;">
-                            <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                            style="opacity: 0; transition: opacity 0.4s ease; display: flex; justify-content: flex-end; align-items: center; margin-left: 15px;">
+                            <a href="connexion.html"
+                                style="background-color: #6C83D9; color: white; padding: 10px 24px; border-radius: 50px; font-weight: 600; text-decoration: none; font-size: 14px; box-shadow: 0 4px 6px rgba(108, 131, 217, 0.2); transition: all 0.3s ease;"
+                                onmouseover="this.style.backgroundColor='#566DBA'; this.style.transform='translateY(-2px)';"
+                                onmouseout="this.style.backgroundColor='#6C83D9'; this.style.transform='translateY(0)';">Connexion
+                                <i class="fas fa-user" style="margin-left: 6px; font-size: 12px;"></i></a>
                         </div>
                     </div>
 

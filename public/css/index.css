@@ -24,7 +24,7 @@
     justify-content: center;
     padding: 10px 20px;
     box-sizing: border-box;
-    background-image: url('/public/images/index.webp');
+    background-image: url('../images/index.webp');
     background-size: cover;
     background-position: center;
 }
