@@ -191,6 +191,15 @@ p {
     /* Un peu plus de marge sur les bords de l'écran */
 }
 
+.card-hover-anim {
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.card-hover-anim:hover {
+    transform: translateY(-8px) !important;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
 .nav {
     display: flex;
     justify-content: space-around;

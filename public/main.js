@@ -13,23 +13,19 @@ if (!window.supabaseClient && window.supabase) {
 // FONCTION DE CHARGEMENT DU DASHBOARD CLIENT
 // ==========================================
 async function loadClientDashboard(userId) {
-    // On vérifie que le client Supabase est bien initialisé
     if (!window.supabaseClient) {
         console.error("Supabase Client introuvable.");
         return;
     }
 
     try {
-        // 1. Récupération du message de l'expert
         const { data: msgData, error: msgError } = await window.supabaseClient
             .from('expert_messages')
             .select('agent_name, content')
             .eq('clerk_user_id', userId)
             .maybeSingle();
 
-        if (msgError) {
-            console.error("Erreur lors de la requête expert_messages:", msgError.message);
-        }
+        if (msgError) console.error("Erreur lors de la requête expert_messages:", msgError.message);
 
         const nameEl = document.getElementById('expert-name');
         const msgEl = document.getElementById('expert-message');
@@ -42,7 +38,6 @@ async function loadClientDashboard(userId) {
             msgEl.textContent = "Bienvenue ! Je prépare actuellement votre dossier. N'hésitez pas à me contacter si vous avez des questions.";
         }
 
-        // 2. Récupération des biens mis en vente (Filtré par utilisateur)
         const { data: salesData } = await window.supabaseClient
             .from('properties_for_sale')
             .select('*')
@@ -60,7 +55,6 @@ async function loadClientDashboard(userId) {
                     ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(sale.listing_price)
                     : 'Prix en cours d\'évaluation';
 
-                // Condition pour afficher ou masquer dynamiquement la ligne de l'agent
                 const agentHtml = (sale.agent_assigned && sale.agent_assigned.trim() !== '')
                     ? `<div class="sale-agent"><i class="fas fa-user"></i> Agent : ${sale.agent_assigned}</div>`
                     : '';
@@ -81,7 +75,6 @@ async function loadClientDashboard(userId) {
             });
         }
 
-        // 3. Récupération de l'historique des estimations (Filtré par utilisateur)
         const { data: estData } = await window.supabaseClient
             .from('estimations')
             .select('*')
@@ -516,7 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 top: '20px',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                background: '#10B981', // Vert "Succès"
+                background: '#10B981',
                 color: 'white',
                 padding: '12px 24px',
                 borderRadius: '50px',
@@ -568,7 +561,6 @@ const clerkInterval = setInterval(async () => {
                         fontFamily: "'Inter', sans-serif"
                     },
                     elements: {
-                        // --- Modale principale (Gérer le compte) ---
                         modalContent: {
                             maxWidth: '850px',
                             width: '90%',
@@ -579,98 +571,25 @@ const clerkInterval = setInterval(async () => {
                             borderRadius: '20px',
                             boxShadow: '0 25px 50px -12px rgba(46, 63, 132, 0.25)'
                         },
-                        cardBox: {
-                            width: '100%',
-                            height: '100%',
-                            borderRadius: '20px',
-                            boxShadow: 'none'
-                        },
-                        scrollBox: {
-                            borderRadius: '20px'
-                        },
-                        navbar: {
-                            background: '#FAFBFE',
-                            borderRight: '1px solid #E3E8F5',
-                            padding: '20px 15px'
-                        },
-                        navbarButton: {
-                            borderRadius: '10px',
-                            color: '#6B7280',
-                            padding: '12px 15px',
-                            marginBottom: '5px'
-                        },
-                        navbarButton__active: {
-                            backgroundColor: '#EEF2FF',
-                            color: '#6C83D9',
-                            fontWeight: '600'
-                        },
-                        headerTitle: {
-                            color: '#2E3F84',
-                            fontSize: '22px',
-                            fontWeight: '800'
-                        },
-                        profileSectionTitleText: {
-                            color: '#2E3F84',
-                            fontWeight: '700',
-                            borderBottom: '1px solid #E3E8F5',
-                            paddingBottom: '10px',
-                            marginBottom: '15px'
-                        },
-                        formButtonPrimary: {
-                            backgroundColor: '#6C83D9',
-                            color: '#fff',
-                            borderRadius: '50px',
-                            padding: '10px 24px',
-                            textTransform: 'none',
-                            fontWeight: '600',
-                            boxShadow: 'none',
-                            "&:hover": {
-                                backgroundColor: '#566DBA'
-                            }
-                        },
-                        profileSectionPrimaryButton: {
-                            color: '#6C83D9',
-                            fontWeight: '600',
-                            "&:hover": {
-                                backgroundColor: '#EEF2FF',
-                                borderRadius: '10px'
-                            }
-                        },
-                        badge: {
-                            backgroundColor: '#EEF2FF',
-                            color: '#6C83D9',
-                            fontWeight: '600',
-                            borderRadius: '50px'
-                        },
-
-                        // --- Menu déroulant de la photo de profil ---
-                        userButtonPopoverActionButton: {
-                            borderRadius: '10px',
-                            "&:hover": {
-                                backgroundColor: '#EEF2FF'
-                            }
-                        },
-                        userButtonPopoverActionButtonText: {
-                            color: '#2E3F84',
-                            fontWeight: '600'
-                        },
-                        userButtonPopoverActionButtonIcon: {
-                            color: '#6C83D9'
-                        },
-                        userPreviewMainIdentifier: {
-                            color: '#2E3F84',
-                            fontWeight: '700'
-                        },
-                        userPreviewSecondaryIdentifier: {
-                            color: '#6B7280'
-                        }
+                        cardBox: { width: '100%', height: '100%', borderRadius: '20px', boxShadow: 'none' },
+                        scrollBox: { borderRadius: '20px' },
+                        navbar: { background: '#FAFBFE', borderRight: '1px solid #E3E8F5', padding: '20px 15px' },
+                        navbarButton: { borderRadius: '10px', color: '#6B7280', padding: '12px 15px', marginBottom: '5px' },
+                        navbarButton__active: { backgroundColor: '#EEF2FF', color: '#6C83D9', fontWeight: '600' },
+                        headerTitle: { color: '#2E3F84', fontSize: '22px', fontWeight: '800' },
+                        profileSectionTitleText: { color: '#2E3F84', fontWeight: '700', borderBottom: '1px solid #E3E8F5', paddingBottom: '10px', marginBottom: '15px' },
+                        formButtonPrimary: { backgroundColor: '#6C83D9', color: '#fff', borderRadius: '50px', padding: '10px 24px', textTransform: 'none', fontWeight: '600', boxShadow: 'none', "&:hover": { backgroundColor: '#566DBA' } },
+                        profileSectionPrimaryButton: { color: '#6C83D9', fontWeight: '600', "&:hover": { backgroundColor: '#EEF2FF', borderRadius: '10px' } },
+                        badge: { backgroundColor: '#EEF2FF', color: '#6C83D9', fontWeight: '600', borderRadius: '50px' },
+                        userButtonPopoverActionButton: { borderRadius: '10px', "&:hover": { backgroundColor: '#EEF2FF' } },
+                        userButtonPopoverActionButtonText: { color: '#2E3F84', fontWeight: '600' },
+                        userButtonPopoverActionButtonIcon: { color: '#6C83D9' },
+                        userPreviewMainIdentifier: { color: '#2E3F84', fontWeight: '700' },
+                        userPreviewSecondaryIdentifier: { color: '#6B7280' }
                     }
                 },
                 localization: {
-                    userButton: {
-                        action__manageAccount: "Gérer le compte",
-                        action__signOut: "Se déconnecter"
-                    },
+                    userButton: { action__manageAccount: "Gérer le compte", action__signOut: "Se déconnecter" },
                     userProfile: {
                         navbar: { title: "Compte", description: "Gérez les informations de votre compte.", account: "Profil", security: "Sécurité" },
                         start: {
@@ -714,11 +633,12 @@ const clerkInterval = setInterval(async () => {
 
                 // --- UTILISATEUR CONNECTÉ ---
                 if (window.location.pathname.includes('connexion.html') || window.location.pathname.includes('inscription.html')) {
-                    window.location.href = 'index.html';
+                    // Utilisation d'une URL dynamique relative pour éviter les bugs de dossier "public"
+                    window.location.href = new URL('index.html', window.location.href).href;
                     return;
                 }
 
-                // Vérification du rôle Admin pour révéler le bon texte de façon fluide
+                // Vérification du rôle Admin
                 const isAdmin = window.Clerk.user?.publicMetadata?.role === 'admin';
 
                 document.querySelectorAll('.nav-espace-link').forEach(link => {
@@ -731,7 +651,6 @@ const clerkInterval = setInterval(async () => {
                             link.setAttribute('href', 'client.html');
                             roleSpan.textContent = 'client';
                         }
-                        // Apparition en fondu après l'injection du texte
                         setTimeout(() => {
                             roleSpan.style.opacity = '1';
                         }, 50);
@@ -746,19 +665,75 @@ const clerkInterval = setInterval(async () => {
                             <div id="user-button-desktop"></div>
                         </div>
                     `;
-                    window.Clerk.mountUserButton(document.getElementById('user-button-desktop'));
+                    window.Clerk.mountUserButton(document.getElementById('user-button-desktop'), {
+                        // Résout le problème du bouton déconnexion cassé
+                        afterSignOutUrl: new URL('index.html', window.location.href).href
+                    });
                 }
 
                 const mobileAuth = document.getElementById('auth-container-mobile');
                 if (mobileAuth) {
                     mobileAuth.innerHTML = '<div id="user-button-mobile"></div>';
-                    window.Clerk.mountUserButton(document.getElementById('user-button-mobile'));
+                    window.Clerk.mountUserButton(document.getElementById('user-button-mobile'), {
+                        // Résout le problème du bouton déconnexion cassé
+                        afterSignOutUrl: new URL('index.html', window.location.href).href
+                    });
                 }
 
                 // ==> APPEL À SUPABASE SI ON EST SUR LE DASHBOARD
                 if (window.location.pathname.includes('client.html')) {
                     loadClientDashboard(window.Clerk.user.id);
                 }
+
+                // === NOUVEAU : AJOUT DE L'OPTION DANS LA MODALE CLERK ===
+                const observer = new MutationObserver((mutations) => {
+                    const popover = document.querySelector('.cl-userButtonPopoverCard');
+                    if (popover && !document.getElementById('custom-clerk-link')) {
+                        const firstButton = popover.querySelector('button');
+
+                        if (firstButton && firstButton.parentNode) {
+                            const linkText = isAdmin ? 'Espace admin' : 'Espace client';
+                            const linkHref = isAdmin ? 'admin.html' : 'client.html';
+
+                            const customBtn = firstButton.cloneNode(true);
+                            customBtn.id = 'custom-clerk-link';
+
+                            const oldSvg = customBtn.querySelector('svg');
+                            if (oldSvg) {
+                                const svgClass = oldSvg.getAttribute('class') || '';
+                                oldSvg.outerHTML = `<svg class="${svgClass}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`;
+                            }
+
+                            const walkAndReplaceText = (node) => {
+                                if (node.nodeType === Node.TEXT_NODE) {
+                                    if (node.textContent.trim() !== '') {
+                                        node.textContent = linkText;
+                                    }
+                                } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName !== 'SVG') {
+                                    for (let i = 0; i < node.childNodes.length; i++) {
+                                        walkAndReplaceText(node.childNodes[i]);
+                                    }
+                                }
+                            };
+                            walkAndReplaceText(customBtn);
+
+                            customBtn.onclick = (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                window.location.href = new URL(linkHref, window.location.href).href;
+                            };
+
+                            customBtn.style.backgroundColor = 'transparent';
+                            customBtn.addEventListener('mouseenter', () => customBtn.style.backgroundColor = '#F3F4F6');
+                            customBtn.addEventListener('mouseleave', () => customBtn.style.backgroundColor = 'transparent');
+
+                            firstButton.parentNode.insertBefore(customBtn, firstButton);
+                        }
+                    }
+                });
+
+                observer.observe(document.body, { childList: true, subtree: true });
+                // =========================================================
 
             } else {
                 // --- UTILISATEUR DÉCONNECTÉ ---
@@ -792,7 +767,7 @@ const clerkInterval = setInterval(async () => {
                             });
                             if (result.status === 'complete') {
                                 await window.Clerk.setActive({ session: result.createdSessionId });
-                                window.location.href = 'index.html';
+                                window.location.href = new URL('index.html', window.location.href).href;
                             } else {
                                 errorDiv.textContent = "Une vérification supplémentaire est requise (2FA).";
                             }
@@ -889,7 +864,7 @@ const clerkInterval = setInterval(async () => {
                                 });
                                 if (result.status === 'complete') {
                                     await window.Clerk.setActive({ session: result.createdSessionId });
-                                    window.location.href = 'index.html';
+                                    window.location.href = new URL('index.html', window.location.href).href;
                                 }
                             } catch (err) {
                                 let errMsg = err.errors?.[0]?.longMessage || "Erreur de réinitialisation.";
@@ -915,8 +890,8 @@ const clerkInterval = setInterval(async () => {
                             try {
                                 await window.Clerk.client.signIn.authenticateWithRedirect({
                                     strategy: "oauth_google",
-                                    redirectUrl: window.location.origin + "/sso-callback.html",
-                                    redirectUrlComplete: window.location.origin + "/index.html",
+                                    redirectUrl: new URL('sso-callback.html', window.location.href).href,
+                                    redirectUrlComplete: new URL('index.html', window.location.href).href,
                                 });
                             } catch (err) {
                                 errorDiv.textContent = "Erreur de connexion avec Google.";
@@ -942,8 +917,8 @@ const clerkInterval = setInterval(async () => {
                             try {
                                 await window.Clerk.client.signIn.authenticateWithRedirect({
                                     strategy: "oauth_google",
-                                    redirectUrl: window.location.origin + "/sso-callback.html",
-                                    redirectUrlComplete: window.location.origin + "/index.html",
+                                    redirectUrl: new URL('sso-callback.html', window.location.href).href,
+                                    redirectUrlComplete: new URL('index.html', window.location.href).href,
                                 });
                             } catch (err) {
                                 errorDivReg.textContent = "Erreur de connexion avec Google.";
@@ -1044,7 +1019,7 @@ const clerkInterval = setInterval(async () => {
 
                                 if (completeSignUp.status === 'complete') {
                                     await window.Clerk.setActive({ session: completeSignUp.createdSessionId });
-                                    window.location.href = 'index.html';
+                                    window.location.href = new URL('index.html', window.location.href).href;
                                 } else {
                                     errorDivReg.textContent = "Vérification incomplète, veuillez réessayer.";
                                 }

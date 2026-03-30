@@ -1,20 +1,6 @@
 /* ======
-   INDEX.CSS - Landing Page Style
+   VENDRE.CSS - Page de mise en vente
 ====== */
-
-#user-button-desktop,
-#user-button-mobile {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 45px;
-    /* Aligné sur la hauteur de tes boutons */
-}
-
-/* Sur mobile, on veut que le bouton reste discret mais cliquable */
-#auth-container-mobile {
-    padding: 10px 0;
-}
 
 .hero-fullscreen {
     position: relative;
@@ -24,7 +10,7 @@
     justify-content: center;
     padding: 10px 20px;
     box-sizing: border-box;
-    background-image: url('/images/index.webp');
+    background-image: url('/public/images/vendre.webp');
     background-size: cover;
     background-position: center;
 }
@@ -35,11 +21,12 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(26, 43, 94, 0.85) 0%, rgba(26, 43, 94, 0.6) 100%);
-    backdrop-filter: blur(2px);
+    background: linear-gradient(135deg, rgba(26, 43, 94, 0.90) 0%, rgba(46, 63, 132, 0.7) 100%);
+    backdrop-filter: blur(3px);
     z-index: 1;
 }
 
+/* --- LOGIQUE DE CENTRAGE ET D'EXPANSION --- */
 .hero-split-container {
     position: relative;
     z-index: 2;
@@ -48,12 +35,40 @@
     align-items: center;
     justify-content: space-between;
     gap: 4rem;
+    transition: all 0.4s ease;
 }
 
 .hero-text-content {
     width: 50%;
     color: #FFFFFF;
+    transition: opacity 0.3s ease;
 }
+
+/* Classes ajoutées en JS à l'étape 2 */
+.hero-split-container.centered-mode {
+    justify-content: center;
+}
+
+.hero-split-container.centered-mode .hero-text-content {
+    display: none;
+}
+
+.hero-split-container.centered-mode .hero-form-container {
+    width: 100%;
+    justify-content: center;
+}
+
+.estimation-card-wrapper {
+    width: 100%;
+    max-width: 500px;
+    transition: max-width 0.4s ease;
+}
+
+.estimation-card-wrapper.expanded {
+    max-width: 800px;
+}
+
+/* ------------------------------------------- */
 
 .hero-title-main {
     font-size: 42px;
@@ -66,9 +81,9 @@
     font-size: 16px;
     color: rgba(255, 255, 255, 0.9);
     margin-bottom: 25px;
+    line-height: 1.5;
 }
 
-/* Classes pour modifier le texte sur mobile sans JavaScript */
 .mobile-subtitle {
     display: none;
 }
@@ -114,31 +129,6 @@
     justify-content: flex-end;
 }
 
-/* --- LE MODE CENTRÉ SANS BUG DE SCROLL --- */
-.hero-split-container.centered-mode {
-    justify-content: center;
-}
-
-.hero-split-container.centered-mode .hero-text-content {
-    display: none;
-}
-
-.hero-split-container.centered-mode .hero-form-container {
-    width: 100%;
-    justify-content: center;
-}
-
-/* --- LE FORMULAIRE --- */
-.estimation-card-wrapper {
-    width: 100%;
-    max-width: 500px;
-    transition: max-width 0.4s ease;
-}
-
-.estimation-card-wrapper.expanded {
-    max-width: 800px;
-}
-
 .estimation-card {
     background: #FFFFFF;
     border-radius: 20px;
@@ -157,57 +147,25 @@
     font-weight: 500;
 }
 
-/* Autocomplétion */
-.autocomplete-wrapper {
-    position: relative;
-}
-
-.autocomplete-suggestions {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    list-style: none;
-    margin-top: 5px;
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 100;
-    padding: 0;
-}
-
-.autocomplete-suggestions li {
-    padding: 10px 16px;
-    cursor: pointer;
-    border-bottom: 1px solid #F3F4F6;
-    font-size: 13px;
-    transition: background 0.2s;
-}
-
-.autocomplete-suggestions li:hover {
-    background: #F3F4F6;
-    color: var(--primary-blue);
-}
-
-/* Grilles compactes */
 .grid-3-cols {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
+    margin-bottom: 15px;
 }
 
 .grid-2-cols {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
+    margin-bottom: 15px;
 }
 
 .checkbox-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
+    margin-bottom: 15px;
 }
 
 .checkbox-modern {
@@ -279,10 +237,10 @@
     margin-bottom: 20px;
 }
 
-/* Correction du bug des icônes volantes */
 .input-wrapper {
     position: relative;
     width: 100%;
+    margin-bottom: 15px;
 }
 
 .input-wrapper label {
@@ -294,87 +252,190 @@
 }
 
 .input-wrapper input,
-.input-wrapper select {
+.input-wrapper select,
+.input-wrapper textarea {
     width: 100%;
-    height: 44px;
-    padding: 0 12px;
-    border: 1px solid #E5E7EB;
-    border-radius: 10px;
+    height: 56px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
     font-size: 14px;
-    background-color: #F9FAFB;
+    background-color: #fff;
     transition: all 0.3s ease;
+    font-family: inherit;
+    color: var(--text-blue, #2E3F84);
 }
 
-.input-wrapper .input-icon {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #9CA3AF;
+.input-wrapper textarea {
+    height: auto;
+    min-height: 100px;
+    padding: 16px 20px;
+    resize: vertical;
 }
 
-.input-wrapper .input-icon+input {
-    padding-left: 40px;
-}
-
-.input-wrapper input:focus,
-.input-wrapper select:focus {
-    outline: none;
-    border-color: var(--primary-blue);
-    background-color: #FFFFFF;
-}
-
-.property-types {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-.property-types.view-types {
-    grid-template-columns: 1fr 1fr 1fr;
-}
-
-.property-type-card {
-    position: relative;
+.input-wrapper input[type="file"] {
+    padding: 9px 12px;
+    background: #fff;
     cursor: pointer;
 }
 
-.property-type-card input {
-    position: absolute;
-    opacity: 0;
+.input-wrapper input:focus,
+.input-wrapper select:focus,
+.input-wrapper textarea:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 4px 15px rgba(108, 131, 217, 0.15);
 }
 
-.property-type-card .card-content {
+/* ======
+   MASQUER LES FLÈCHES DES CHAMPS NUMBER
+====== */
+.input-wrapper input[type="number"]::-webkit-inner-spin-button,
+.input-wrapper input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.input-wrapper input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+    /* Pour Firefox */
+}
+
+/* Modificaton visuelle des Selects */
+.estimation-form select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236C83D9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 20px center;
+    background-size: 16px;
+    cursor: pointer;
+}
+
+/* Autocomplétion */
+.autocomplete-wrapper {
+    position: relative;
+}
+
+.autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: #fff;
+    border: 1px solid var(--card-border, #E3E8F5);
+    border-radius: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+    display: none;
+    text-align: left;
+}
+
+.autocomplete-suggestions:not(:empty) {
+    display: block;
+}
+
+.autocomplete-suggestions li {
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+    color: var(--text-blue, #2E3F84);
+}
+
+.autocomplete-suggestions li:hover {
+    background: rgba(108, 131, 217, 0.1);
+}
+
+.autocomplete-suggestions li span {
+    color: var(--text-gray, #6B7280);
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+/* Bouton d'upload et previews */
+.custom-file-upload {
+    border: 2px dashed var(--primary-blue, #6C83D9);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    background: rgba(108, 131, 217, 0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 15px;
-    border: 1px solid #E5E7EB;
-    border-radius: 12px;
-    background: #FAFBFE;
-    transition: all 0.2s ease;
-    text-align: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-.property-type-card .card-content i {
-    font-size: 24px;
-    color: #9CA3AF;
-    margin-bottom: 8px;
+.custom-file-upload:hover,
+.custom-file-upload.dragover {
+    background: rgba(108, 131, 217, 0.15);
+    border-color: var(--title-blue, #1A202C);
 }
 
-.property-type-card .card-content span {
-    font-size: 13px;
+.custom-file-upload i {
+    font-size: 28px;
+    color: var(--primary-blue, #6C83D9);
+}
+
+.custom-file-upload span {
+    color: var(--text-blue, #2E3F84);
     font-weight: 500;
+    font-size: 14px;
 }
 
-.property-type-card input:checked+.card-content {
-    border-color: var(--primary-blue);
-    background: #EEF2FF;
-    color: var(--primary-blue);
+.image-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
 }
 
-.property-type-card input:checked+.card-content i {
-    color: var(--primary-blue);
+.image-preview-item {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.image-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-preview-item .remove-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(255, 59, 48, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.image-preview-item .remove-btn:hover {
+    transform: scale(1.1);
 }
 
 .form-navigation {
@@ -388,59 +449,11 @@
     width: 100%;
 }
 
-/* Loader & Result */
-.spinner-modern {
-    width: 40px;
-    height: 40px;
-    border: 4px solid rgba(108, 131, 217, 0.2);
-    border-top-color: var(--primary-blue);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.result-header {
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-.price-detail {
-    display: block;
-    color: var(--text-gray);
-    font-size: 14px;
-    margin-bottom: 5px;
-}
-
-.price-range {
-    font-size: 34px;
-    font-weight: 700;
-    color: var(--primary-blue);
-    line-height: 1.2;
-}
-
-/* Sécurise la protection contre le wrap (FAQ / Logo) */
-.section-header h2 {
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* ======
-   RESPONSIVE MOBILE 
-====== */
-/* Cache la version mobile des avis par défaut (sur ordinateur) */
+/* Responsive Mobile */
 .mobile-trust {
     display: none !important;
 }
 
-/* ======
-   RESPONSIVE MOBILE 
-====== */
 @media (max-width: 992px) {
     .hero-split-container {
         flex-direction: column;
@@ -458,11 +471,11 @@
         text-align: center;
     }
 
+    /* Le display none s'applique aussi en mobile en centered-mode */
     .hero-split-container.centered-mode .hero-text-content {
         display: none;
     }
 
-    /* Disparition du sous-titre long au profit du court */
     .desktop-subtitle {
         display: none !important;
     }
@@ -472,29 +485,24 @@
         margin-bottom: 10px;
     }
 
-    /* Bascule des avis : on cache ceux du haut, on affiche ceux du bas */
     .desktop-trust {
         display: none !important;
     }
 
     .mobile-trust {
         display: flex !important;
-        margin-top: 45px !important;
+        margin-top: 25px !important;
         margin-bottom: 20px !important;
         justify-content: center !important;
     }
 }
 
-/* --- CORRECTION HAUTEUR HERO SUR MOBILE --- */
 @media (max-width: 768px) {
     .hero-fullscreen {
-        /* 100% de l'écran MOINS la hauteur de ton menu mobile (environ 60px) */
         min-height: calc(100dvh - 60px) !important;
         padding: 20px 15px !important;
-        /* Marges réduites pour gagner de la place */
     }
 
-    /* Optionnel : réduire un poil le titre sur mobile pour tout faire rentrer sans scroller */
     .hero-fullscreen h1 {
         font-size: 28px !important;
         margin-bottom: 10px !important;
@@ -502,21 +510,13 @@
 }
 
 @media (max-width: 576px) {
-    .hero-title-main {
-        font-size: 28px;
-        margin-bottom: 10px;
-    }
-
-    .hero-subtitle {
-        margin-bottom: 15px;
-    }
 
     .grid-3-cols,
-    .property-types.view-types {
+    .grid-2-cols {
         grid-template-columns: 1fr;
+        gap: 0;
     }
 
-    /* Gère la réassurance sur une ligne (sans wrap) */
     .form-reassurance {
         flex-direction: row !important;
         flex-wrap: nowrap !important;
@@ -525,18 +525,5 @@
         gap: 10px !important;
         white-space: nowrap;
         font-size: 11px;
-    }
-
-    .section-header {
-        flex-wrap: wrap !important;
-    }
-
-    .section-header h2 {
-        white-space: normal !important;
-        text-align: center;
-    }
-
-    .faq-question h3 {
-        white-space: normal !important;
     }
 }
