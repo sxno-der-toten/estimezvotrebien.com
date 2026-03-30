@@ -4,7 +4,7 @@
 
 .hero-fullscreen {
     position: relative;
-    min-height: calc(100vh - 69px);
+    min-height: calc(100vh - 62px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -499,7 +499,7 @@
 
 @media (max-width: 768px) {
     .hero-fullscreen {
-        min-height: calc(100dvh - 60px) !important;
+        min-height: calc(100dvh - 47px) !important;
         padding: 20px 15px !important;
     }
 

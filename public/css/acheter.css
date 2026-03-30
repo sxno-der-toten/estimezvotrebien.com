@@ -4,7 +4,7 @@
 
 .hero-fullscreen {
     position: relative;
-    min-height: calc(100vh - 69px);
+    min-height: calc(100vh - 62px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -460,8 +460,7 @@
 
 @media (max-width: 768px) {
     .hero-fullscreen {
-        /* On retire 75px au lieu de 60px pour absorber exactement la taille de ton header et tuer le micro-scroll */
-        min-height: calc(100dvh - 50px) !important;
+        min-height: calc(100dvh - 47px) !important;
         padding: 15px 15px 10px 15px !important;
     }
 

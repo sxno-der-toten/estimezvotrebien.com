@@ -17,7 +17,6 @@
     background: #ffffff;
     width: 100%;
     max-width: 900px;
-    /* ÉLARGI HORIZONTALEMENT */
     border-radius: 16px;
     box-shadow: 0 15px 35px rgba(108, 131, 217, 0.08);
     border: 1px solid #e5e7eb;
@@ -27,12 +26,10 @@
 
 .card-body {
     padding: 25px 20px;
-    /* TASSEMENT HAUT ET BAS */
 }
 
 .form-content {
     max-width: 550px;
-    /* ÉLARGI POUR LES CHAMPS */
     margin: 0 auto;
     text-align: center;
 }
@@ -59,23 +56,18 @@
     color: #374151;
     cursor: pointer;
     transition: all 0.3s ease;
-    /* ANIMATION AJOUTÉE */
     margin-bottom: 15px;
 }
 
 .btn-google:hover {
     background: #f9fafb;
     transform: translateY(-2px);
-    /* ANIMATION AJOUTÉE */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    /* ANIMATION AJOUTÉE */
 }
 
 .btn-google:active {
     transform: translateY(1px) scale(0.98);
-    /* ANIMATION AJOUTÉE */
     box-shadow: none;
-    /* ANIMATION AJOUTÉE */
 }
 
 .btn-google img {
@@ -132,7 +124,6 @@
     font-size: 15px;
     outline: none;
     transition: all 0.3s ease;
-    /* ANIMATION FLUIDIFIÉE */
     font-family: inherit;
 }
 
@@ -140,7 +131,6 @@
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 3px rgba(108, 131, 217, 0.15);
     transform: translateY(-1px);
-    /* ANIMATION LÉGÈRE SUR FOCUS */
 }
 
 .password-hint {
@@ -168,12 +158,10 @@
     accent-color: var(--primary-blue);
     flex-shrink: 0;
     transition: transform 0.2s ease;
-    /* ANIMATION AJOUTÉE */
 }
 
 .terms-group input[type="checkbox"]:active {
     transform: scale(0.85);
-    /* ANIMATION AJOUTÉE */
 }
 
 .terms-group label {
@@ -202,30 +190,20 @@
     font-weight: 600;
     cursor: pointer;
     margin-top: 25px;
+    /* Marge pour quand le bouton est tout seul */
     transition: all 0.3s ease;
-    /* ANIMATION AJOUTÉE */
     box-shadow: 0 4px 10px rgba(108, 131, 217, 0.2);
-    /* OMBRE DE BASE */
 }
 
 .btn-submit:hover {
     background-color: #5A71C9;
     transform: translateY(-2px);
-    /* ANIMATION AJOUTÉE */
     box-shadow: 0 6px 15px rgba(108, 131, 217, 0.35);
-    /* ANIMATION AJOUTÉE */
 }
 
 .btn-submit:active {
     transform: translateY(1px) scale(0.98);
-    /* ANIMATION AJOUTÉE */
     box-shadow: 0 2px 5px rgba(108, 131, 217, 0.2);
-    /* ANIMATION AJOUTÉE */
-}
-
-.btn-row {
-    display: flex;
-    gap: 10px;
 }
 
 /* --- BOUTON SECONDAIRE ANIMÉ --- */
@@ -239,24 +217,34 @@
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 5px;
+    margin-top: 25px;
+    /* Marge pour quand le bouton est tout seul */
     transition: all 0.3s ease;
-    /* ANIMATION AJOUTÉE */
 }
 
 .btn-secondary:hover {
     background-color: #e5e7eb;
     transform: translateY(-2px);
-    /* ANIMATION AJOUTÉE */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    /* ANIMATION AJOUTÉE */
 }
 
 .btn-secondary:active {
     transform: translateY(1px) scale(0.98);
-    /* ANIMATION AJOUTÉE */
     box-shadow: none;
-    /* ANIMATION AJOUTÉE */
+}
+
+/* --- FIX DE L'ALIGNEMENT DES BOUTONS EN LIGNE --- */
+.btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+    /* La marge est gérée par le groupe */
+}
+
+.btn-row .btn-secondary,
+.btn-row .btn-submit {
+    margin-top: 0;
+    /* On annule les marges individuelles pour un alignement parfait */
 }
 
 /* --- GESTION DES ÉTAPES (Animation) --- */
@@ -267,7 +255,6 @@
 .form-step.active {
     display: block;
     animation: fadeInStep 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    /* ANIMATION AMÉLIORÉE */
 }
 
 @keyframes fadeInStep {
@@ -307,13 +294,11 @@
     font-weight: 600;
     text-decoration: none;
     transition: all 0.2s ease;
-    /* ANIMATION AJOUTÉE */
 }
 
 .card-footer a:hover {
     text-decoration: underline;
     opacity: 0.8;
-    /* ANIMATION AJOUTÉE */
 }
 
 .secured-by {

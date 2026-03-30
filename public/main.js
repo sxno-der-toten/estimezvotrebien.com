@@ -164,9 +164,12 @@ class EstimationTool {
 
         input.addEventListener('input', (e) => {
             clearTimeout(timeout);
-            const query = e.target.value;
 
-            if (query.length < 3) {
+            // On enlève les espaces vides à la fin pour éviter de lancer une requête pour rien
+            const query = e.target.value.trim();
+
+            // On demande au moins 3 caractères ET au moins une lettre (pour éviter de chercher juste "10 ")
+            if (query.length < 3 || !/[a-zA-Z]/.test(query)) {
                 if (suggestionsBox) suggestionsBox.innerHTML = '';
                 this.validateStep();
                 return;
@@ -175,6 +178,10 @@ class EstimationTool {
             timeout = setTimeout(async () => {
                 try {
                     const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`);
+
+                    // Si l'API trouve que c'est encore trop vague (Erreur 400), on ignore en silence
+                    if (response.status === 400) return;
+
                     if (!response.ok) throw new Error("Erreur réseau");
                     const data = await response.json();
 
@@ -195,6 +202,7 @@ class EstimationTool {
                         });
                     }
                 } catch (error) {
+                    // On garde le log pour les vraies erreurs (panne de serveur, etc.)
                     console.error("L'autocomplétion API a échoué:", error);
                 }
             }, 100);

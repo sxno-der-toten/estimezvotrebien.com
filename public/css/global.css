@@ -25,6 +25,29 @@
     --hero-image-height: 300px;
 }
 
+html {
+    zoom: 0.92;
+}
+
+.hero-fullscreen,
+.guides-hero-fullscreen {
+    zoom: 1.087;
+}
+
+@supports not (zoom: 1) {
+    body {
+        transform: scale(0.92);
+        transform-origin: top center;
+        width: calc(100% / 0.92);
+    }
+
+    .hero-fullscreen,
+    .guides-hero-fullscreen {
+        transform: scale(1.087);
+        transform-origin: top center;
+    }
+}
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 14px;
@@ -822,4 +845,34 @@ p {
         height: 300px !important;
         width: 100% !important;
     }
+}
+
+/* ==========================================
+   CORRECTION DÉFINITIVE CLERK (Bande blanche, Voile noir & SCROLL)
+   ========================================== */
+
+/* 1. On empêche Clerk de bloquer le scroll et de décaler la page */
+html,
+body,
+html[style],
+body[style] {
+    overflow-y: auto !important;
+    /* Rétablit le scroll vertical ! */
+    padding-right: 0 !important;
+    /* Empêche le décalage de la page */
+}
+
+/* 2. On rend le voile sombre géant (120% de l'écran) pour boucher n'importe quel trou possible */
+.cl-modalBackdrop {
+    width: 120vw !important;
+    height: 120vh !important;
+    top: -10vh !important;
+    left: -10vw !important;
+    right: auto !important;
+    bottom: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    transform: none !important;
+    position: fixed !important;
+    /* Garde le voile fixe même si on scrolle en dessous */
 }
