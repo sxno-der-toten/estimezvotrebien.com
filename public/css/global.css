@@ -536,6 +536,18 @@ p {
     display: none;
 }
 
+.desktop-only {
+    opacity: 1 !important;
+    min-width: 150px;
+    display: inline-flex !important;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+#auth-container-desktop {
+    min-width: 150px;
+}
+
 .nav-content {
     display: flex;
     align-items: center;
@@ -774,6 +786,10 @@ p {
         width: auto !important;
         display: block;
         margin: 0 auto;
+    }
+
+    .desktop-only {
+        display: none !important;
     }
 
     .nav-menu {

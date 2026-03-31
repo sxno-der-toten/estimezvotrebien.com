@@ -458,6 +458,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (parentLi) parentLi.style.display = 'none';
     });
 
+    const desktopAuthContainer = document.getElementById('auth-container-desktop');
+    if (desktopAuthContainer) {
+        desktopAuthContainer.style.opacity = '1';
+        desktopAuthContainer.style.minWidth = '150px';
+        desktopAuthContainer.innerHTML = '<a href="connexion.html" class="btn btn-primary">Connexion</a>';
+    }
+
     new EstimationTool();
 
     const hamburgerBtn = document.getElementById('hamburger-btn');
