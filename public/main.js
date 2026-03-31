@@ -441,29 +441,52 @@ class EstimationTool {
         }
 
         setTimeout(() => {
-            const paramsUrl = new URLSearchParams({
-                email: data.get('email'),
-                phone: data.get('phone'),
-                projet: isVendrePage ? 'vente' : (isAchat ? 'achat' : 'estimation')
-            });
-            window.location.href = `contact.html?${paramsUrl.toString()}#grid`;
+            if (!isVendrePage && !isAchat) {
+                // Redirection Estimation vers page Premium (pas de prix affiché)
+                const extrasArray = [
+                    (data.get('Garage') || data.get('garage')) ? 'Garage/Parking' : '',
+                    (data.get('Piscine') || data.get('piscine')) ? 'Piscine' : '',
+                    (data.get('Jardin') || data.get('jardin')) ? 'Jardin' : '',
+                    (data.get('Balcon') || data.get('balcon')) ? 'Balcon/Terrasse' : '',
+                    (data.get('Cave') || data.get('cave')) ? 'Cave' : '',
+                    (data.get('Ascenseur') || data.get('ascenseur')) ? 'Ascenseur' : ''
+                ].filter(Boolean).join(', ');
+
+                const paramsUrl = new URLSearchParams({
+                    address: address,
+                    type: type,
+                    surface: surface,
+                    rooms: data.get('rooms'),
+                    bedrooms: data.get('bedrooms'),
+                    condition: condition,
+                    dpe: data.get('dpe') || 'Non précisé',
+                    year: data.get('year') || 'Non précisée',
+                    vue: vue || 'Standard',
+                    extras: extrasArray || 'Aucun équipement spé.'
+                });
+                window.location.href = `votre-estimation.html?${paramsUrl.toString()}`;
+            } else {
+                // Pages Acheter ou Vendre
+                const paramsUrl = new URLSearchParams({
+                    email: data.get('email'),
+                    phone: data.get('phone'),
+                    projet: isVendrePage ? 'vente' : 'achat'
+                });
+                window.location.href = `contact.html?${paramsUrl.toString()}#grid`;
+            }
         }, 2500);
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // === NOUVEAUTÉ : Cacher l'Espace Admin/Client par défaut au chargement de la page ===
     document.querySelectorAll('.nav-espace-link').forEach(link => {
         const parentLi = link.closest('li');
-        if (parentLi) parentLi.style.display = 'none';
+        if (parentLi) {
+            parentLi.style.display = 'none';
+            parentLi.style.opacity = '0';
+            parentLi.style.transition = 'opacity 0.4s ease';
+        }
     });
-
-    const desktopAuthContainer = document.getElementById('auth-container-desktop');
-    if (desktopAuthContainer) {
-        desktopAuthContainer.style.opacity = '1';
-        desktopAuthContainer.style.minWidth = '150px';
-        desktopAuthContainer.innerHTML = '<a href="connexion.html" class="btn btn-primary">Connexion</a>';
-    }
 
     new EstimationTool();
 
@@ -593,8 +616,8 @@ const clerkInterval = setInterval(async () => {
                             boxShadow: '0 25px 50px -12px rgba(46, 63, 132, 0.25)'
                         },
                         cardBox: { width: '100%', height: '100%', borderRadius: '20px', boxShadow: 'none' },
-                        scrollBox: { borderRadius: '20px' },
-                        navbar: { background: '#FAFBFE', borderRight: '1px solid #E3E8F5', padding: '20px 15px' },
+                        scrollBox: { borderRadius: '0 20px 20px 0' },
+                        navbar: { background: '#FAFBFE', borderRight: '1px solid #E3E8F5', padding: '20px 15px', borderRadius: '20px 0 0 20px' },
                         navbarButton: { borderRadius: '10px', color: '#6B7280', padding: '12px 15px', marginBottom: '5px' },
                         navbarButton__active: { backgroundColor: '#EEF2FF', color: '#6C83D9', fontWeight: '600' },
                         headerTitle: { color: '#2E3F84', fontSize: '22px', fontWeight: '800' },
@@ -632,16 +655,10 @@ const clerkInterval = setInterval(async () => {
                 }
             });
 
-            const desktopAuthContainer = document.getElementById('auth-container-desktop');
-            if (desktopAuthContainer) {
-                desktopAuthContainer.style.opacity = '1';
-            }
-
             if (window.Clerk.user) {
 
                 const user = window.Clerk.user;
 
-                // On synchronise le profil avec Supabase SEULEMENT si Supabase est présent sur la page
                 if (window.supabaseClient) {
                     window.supabaseClient.from('profiles').upsert({
                         id: user.id,
@@ -652,19 +669,20 @@ const clerkInterval = setInterval(async () => {
                     }).then(({ error }) => { if (error) console.error("Erreur synchro profil:", error); });
                 }
 
-                // --- UTILISATEUR CONNECTÉ ---
                 if (window.location.pathname.includes('connexion.html') || window.location.pathname.includes('inscription.html')) {
                     window.location.href = new URL('index.html', window.location.href).href;
                     return;
                 }
 
-                // Vérification du rôle Admin
                 const isAdmin = window.Clerk.user?.publicMetadata?.role === 'admin';
 
-                // === NOUVEAUTÉ : On affiche l'Espace (car l'utilisateur est connecté) ===
+                // On affiche l'Espace (car l'utilisateur est connecté) en fondu
                 document.querySelectorAll('.nav-espace-link').forEach(link => {
                     const parentLi = link.closest('li');
-                    if (parentLi) parentLi.style.display = 'block';
+                    if (parentLi) {
+                        parentLi.style.display = 'block';
+                        setTimeout(() => parentLi.style.opacity = '1', 10);
+                    }
 
                     const roleSpan = link.querySelector('.nav-espace-role');
                     if (roleSpan) {
@@ -681,6 +699,7 @@ const clerkInterval = setInterval(async () => {
                     }
                 });
 
+                const desktopAuthContainer = document.getElementById('auth-container-desktop');
                 if (desktopAuthContainer) {
                     const userName = window.Clerk.user.fullName || window.Clerk.user.firstName || "Mon espace";
                     desktopAuthContainer.innerHTML = `
@@ -692,6 +711,9 @@ const clerkInterval = setInterval(async () => {
                     window.Clerk.mountUserButton(document.getElementById('user-button-desktop'), {
                         afterSignOutUrl: new URL('index.html', window.location.href).href
                     });
+
+                    // On affiche le bloc en fondu
+                    setTimeout(() => desktopAuthContainer.style.opacity = '1', 50);
                 }
 
                 const mobileAuth = document.getElementById('auth-container-mobile');
@@ -702,35 +724,28 @@ const clerkInterval = setInterval(async () => {
                     });
                 }
 
-                // ==> APPEL À SUPABASE SI ON EST SUR LE DASHBOARD
                 if (window.location.pathname.includes('client.html')) {
                     loadClientDashboard(window.Clerk.user.id);
                 }
 
-                // === NOUVEAU : AJOUT DE L'OPTION DANS LA MODALE CLERK (CLONE PARFAIT) ===
                 setInterval(() => {
                     const popover = document.querySelector('.cl-userButtonPopoverCard');
-                    // On vérifie si la modale est ouverte et si on n'a pas déjà ajouté notre bouton
                     if (popover && !document.getElementById('custom-clerk-link')) {
-                        // On cherche le premier bouton d'action existant (Gérer le compte)
                         const firstButton = popover.querySelector('button');
 
                         if (firstButton && firstButton.parentNode) {
                             const linkText = isAdmin ? 'Espace admin' : 'Espace client';
                             const linkHref = isAdmin ? 'admin.html' : 'client.html';
 
-                            // On clone le bouton pour récupérer 100% de son style Clerk React
                             const customBtn = firstButton.cloneNode(true);
                             customBtn.id = 'custom-clerk-link';
 
-                            // On remplace l'icône proprement
                             const oldSvg = customBtn.querySelector('svg');
                             if (oldSvg) {
                                 const svgClass = oldSvg.getAttribute('class') || '';
                                 oldSvg.outerHTML = `<svg class="${svgClass}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`;
                             }
 
-                            // Scanner et remplacer le texte sans toucher aux classes générées par Clerk
                             const walkAndReplaceText = (node) => {
                                 if (node.nodeType === Node.TEXT_NODE) {
                                     if (node.textContent.trim() !== '') {
@@ -744,32 +759,38 @@ const clerkInterval = setInterval(async () => {
                             };
                             walkAndReplaceText(customBtn);
 
-                            // On désactive les actions par défaut et on met notre redirection
                             customBtn.onclick = (e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 window.location.href = new URL(linkHref, window.location.href).href;
                             };
 
-                            // On ajoute un effet au survol (car les pseudo-classes React ne sont pas clonées)
                             customBtn.style.backgroundColor = 'transparent';
                             customBtn.addEventListener('mouseenter', () => customBtn.style.backgroundColor = '#F3F4F6');
                             customBtn.addEventListener('mouseleave', () => customBtn.style.backgroundColor = 'transparent');
 
-                            // On l'insère juste avant le bouton "Gérer le compte"
                             firstButton.parentNode.insertBefore(customBtn, firstButton);
                         }
                     }
-                }, 200); // Check régulier (invisible pour les performances)
-                // =========================================================
+                }, 200);
 
             } else {
                 // --- UTILISATEUR DÉCONNECTÉ ---
-                // === NOUVEAUTÉ : On s'assure que l'onglet Espace reste bien caché ! ===
                 document.querySelectorAll('.nav-espace-link').forEach(link => {
                     const parentLi = link.closest('li');
-                    if (parentLi) parentLi.style.display = 'none';
+                    if (parentLi) {
+                        parentLi.style.display = 'none';
+                        parentLi.style.opacity = '0';
+                    }
                 });
+
+                const desktopAuthContainer = document.getElementById('auth-container-desktop');
+                if (desktopAuthContainer) {
+                    if (!desktopAuthContainer.innerHTML.includes('Connexion')) {
+                        desktopAuthContainer.innerHTML = '<a href="connexion.html" style="background-color: #6C83D9; color: white; padding: 10px 24px; border-radius: 50px; font-weight: 600; text-decoration: none; font-size: 14px; box-shadow: 0 4px 6px rgba(108, 131, 217, 0.2); transition: all 0.3s ease;" onmouseover="this.style.backgroundColor=\'#566DBA\'; this.style.transform=\'translateY(-2px)\';" onmouseout="this.style.backgroundColor=\'#6C83D9\'; this.style.transform=\'translateY(0)\';">Connexion <i class="fas fa-user" style="margin-left: 6px; font-size: 12px;"></i></a>';
+                    }
+                    setTimeout(() => desktopAuthContainer.style.opacity = '1', 50);
+                }
 
                 const loginForm = document.getElementById('clerk-login-form');
                 if (loginForm) {
@@ -1071,9 +1092,7 @@ const clerkInterval = setInterval(async () => {
             console.error("Erreur de chargement Clerk :", error);
         }
     }
-}
-
-    , 50);
+}, 50);
 
 // ==========================================
 // GESTIONNAIRE DE COOKIES (Bandeau RGPD Fonctionnel)
