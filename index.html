@@ -5,6 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estimez la valeur de votre bien immobilier | estimez-votre-bien.com</title>
+
+    <script>
+        // Anti-FOUC : Récupération immédiate de l'état de connexion ET du rôle via localStorage 
+        // Exécuté avant même de dessiner la page pour empêcher le moindre clignotement.
+        (function () {
+            var authState = localStorage.getItem('app_auth_state');
+            var userRole = localStorage.getItem('app_user_role');
+
+            if (authState === 'logged_in') {
+                document.documentElement.classList.add('is-logged-in');
+                if (userRole === 'admin') {
+                    document.documentElement.classList.add('is-admin');
+                } else {
+                    document.documentElement.classList.add('is-client');
+                }
+            } else if (authState === 'logged_out') {
+                document.documentElement.classList.add('is-logged-out');
+            }
+        })();
+    </script>
+
     <meta name="description"
         content="Découvrez la valeur réelle de votre bien immobilier. Obtenez une estimation claire, fiable et sans surprise.">
 
@@ -24,8 +45,7 @@
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/index.css">
 
-    <script async crossorigin="anonymous"
-        data-clerk-publishable-key="pk_test_ZmxleGlibGUtd2FydGhvZy03MC5jbGVyay5hY2NvdW50cy5kZXYk"
+    <script async crossorigin="anonymous" data-clerk-publishable-key="pk_live_Y2xlcmsuZXN0aW1lei12b3RyZS1iaWVuLmNvbSQ"
         src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" type="text/javascript">
         </script>
 
@@ -55,7 +75,7 @@
         "name": "L'estimation immobilière en ligne est-elle vraiment gratuite ?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Oui, l'utilisation de notre simulateur est totalement gratuite et ne vous engage à rien. En quelques minutes, après avoir renseigné les caractéristiques de votre propriété, vous obtenez instantanément une fourchette de prix pour démarrer votre projet."
+          "text": "Oui, l'utilisation de notre simulateur est totally gratuite et ne vous engage à rien. En quelques minutes, après avoir renseigné les caractéristiques de votre propriété, vous obtenez instantanément une fourchette de prix pour démarrer votre projet."
         }
       },
       {
@@ -127,17 +147,25 @@
                         <li><a href="faq.html">FAQ</a></li>
                         <li><a href="a_propos.html">À propos</a></li>
                         <li><a href="contact.html">Contact</a></li>
-                        <li><a href="client.html">Espace client</a></li>
+                        <li class="auth-client-only"><a href="client.html">Espace client</a></li>
+                        <li class="auth-admin-only"><a href="admin.html">Espace admin</a></li>
                     </ul>
 
                     <div class="nav-cta">
                         <div id="auth-container-mobile" class="mobile-only">
-                            <a href="connexion.html" class="mobile-login-link">Connexion</a>
+                            <a href="connexion.html" class="mobile-login-link guest-only">Connexion</a>
+                            <div id="user-button-mobile" class="auth-required"></div>
                         </div>
 
                         <div id="auth-container-desktop" class="desktop-only"
-                            style="opacity: 0; transition: opacity 0.4s ease; min-width: 150px; height: 45px; display: flex; justify-content: flex-end; align-items: center;">
-                            <a href="connexion.html" class="btn btn-outline btn-login">Connexion</a>
+                            style="min-width: 150px; height: 45px; display: flex; justify-content: flex-end; align-items: center;">
+                            <a href="connexion.html" class="btn-login guest-only">Connexion <i
+                                    class="fas fa-sign-in-alt" style="margin-left: 6px;"></i></a>
+                            <div class="auth-required" style="display: flex; align-items: center; gap: 12px;">
+                                <span id="user-name-display"
+                                    style="font-size: 14px; font-weight: 600; color: #2E3F84; white-space: nowrap;"></span>
+                                <div id="user-button-desktop"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -406,7 +434,7 @@
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="faq-answer">
-                        <p>Oui, l'utilisation de notre simulateur est totalement gratuite et ne vous engage à rien. En
+                        <p>Oui, l'utilisation de notre simulateur est totally gratuite et ne vous engage à rien. En
                             quelques minutes, après avoir renseigné les caractéristiques de votre propriété, vous
                             obtenez instantanément une fourchette de prix pour démarrer votre projet.</p>
                     </div>
@@ -552,21 +580,33 @@
                 await Clerk.load();
 
                 if (Clerk.user) {
+                    // Update LocalStorage here too as a fallback, incluant le rôle
+                    const userRole = Clerk.user.publicMetadata?.role === 'admin' ? 'admin' : 'client';
+                    localStorage.setItem('app_auth_state', 'logged_in');
+                    localStorage.setItem('app_user_role', userRole);
+
+                    document.documentElement.classList.add('is-logged-in');
+                    document.documentElement.classList.remove('is-logged-out');
+
+                    if (userRole === 'admin') {
+                        document.documentElement.classList.add('is-admin');
+                        document.documentElement.classList.remove('is-client');
+                    } else {
+                        document.documentElement.classList.add('is-client');
+                        document.documentElement.classList.remove('is-admin');
+                    }
+
                     // 2. L'utilisateur est connecté : on remplace les boutons par le UserButton
                     const desktopAuth = document.getElementById('auth-container-desktop');
                     if (desktopAuth) {
-                        desktopAuth.innerHTML = '<div id="user-button-desktop"></div>';
-                        Clerk.mountUserButton(document.getElementById('user-button-desktop'), {
-                            afterSignOutUrl: '/index.html'
-                        });
+                        const btnDesktop = document.getElementById('user-button-desktop');
+                        if (btnDesktop) Clerk.mountUserButton(btnDesktop, { afterSignOutUrl: '/index.html' });
                     }
 
                     const mobileAuth = document.getElementById('auth-container-mobile');
                     if (mobileAuth) {
-                        mobileAuth.innerHTML = '<div id="user-button-mobile"></div>';
-                        Clerk.mountUserButton(document.getElementById('user-button-mobile'), {
-                            afterSignOutUrl: '/index.html'
-                        });
+                        const btnMobile = document.getElementById('user-button-mobile');
+                        if (btnMobile) Clerk.mountUserButton(btnMobile, { afterSignOutUrl: '/index.html' });
                     }
                 }
             }

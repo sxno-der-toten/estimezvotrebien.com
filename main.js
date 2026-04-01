@@ -564,6 +564,14 @@ const clerkInterval = setInterval(async () => {
 
         try {
             await window.Clerk.load({
+                appearance: {
+                    variables: {
+                        colorPrimary: '#6C83D9',
+                        colorText: '#2E3F84',
+                        borderRadius: '12px',
+                        fontFamily: "'Inter', sans-serif"
+                    }
+                },
                 localization: {
                     userButton: {
                         action__manageAccount: "Gérer le compte",
@@ -597,6 +605,24 @@ const clerkInterval = setInterval(async () => {
 
             if (window.Clerk.user) {
                 // --- UTILISATEUR CONNECTÉ ---
+                const role = (window.Clerk.user?.publicMetadata?.role || window.Clerk.user?.unsafeMetadata?.role || '').toString().toLowerCase();
+                const isAdmin = role === 'admin';
+
+                // Sauvegarde immédiate dans localStorage pour éviter le FOUC au prochain rechargement
+                localStorage.setItem('app_auth_state', 'logged_in');
+                localStorage.setItem('app_user_role', isAdmin ? 'admin' : 'client');
+
+                document.documentElement.classList.add('is-logged-in');
+                document.documentElement.classList.remove('is-logged-out');
+
+                if (isAdmin) {
+                    document.documentElement.classList.add('is-admin');
+                    document.documentElement.classList.remove('is-client');
+                } else {
+                    document.documentElement.classList.add('is-client');
+                    document.documentElement.classList.remove('is-admin');
+                }
+
                 if (window.location.pathname.includes('connexion.html') || window.location.pathname.includes('inscription.html')) {
                     window.location.href = 'index.html';
                     return;
@@ -604,28 +630,62 @@ const clerkInterval = setInterval(async () => {
 
                 if (desktopAuthContainer) {
                     const userName = window.Clerk.user.fullName || window.Clerk.user.firstName || "Mon espace";
-                    desktopAuthContainer.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 12px; justify-content: flex-end; width: 100%;">
-                            <span style="font-size: 14px; font-weight: 600; color: #2E3F84; white-space: nowrap;">${userName}</span>
-                            <div id="user-button-desktop"></div>
-                        </div>
-                    `;
-                    window.Clerk.mountUserButton(document.getElementById('user-button-desktop'));
+                    const userNameDisplay = document.getElementById('user-name-display');
+                    if (userNameDisplay) userNameDisplay.textContent = userName;
+
+                    const btnDesktop = document.getElementById('user-button-desktop');
+                    if (btnDesktop) window.Clerk.mountUserButton(btnDesktop);
                 }
 
                 const mobileAuth = document.getElementById('auth-container-mobile');
                 if (mobileAuth) {
-                    mobileAuth.innerHTML = '<div id="user-button-mobile"></div>';
-                    window.Clerk.mountUserButton(document.getElementById('user-button-mobile'));
+                    const btnMobile = document.getElementById('user-button-mobile');
+                    if (btnMobile) window.Clerk.mountUserButton(btnMobile);
                 }
 
-                // ==> APPEL À SUPABASE SI ON EST SUR LE DASHBOARD
                 if (window.location.pathname.includes('client.html')) {
                     loadClientDashboard(window.Clerk.user.id);
                 }
 
+                // --- INJECTION DU LIEN PERSONNALISÉ DANS LE POPOVER CLERK ---
+                setInterval(() => {
+                    const popover = document.querySelector('.cl-userButtonPopoverCard');
+                    if (popover && !document.getElementById('custom-clerk-link')) {
+                        const firstButton = popover.querySelector('button');
+                        if (firstButton && firstButton.parentNode) {
+                            const linkText = isAdmin ? 'Espace admin' : 'Espace client';
+                            const linkHref = isAdmin ? 'admin.html' : 'client.html';
+
+                            const customBtn = firstButton.cloneNode(true);
+                            customBtn.id = 'custom-clerk-link';
+                            customBtn.onclick = (e) => {
+                                e.preventDefault(); e.stopPropagation();
+                                window.location.href = new URL(linkHref, window.location.href).href;
+                            };
+
+                            const walkAndReplaceText = (node) => {
+                                if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
+                                    node.textContent = linkText;
+                                } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName !== 'SVG') {
+                                    for (let i = 0; i < node.childNodes.length; i++) walkAndReplaceText(node.childNodes[i]);
+                                }
+                            };
+                            walkAndReplaceText(customBtn);
+                            firstButton.parentNode.insertBefore(customBtn, firstButton);
+                        }
+                    }
+                }, 200);
+
             } else {
                 // --- UTILISATEUR DÉCONNECTÉ ---
+                localStorage.setItem('app_auth_state', 'logged_out');
+                localStorage.removeItem('app_user_role');
+
+                document.documentElement.classList.add('is-logged-out');
+                document.documentElement.classList.remove('is-logged-in');
+                document.documentElement.classList.remove('is-admin');
+                document.documentElement.classList.remove('is-client');
+
                 const loginForm = document.getElementById('clerk-login-form');
                 if (loginForm) {
                     const googleBtn = document.getElementById('btn-google');
