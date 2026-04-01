@@ -102,6 +102,35 @@ function restoreNavbarFromSavedSession() {
 restoreNavbarFromSavedSession();
 
 // ==========================================
+// 1. INITIALISATION DE SWUP (Navigation Fluide)
+// ==========================================
+// Importez Swup via CDN dans vos HTML si ce n'est pas déjà fait
+// <script src="https://unpkg.com/swup@4"></script>
+const swup = new Swup();
+
+// ==========================================
+// 2. GESTION DES RÔLES ET LOCALSTORAGE
+// ==========================================
+function updateAuthState(user) {
+    if (user) {
+        const role = user.publicMetadata?.role === 'admin' ? 'admin' : 'client';
+        localStorage.setItem('app_auth_state', 'logged_in');
+        localStorage.setItem('app_user_role', role);
+
+        // Applique les classes immédiatement pour le changement de page Swup
+        document.documentElement.classList.add('is-logged-in');
+        document.documentElement.classList.remove('is-logged-out');
+        document.documentElement.classList.toggle('is-admin', role === 'admin');
+        document.documentElement.classList.toggle('is-client', role !== 'admin');
+    } else {
+        localStorage.setItem('app_auth_state', 'logged_out');
+        localStorage.removeItem('app_user_role');
+        document.documentElement.classList.add('is-logged-out');
+        document.documentElement.classList.remove('is-logged-in', 'is-admin', 'is-client');
+    }
+}
+
+// ==========================================
 // FONCTION DE CHARGEMENT DU DASHBOARD CLIENT
 // ==========================================
 async function loadClientDashboard(userId) {
