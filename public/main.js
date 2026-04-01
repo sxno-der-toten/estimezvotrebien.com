@@ -674,7 +674,10 @@ const clerkInterval = setInterval(async () => {
                     return;
                 }
 
-                const isAdmin = window.Clerk.user?.publicMetadata?.role === 'admin';
+                const rawRole = (window.Clerk.user?.publicMetadata?.role || window.Clerk.user?.unsafeMetadata?.role || '').toString().trim().toLowerCase();
+                const isAdmin = rawRole === 'admin';
+                const roleText = isAdmin ? 'admin' : 'client';
+                const roleHref = isAdmin ? 'admin.html' : 'client.html';
 
                 // On affiche l'Espace (car l'utilisateur est connecté) en fondu
                 document.querySelectorAll('.nav-espace-link').forEach(link => {
@@ -686,16 +689,14 @@ const clerkInterval = setInterval(async () => {
 
                     const roleSpan = link.querySelector('.nav-espace-role');
                     if (roleSpan) {
-                        if (isAdmin) {
-                            link.setAttribute('href', 'admin.html');
-                            roleSpan.textContent = 'admin';
-                        } else {
-                            link.setAttribute('href', 'client.html');
-                            roleSpan.textContent = 'client';
-                        }
+                        link.setAttribute('href', roleHref);
+                        roleSpan.textContent = roleText;
                         setTimeout(() => {
                             roleSpan.style.opacity = '1';
                         }, 50);
+                    } else {
+                        link.textContent = `Espace ${roleText}`;
+                        link.setAttribute('href', roleHref);
                     }
                 });
 
