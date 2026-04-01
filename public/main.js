@@ -9,6 +9,76 @@ if (!window.supabaseClient && window.supabase) {
     window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 }
 
+const CLERK_SESSION_KEY = 'estimez_clerk_saved_session';
+
+function saveClerkSession(session) {
+    try {
+        localStorage.setItem(CLERK_SESSION_KEY, JSON.stringify(session));
+    } catch (error) {
+        console.warn('Impossible de sauvegarder la session Clerk :', error);
+    }
+}
+
+function getSavedClerkSession() {
+    try {
+        return JSON.parse(localStorage.getItem(CLERK_SESSION_KEY)) || null;
+    } catch {
+        return null;
+    }
+}
+
+function clearSavedClerkSession() {
+    try {
+        localStorage.removeItem(CLERK_SESSION_KEY);
+    } catch {
+        // ignore
+    }
+}
+
+function restoreNavbarFromSavedSession() {
+    const session = getSavedClerkSession();
+    if (!session) return;
+
+    const roleHref = session.isAdmin ? 'admin.html' : 'client.html';
+    const roleText = session.isAdmin ? 'admin' : 'client';
+
+    document.querySelectorAll('.nav-espace-link').forEach(link => {
+        const parentLi = link.closest('li');
+        if (parentLi) {
+            parentLi.style.display = 'block';
+            parentLi.style.opacity = '1';
+        }
+
+        const roleSpan = link.querySelector('.nav-espace-role');
+        if (roleSpan) {
+            link.setAttribute('href', roleHref);
+            roleSpan.textContent = roleText;
+            roleSpan.style.opacity = '1';
+        } else {
+            link.textContent = `Espace ${roleText}`;
+            link.setAttribute('href', roleHref);
+        }
+    });
+
+    const desktopAuthContainer = document.getElementById('auth-container-desktop');
+    if (desktopAuthContainer && session.userName) {
+        desktopAuthContainer.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 12px; justify-content: flex-end; width: 100%;">
+                <span style="font-size: 14px; font-weight: 600; color: #2E3F84; white-space: nowrap;">${session.userName}</span>
+            </div>
+        `;
+        desktopAuthContainer.style.opacity = '1';
+    }
+
+    const mobileAuth = document.getElementById('auth-container-mobile');
+    if (mobileAuth && session.userName) {
+        mobileAuth.innerHTML = `<div style="font-size: 14px; font-weight: 600; color: #2E3F84;">${session.userName}</div>`;
+        mobileAuth.style.opacity = '1';
+    }
+}
+
+restoreNavbarFromSavedSession();
+
 // ==========================================
 // FONCTION DE CHARGEMENT DU DASHBOARD CLIENT
 // ==========================================
@@ -678,6 +748,15 @@ const clerkInterval = setInterval(async () => {
                 const isAdmin = rawRole === 'admin';
                 const roleText = isAdmin ? 'admin' : 'client';
                 const roleHref = isAdmin ? 'admin.html' : 'client.html';
+                const userName = window.Clerk.user.fullName || window.Clerk.user.firstName || "Mon espace";
+
+                saveClerkSession({
+                    userId: window.Clerk.user.id,
+                    userName,
+                    isAdmin,
+                    roleText,
+                    roleHref
+                });
 
                 // On affiche l'Espace (car l'utilisateur est connecté) en fondu
                 document.querySelectorAll('.nav-espace-link').forEach(link => {
@@ -776,6 +855,8 @@ const clerkInterval = setInterval(async () => {
                 }, 200);
 
             } else {
+                clearSavedClerkSession();
+
                 // --- UTILISATEUR DÉCONNECTÉ ---
                 document.querySelectorAll('.nav-espace-link').forEach(link => {
                     const parentLi = link.closest('li');
