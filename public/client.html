@@ -5,6 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espace Client | EstimezVotreBien.com</title>
+
+    <script>
+        // Anti-FOUC : Récupération immédiate de l'état de connexion ET du rôle via localStorage 
+        // Exécuté avant même de dessiner la page pour empêcher le moindre clignotement.
+        (function () {
+            var authState = localStorage.getItem('app_auth_state');
+            var userRole = localStorage.getItem('app_user_role');
+
+            if (authState === 'logged_in') {
+                document.documentElement.classList.add('is-logged-in');
+                if (userRole === 'admin') {
+                    document.documentElement.classList.add('is-admin');
+                } else {
+                    document.documentElement.classList.add('is-client');
+                }
+            } else if (authState === 'logged_out') {
+                document.documentElement.classList.add('is-logged-out');
+            }
+        })();
+    </script>
+
     <link rel="icon" href="images/small_logo.png" type="image/png">
     <meta name="description" content="Mon Espace Client | EstimezVotreBien.com - estimez-votre-bien.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -29,7 +50,6 @@
     <meta name="twitter:image" content="https://estimez-votre-bien.com/images/logo.png">
     <meta name="twitter:site" content="@estimezvotrebien">
     <meta name="robots" content="index, follow">
-    <!-- IA SEO schema for ChatGPT, Gemini and other agents -->
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -122,27 +142,26 @@
                         <li><a href="faq.html">FAQ</a></li>
                         <li><a href="a_propos.html">À propos</a></li>
                         <li><a href="contact.html">Contact</a></li>
-                        <li>
-                            <a href="client.html" class="nav-espace-link">
-                                Espace <span class="nav-espace-role"
-                                    style="opacity: 0; transition: opacity 0.4s ease; display: inline-block; min-width: 42px; color: var(--primary-blue); font-weight: 700;"></span>
-                            </a>
-                        </li>
+                        <li class="auth-client-only"><a href="client.html"
+                                style="color: var(--primary-blue); font-weight: 700;">Espace client</a></li>
+                        <li class="auth-admin-only"><a href="admin.html">Espace admin</a></li>
                     </ul>
 
                     <div class="nav-cta">
                         <div id="auth-container-mobile" class="mobile-only">
-                            <a href="connexion.html"
-                                style="display: block; background-color: #6C83D9; color: white; text-align: center; padding: 12px; border-radius: 10px; font-weight: 600; text-decoration: none; margin-top: 10px;">Connexion</a>
+                            <a href="connexion.html" class="mobile-login-link guest-only">Connexion</a>
+                            <div id="user-button-mobile" class="auth-required"></div>
                         </div>
 
                         <div id="auth-container-desktop" class="desktop-only"
-                            style="opacity: 0; transition: opacity 0.4s ease; display: flex; justify-content: flex-end; align-items: center; margin-left: 15px;">
-                            <a href="connexion.html"
-                                style="background-color: #6C83D9; color: white; padding: 10px 24px; border-radius: 50px; font-weight: 600; text-decoration: none; font-size: 14px; box-shadow: 0 4px 6px rgba(108, 131, 217, 0.2); transition: all 0.3s ease;"
-                                onmouseover="this.style.backgroundColor='#566DBA'; this.style.transform='translateY(-2px)';"
-                                onmouseout="this.style.backgroundColor='#6C83D9'; this.style.transform='translateY(0)';">Connexion
-                                <i class="fas fa-user" style="margin-left: 6px; font-size: 12px;"></i></a>
+                            style="min-width: 150px; height: 45px; display: flex; justify-content: flex-end; align-items: center;">
+                            <a href="connexion.html" class="btn-login guest-only">Connexion <i
+                                    class="fas fa-sign-in-alt" style="margin-left: 6px;"></i></a>
+                            <div class="auth-required" style="display: flex; align-items: center; gap: 12px;">
+                                <span id="user-name-display"
+                                    style="font-size: 14px; font-weight: 600; color: #2E3F84; white-space: nowrap;"></span>
+                                <div id="user-button-desktop"></div>
+                            </div>
                         </div>
                     </div>
 
