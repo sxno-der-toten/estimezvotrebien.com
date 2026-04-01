@@ -35,6 +35,28 @@ function clearSavedClerkSession() {
     }
 }
 
+function getClerkRole(user) {
+    const rawRole = user?.publicMetadata?.role ?? user?.unsafeMetadata?.role ?? '';
+    if (Array.isArray(rawRole)) {
+        return rawRole
+            .map(item => String(item || '').trim().toLowerCase())
+            .filter(Boolean)
+            .join(' ');
+    }
+    if (rawRole && typeof rawRole === 'object') {
+        return Object.values(rawRole)
+            .map(item => String(item || '').trim().toLowerCase())
+            .filter(Boolean)
+            .join(' ');
+    }
+    return String(rawRole || '').trim().toLowerCase();
+}
+
+function isClerkAdmin(user) {
+    const role = getClerkRole(user);
+    return role.includes('admin');
+}
+
 function restoreNavbarFromSavedSession() {
     const session = getSavedClerkSession();
     if (!session) return;
@@ -726,7 +748,20 @@ const clerkInterval = setInterval(async () => {
             });
 
             if (window.Clerk.user) {
-
+                const styleId = 'fix-clerk-userpopover-position';
+                if (!document.getElementById(styleId)) {
+                    const styleElem = document.createElement('style');
+                    styleElem.id = styleId;
+                    styleElem.textContent = `
+                            .cl-userButtonPopoverCard,
+                            .cl-userButtonPopover {
+                                left: auto !important;
+                                right: 16px !important;
+                                transform: translateX(0) !important;
+                            }
+                        `;
+                    document.head.appendChild(styleElem);
+                }
                 const user = window.Clerk.user;
 
                 if (window.supabaseClient) {
@@ -744,8 +779,7 @@ const clerkInterval = setInterval(async () => {
                     return;
                 }
 
-                const rawRole = (window.Clerk.user?.publicMetadata?.role || window.Clerk.user?.unsafeMetadata?.role || '').toString().trim().toLowerCase();
-                const isAdmin = rawRole === 'admin';
+                const isAdmin = isClerkAdmin(window.Clerk.user);
                 const roleText = isAdmin ? 'admin' : 'client';
                 const roleHref = isAdmin ? 'admin.html' : 'client.html';
                 const userName = window.Clerk.user.fullName || window.Clerk.user.firstName || "Mon espace";
