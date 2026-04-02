@@ -1076,14 +1076,20 @@ const clerkInterval = setInterval(async () => {
                         fontFamily: "'Inter', sans-serif"
                     },
                     elements: {
-                        // Forçage de l'avatar exactement à la même taille que le bouton gris pour un fade-in parfait (26x26)
                         userButtonAvatarBox: { width: '25.76px', height: '25.76px' },
+
+                        /* MODIFICATIONS ICI */
+                        userButtonPopoverCard: {
+                            left: 'auto !important',
+                            right: '0 !important',
+                            transform: 'translateX(0) !important'
+                        },
 
                         modalContent: {
                             maxWidth: '850px',
                             width: '90%',
-                            height: '70vh',
-                            minHeight: '500px',
+                            height: 'auto',  /* MODIFICATION ICI */
+                            minHeight: '400px', /* MODIFICATION ICI */
                             maxHeight: '90vh',
                             margin: '0 auto',
                             borderRadius: '20px',
@@ -1130,18 +1136,20 @@ const clerkInterval = setInterval(async () => {
             });
 
             if (window.Clerk.user) {
+                /* MODIFICATION ICI : On utilise un style dynamique pour forcer la position droite */
                 const styleId = 'fix-clerk-userpopover-position';
                 if (!document.getElementById(styleId)) {
                     const styleElem = document.createElement('style');
                     styleElem.id = styleId;
                     styleElem.textContent = `
-                            .cl-userButtonPopoverCard,
-                            .cl-userButtonPopover {
-                                left: auto !important;
-                                right: 16px !important;
-                                transform: translateX(0) !important;
-                            }
-                        `;
+                        .cl-userButtonPopoverCard,
+                        .cl-userButtonPopover {
+                            left: auto !important;
+                            right: 0 !important;
+                            transform: translateX(0) !important;
+                            margin-top: 5px !important;
+                        }
+                    `;
                     document.head.appendChild(styleElem);
                 }
                 const user = window.Clerk.user;
@@ -1178,7 +1186,6 @@ const clerkInterval = setInterval(async () => {
                     link.setAttribute('href', isAdmin ? 'admin.html' : 'client.html');
                 });
 
-                // Montage de l'avatar (qui remplacera l'icône grise en fade in)
                 const desktopBtn = document.getElementById('user-button-desktop');
                 if (desktopBtn && !desktopBtn.hasChildNodes()) {
                     window.Clerk.mountUserButton(desktopBtn, { afterSignOutUrl: new URL('index.html', window.location.href).href });
@@ -1192,53 +1199,6 @@ const clerkInterval = setInterval(async () => {
                 if (window.location.pathname.includes('client.html')) {
                     loadClientDashboard(window.Clerk.user.id);
                 }
-
-                // Customisation de la modale Clerk (Option Espace Client/Admin dans le menu Clerk)
-                setInterval(() => {
-                    const popover = document.querySelector('.cl-userButtonPopoverCard');
-                    if (popover && !document.getElementById('custom-clerk-link')) {
-                        const firstButton = popover.querySelector('button');
-
-                        if (firstButton && firstButton.parentNode) {
-                            const linkText = isAdmin ? 'Espace admin' : 'Espace client';
-                            const linkHref = isAdmin ? 'admin.html' : 'client.html';
-
-                            const customBtn = firstButton.cloneNode(true);
-                            customBtn.id = 'custom-clerk-link';
-
-                            const oldSvg = customBtn.querySelector('svg');
-                            if (oldSvg) {
-                                const svgClass = oldSvg.getAttribute('class') || '';
-                                oldSvg.outerHTML = `<svg class="${svgClass}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`;
-                            }
-
-                            const walkAndReplaceText = (node) => {
-                                if (node.nodeType === Node.TEXT_NODE) {
-                                    if (node.textContent.trim() !== '') {
-                                        node.textContent = linkText;
-                                    }
-                                } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName !== 'SVG') {
-                                    for (let i = 0; i < node.childNodes.length; i++) {
-                                        walkAndReplaceText(node.childNodes[i]);
-                                    }
-                                }
-                            };
-                            walkAndReplaceText(customBtn);
-
-                            customBtn.onclick = (e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                window.location.href = new URL(linkHref, window.location.href).href;
-                            };
-
-                            customBtn.style.backgroundColor = 'transparent';
-                            customBtn.addEventListener('mouseenter', () => customBtn.style.backgroundColor = '#F3F4F6');
-                            customBtn.addEventListener('mouseleave', () => customBtn.style.backgroundColor = 'transparent');
-
-                            firstButton.parentNode.insertBefore(customBtn, firstButton);
-                        }
-                    }
-                }, 200);
 
             } else {
                 // --- UTILISATEUR DÉCONNECTÉ ---

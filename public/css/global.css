@@ -186,8 +186,10 @@ p {
     inset: 0 auto auto 0;
 }
 
+/* MODIFICATION ICI */
 .header .container {
     max-width: var(--container-width);
+    margin: 0 auto;
     padding: 0 20px;
 }
 
@@ -436,6 +438,14 @@ p {
 }
 
 @media (max-width: 992px) {
+    .mobile-only {
+        display: flex !important;
+    }
+
+    .desktop-only {
+        display: none !important;
+    }
+
     .nav-brand .logo {
         font-size: 18px !important;
     }
@@ -517,18 +527,13 @@ p {
         text-decoration: none;
     }
 
-    .nav-content {
+    .nav-content .nav-cta {
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
         gap: 1.2rem;
         width: 100%;
         margin-bottom: 2rem;
-    }
-
-    .nav-content .nav-cta {
-        align-items: center;
-        width: 100%;
     }
 
     .mobile-login-link {
@@ -915,12 +920,10 @@ html.is-logged-in .auth-required {
     background-color: #E5E7EB;
 }
 
-/* On cache l'icône grise si on est loggué */
 html.is-logged-in .guest-element {
     display: none !important;
 }
 
-/* On cache le conteneur de l'avatar si on n'est pas loggué */
 html.is-logged-out .auth-wrapper {
     display: none !important;
 }
