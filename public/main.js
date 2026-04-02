@@ -1091,10 +1091,15 @@ const clerkInterval = setInterval(async () => {
                             height: 'auto',
                             minHeight: '400px',
                             maxHeight: '90vh',
-                            margin: '10vh auto auto auto', /* MODIFICATION ICI */
+                            position: 'fixed',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            margin: '0',
                             borderRadius: '20px',
                             boxShadow: '0 25px 50px -12px rgba(46, 63, 132, 0.25)'
                         },
+
                         cardBox: { width: '100%', height: '100%', borderRadius: '20px', boxShadow: 'none' },
                         scrollBox: { borderRadius: '0 20px 20px 0' },
                         navbar: { background: '#FAFBFE', borderRight: '1px solid #E3E8F5', padding: '20px 15px', borderRadius: '20px 0 0 20px' },
@@ -1145,13 +1150,14 @@ const clerkInterval = setInterval(async () => {
                         .cl-userButtonPopoverCard,
                         .cl-userButtonPopover {
                             left: auto !important;
-                            right: 30px !important;
+                            right: 0 !important;
                             transform: translateX(0) !important;
                             margin-top: 5px !important;
                         }
                     `;
                     document.head.appendChild(styleElem);
                 }
+
                 const user = window.Clerk.user;
 
                 if (window.supabaseClient) {
