@@ -1081,17 +1081,17 @@ const clerkInterval = setInterval(async () => {
                         /* MODIFICATIONS ICI */
                         userButtonPopoverCard: {
                             left: 'auto !important',
-                            right: '0 !important',
+                            right: '30px !important', /* MODIFICATION ICI */
                             transform: 'translateX(0) !important'
                         },
 
                         modalContent: {
                             maxWidth: '850px',
                             width: '90%',
-                            height: 'auto',  /* MODIFICATION ICI */
-                            minHeight: '400px', /* MODIFICATION ICI */
+                            height: 'auto',
+                            minHeight: '400px',
                             maxHeight: '90vh',
-                            margin: '0 auto',
+                            margin: '10vh auto auto auto', /* MODIFICATION ICI */
                             borderRadius: '20px',
                             boxShadow: '0 25px 50px -12px rgba(46, 63, 132, 0.25)'
                         },
@@ -1136,7 +1136,7 @@ const clerkInterval = setInterval(async () => {
             });
 
             if (window.Clerk.user) {
-                /* MODIFICATION ICI : On utilise un style dynamique pour forcer la position droite */
+                /* MODIFICATION ICI */
                 const styleId = 'fix-clerk-userpopover-position';
                 if (!document.getElementById(styleId)) {
                     const styleElem = document.createElement('style');
@@ -1145,7 +1145,7 @@ const clerkInterval = setInterval(async () => {
                         .cl-userButtonPopoverCard,
                         .cl-userButtonPopover {
                             left: auto !important;
-                            right: 0 !important;
+                            right: 30px !important;
                             transform: translateX(0) !important;
                             margin-top: 5px !important;
                         }

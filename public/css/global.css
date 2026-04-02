@@ -416,13 +416,8 @@ p {
 
 .desktop-only {
     opacity: 1 !important;
-    min-width: 150px;
     justify-content: flex-end;
     align-items: center;
-}
-
-#auth-container-desktop {
-    min-width: 150px;
 }
 
 .nav-content {
