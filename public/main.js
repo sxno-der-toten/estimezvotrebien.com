@@ -1209,7 +1209,7 @@ const clerkInterval = setInterval(async () => {
                 document.documentElement.classList.remove('is-logged-in');
 
                 document.querySelectorAll('.nav-espace-link').forEach(link => {
-                    link.textContent = 'Espace';
+                    link.textContent = 'Mon espace';
                     link.classList.add('espace-disabled');
                     link.classList.remove('espace-active');
                     link.setAttribute('href', 'connexion.html');
