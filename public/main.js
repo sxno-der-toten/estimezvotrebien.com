@@ -1138,8 +1138,8 @@ const clerkInterval = setInterval(async () => {
                             .cl-userButtonPopoverCard,
                             .cl-userButtonPopover {
                                 left: auto !important;
-                                right: 22px !important;
-                                transform: translateX(-8px) !important;
+                                right: 16px !important;
+                                transform: translateX(0) !important;
                             }
                         `;
                     document.head.appendChild(styleElem);
@@ -1193,14 +1193,14 @@ const clerkInterval = setInterval(async () => {
                     loadClientDashboard(window.Clerk.user.id);
                 }
 
-                // Customisation de la modale Clerk (Option Mon espace Client/Admin dans le menu Clerk)
+                // Customisation de la modale Clerk (Option Espace Client/Admin dans le menu Clerk)
                 setInterval(() => {
                     const popover = document.querySelector('.cl-userButtonPopoverCard');
                     if (popover && !document.getElementById('custom-clerk-link')) {
                         const firstButton = popover.querySelector('button');
 
                         if (firstButton && firstButton.parentNode) {
-                            const linkText = isAdmin ? 'Mon espace admin' : 'Mon espace client';
+                            const linkText = isAdmin ? 'Espace admin' : 'Espace client';
                             const linkHref = isAdmin ? 'admin.html' : 'client.html';
 
                             const customBtn = firstButton.cloneNode(true);
@@ -1249,7 +1249,7 @@ const clerkInterval = setInterval(async () => {
                 document.documentElement.classList.remove('is-logged-in');
 
                 document.querySelectorAll('.nav-espace-link').forEach(link => {
-                    link.textContent = 'Mon espace';
+                    link.textContent = 'Espace';
                     link.classList.add('espace-disabled');
                     link.classList.remove('espace-active');
                     link.setAttribute('href', 'connexion.html');

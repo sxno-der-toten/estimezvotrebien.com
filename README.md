@@ -63,14 +63,14 @@ Le projet utilise des technologies légères et performantes :
 ├── acheter.html                        # Portail de recherche pour les acheteurs
 ├── comment-estimer-ma-maison.html      # Guide spécifique : Estimation maison
 ├── comment-estimer-son-appartement.html # Guide spécifique : Estimation appartement
-├── connexion.html                      # Mon espace client : Connexion
+├── connexion.html                      # Espace client : Connexion
 ├── contact.html                        # Formulaire de contact et carte de l'agence
 ├── enlignevspro.html                   # Comparatif : Estimation en ligne vs Expert
 ├── erreurs-estimation.html             # Guide spécifique : 5 erreurs fatales
 ├── faq.html                            # Foire Aux Questions dynamique
 ├── guides.html                         # Portail central des ressources immobilières
 ├── index.html                          # Landing page principale (Simulateur Vendeur)
-├── inscription.html                    # Mon espace client : Création de compte
+├── inscription.html                    # Espace client : Création de compte
 ├── mentions.html                       # Informations juridiques
 ├── politique.html                      # Protection des données personnelles
 ├── README.md                           # Documentation du projet

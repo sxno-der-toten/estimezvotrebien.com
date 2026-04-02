@@ -41,7 +41,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    /* Mon espace uniforme entre les sections */
+    /* Espace uniforme entre les sections */
     overflow: hidden;
     /* Sécurité anti-débordement */
 }

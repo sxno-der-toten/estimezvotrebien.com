@@ -427,12 +427,6 @@ p {
     display: flex;
     align-items: center;
     gap: 2rem;
-    flex: 1;
-    justify-content: flex-end;
-}
-
-.nav-menu {
-    margin-right: auto;
 }
 
 .nav-cta {
@@ -814,10 +808,7 @@ html.is-logged-in .auth-required {
    12. OVERRIDES CLERK (Modale & Popover)
    ========================================== */
 .cl-modalContent {
-    left: 50% !important;
-    right: auto !important;
-    top: 8% !important;
-    transform: translateX(-50%) !important;
+    transform: none !important;
 }
 
 .cl-modalContent .cl-cardBox {
@@ -840,8 +831,6 @@ html.is-logged-in .auth-required {
     border: 1px solid var(--card-border) !important;
     border-radius: 16px !important;
     box-shadow: 0 10px 30px rgba(108, 131, 217, 0.15) !important;
-    right: 22px !important;
-    transform: translateX(-8px) !important;
 }
 
 .cl-userPreviewTextContainer,

@@ -430,12 +430,6 @@ p {
     display: flex;
     align-items: center;
     gap: 2rem;
-    flex: 1;
-    justify-content: flex-end;
-}
-
-.nav-menu {
-    margin-right: auto;
 }
 
 .nav-cta {
@@ -759,7 +753,7 @@ p {
    11. ANTI-FOUC & NOUVEAU BOUTON CONNEXION
 ====== */
 
-/* --- ANTI-FOUC (Gestion de l'affichage Connexion / Mon espace Client / Mon espace Admin) --- */
+/* --- ANTI-FOUC (Gestion de l'affichage Connexion / Espace Client / Espace Admin) --- */
 html.is-logged-out .auth-required,
 html.is-logged-out .auth-client-only,
 html.is-logged-out .auth-admin-only {
@@ -840,10 +834,7 @@ body.menu-open {
 /* --- 1. Modale de Profil (Taille corrigée) --- */
 /* On annule le scale destructeur */
 .cl-modalContent {
-    left: 50% !important;
-    right: auto !important;
-    top: 8% !important;
-    transform: translateX(-50%) !important;
+    transform: none !important;
 }
 
 /* Dimensions respectueuses de la grille 2 colonnes, mais bridées en hauteur */
@@ -874,8 +865,6 @@ body.menu-open {
     border: 1px solid var(--card-border) !important;
     border-radius: 16px !important;
     box-shadow: 0 10px 30px rgba(108, 131, 217, 0.15) !important;
-    right: 22px !important;
-    transform: translateX(-8px) !important;
 }
 
 .cl-userPreviewTextContainer,
