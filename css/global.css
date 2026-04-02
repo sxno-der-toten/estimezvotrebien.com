@@ -186,6 +186,7 @@ p {
     inset: 0 auto auto 0;
 }
 
+/* ✨ NOUVEAU : On centre le container du header pour aligner la navbar avec le contenu */
 .header .container {
     max-width: var(--container-width);
     padding: 0 20px;
@@ -209,6 +210,7 @@ p {
     display: flex;
     list-style: none;
     gap: 1.8rem;
+    /* Légèrement réduit (était 2rem) pour équilibrer avec la nouvelle largeur */
 }
 
 .nav-menu a {
@@ -249,6 +251,7 @@ p {
     transition: background-color 0.3s ease;
 }
 
+/* MODIFICATION ICI : L'effet hover s'applique UNIQUEMENT si l'élément n'est PAS actif */
 .faq-item:not(.active) .faq-question:hover {
     background-color: var(--hero-bg);
 }
@@ -436,6 +439,14 @@ p {
 }
 
 @media (max-width: 992px) {
+    .mobile-only {
+        display: flex !important;
+    }
+
+    .desktop-only {
+        display: none !important;
+    }
+
     .nav-brand .logo {
         font-size: 18px !important;
     }
@@ -517,18 +528,13 @@ p {
         text-decoration: none;
     }
 
-    .nav-content {
+    .nav-content .nav-cta {
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
         gap: 1.2rem;
         width: 100%;
         margin-bottom: 2rem;
-    }
-
-    .nav-content .nav-cta {
-        align-items: center;
-        width: 100%;
     }
 
     .mobile-login-link {
@@ -620,6 +626,7 @@ p {
     pointer-events: auto;
 }
 
+/* Empêche le header de cacher le formulaire lors d'une redirection par ancre */
 #grid {
     scroll-margin-top: 120px;
 }
@@ -639,6 +646,8 @@ p {
 ====== */
 @media (max-width: 768px) {
 
+    /* HEADER HORIZONTAL : Logo fortement réduit */
+    /* --- CORRECTION HEADER MOBILE --- */
     .nav {
         display: flex !important;
         flex-direction: row !important;
@@ -659,25 +668,26 @@ p {
     .nav-brand img,
     .nav-brand .logo-img {
         max-height: 20px !important;
+        /* Taille fortement réduite */
         width: auto !important;
         display: block;
         margin: 0 auto;
     }
 
-    .desktop-only {
-        display: none !important;
+    .mobile-only {
+        display: flex !important;
     }
 
     .nav-menu {
         display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: wrap !important;
-        justify-content: center !important;
-        gap: 8px 15px !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 1.4rem !important;
+        margin-bottom: 2rem !important;
     }
 
     .nav-menu a {
-        font-size: 14px !important;
+        font-size: 18px !important;
     }
 
     .nav-cta {
@@ -687,6 +697,7 @@ p {
         margin-top: 5px;
     }
 
+    /* Autres grilles */
     .content-grid,
     .bento-grid,
     .factors-grid,
@@ -738,41 +749,38 @@ p {
     }
 }
 
-/* ==========================================
-   11. ANTI-FOUC & SWUP (NAVIGATION FLUIDE)
-   ========================================== */
-.transition-fade {
-    transition: 0.4s;
-    opacity: 1;
-}
+/* ======
+   11. ANTI-FOUC & NOUVEAU BOUTON CONNEXION
+====== */
 
-html.is-leaving .transition-fade {
-    opacity: 0;
-}
-
-.auth-client-only,
-.auth-admin-only,
-.auth-required {
+/* --- ANTI-FOUC (Gestion de l'affichage Connexion / Espace Client / Espace Admin) --- */
+html.is-logged-out .auth-required,
+html.is-logged-out .auth-client-only,
+html.is-logged-out .auth-admin-only {
     display: none !important;
-}
-
-html.is-client .auth-client-only {
-    display: block !important;
-}
-
-html.is-admin .auth-admin-only {
-    display: block !important;
 }
 
 html.is-logged-in .guest-only {
     display: none !important;
 }
 
-html.is-logged-in .auth-required {
-    display: flex !important;
-    align-items: center !important;
+/* Gestion spécifique client / admin */
+html:not(.is-client) .auth-client-only {
+    display: none !important;
 }
 
+html:not(.is-admin) .auth-admin-only {
+    display: none !important;
+}
+
+/* Comportement par défaut si le localStorage est vide (ex: 1ère visite) : on cache les infos privées par sécurité */
+html:not(.is-logged-in):not(.is-logged-out) .auth-required,
+html:not(.is-logged-in):not(.is-logged-out) .auth-client-only,
+html:not(.is-logged-in):not(.is-logged-out) .auth-admin-only {
+    display: none !important;
+}
+
+/* --- Bouton Connexion Nouveau Design --- */
 .btn-login {
     background: linear-gradient(135deg, var(--primary-blue) 0%, #4A65D1 100%);
     color: #FFFFFF !important;
@@ -794,6 +802,7 @@ html.is-logged-in .auth-required {
     box-shadow: 0 6px 20px rgba(108, 131, 217, 0.45);
 }
 
+/* Garde le style original épuré sur mobile pour le menu hamburger (fond bleu) */
 @media (max-width: 992px) {
     .nav-cta .btn-login {
         background: #FFFFFF !important;
@@ -804,27 +813,52 @@ html.is-logged-in .auth-required {
     }
 }
 
-/* ==========================================
-   12. OVERRIDES CLERK (Modale & Popover)
-   ========================================== */
+/* ======
+   12. OVERRIDES CLERK (Scroll Page)
+====== */
+/* Empêcher Clerk de bloquer le scroll du body quand on clique sur le profil */
+html,
+body {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+body.menu-open {
+    overflow: hidden !important;
+}
+
+/* ======
+   13. OVERRIDES CLERK (Modale & Popover)
+====== */
+
+/* --- 1. Modale de Profil (Taille corrigée) --- */
+/* On annule le scale destructeur */
 .cl-modalContent {
     transform: none !important;
 }
 
+/* Dimensions respectueuses de la grille 2 colonnes, mais bridées en hauteur */
 .cl-modalContent .cl-cardBox {
     width: 880px !important;
+    /* Largeur idéale pour le mode desktop */
     max-width: 95vw !important;
+    /* Sécurité pour les petits écrans */
     max-height: 80vh !important;
+    /* Plafond strict : 80% de la hauteur de l'écran */
     min-height: 400px !important;
+    /* Annule l'énorme min-height natif */
     border-radius: 20px !important;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2) !important;
 }
 
+/* Force le scroll proprement à l'intérieur de la modale */
 .cl-scrollBox {
     overflow-y: auto !important;
     max-height: 100% !important;
 }
 
+
+/* --- 2. Personnalisation du Popover (Petit menu sous l'avatar) --- */
 .cl-userButtonPopoverCard,
 .cl-popoverBox {
     background-color: var(--white) !important;
@@ -859,68 +893,8 @@ html.is-logged-in .auth-required {
     border-bottom-color: var(--card-border) !important;
 }
 
+/* Masquer le logo "Secured by Clerk" en bas du menu pour gagner de la place */
 .cl-internal-b3al6g,
 .cl-internal-1x7qnwz {
-    display: none !important;
-}
-
-/* ==========================================
-   13. CORRECTION ALIGNEMENT AVATAR CLERK
-   ========================================== */
-
-#auth-container-desktop>div {
-    display: flex !important;
-    align-items: center !important;
-}
-
-#user-button-desktop,
-#user-button-mobile {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    height: 32px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-#user-button-desktop>div,
-#user-button-mobile>div,
-.cl-rootBox,
-.cl-userButtonTrigger {
-    display: flex !important;
-    align-items: center !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    height: 32px !important;
-}
-
-/* ==========================================
-   14. NOUVEAU : TOGGLE PLACEHOLDER / AVATAR (ZÉRO FOUC)
-   ========================================== */
-.login-circle {
-    width: 25.76px;
-    height: 25.76px;
-    border-radius: 50%;
-    background-color: #F3F4F6;
-    color: var(--primary-blue);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    text-decoration: none;
-    transition: background-color 0.2s ease;
-}
-
-.login-circle:hover {
-    background-color: #E5E7EB;
-}
-
-/* On cache l'icône grise si on est loggué */
-html.is-logged-in .guest-element {
-    display: none !important;
-}
-
-/* On cache le conteneur de l'avatar si on n'est pas loggué */
-html.is-logged-out .auth-wrapper {
     display: none !important;
 }

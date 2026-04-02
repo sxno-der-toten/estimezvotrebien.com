@@ -62,8 +62,9 @@ function restoreNavbarFromSavedSession() {
     if (!session) return;
 
     const roleHref = session.isAdmin ? 'admin.html' : 'client.html';
-    const roleText = session.isAdmin ? 'admin' : 'client';
 
+    // On s'occupe UNIQUEMENT de modifier le lien "Mon espace" et son attribut href.
+    // On ne détruit PLUS le conteneur avec un innerHTML.
     document.querySelectorAll('.nav-espace-link').forEach(link => {
         const parentLi = link.closest('li');
         if (parentLi) {
@@ -71,32 +72,9 @@ function restoreNavbarFromSavedSession() {
             parentLi.style.opacity = '1';
         }
 
-        const roleSpan = link.querySelector('.nav-espace-role');
-        if (roleSpan) {
-            link.setAttribute('href', roleHref);
-            roleSpan.textContent = roleText;
-            roleSpan.style.opacity = '1';
-        } else {
-            link.textContent = `Espace ${roleText}`;
-            link.setAttribute('href', roleHref);
-        }
+        link.textContent = 'Mon espace';
+        link.setAttribute('href', roleHref);
     });
-
-    const desktopAuthContainer = document.getElementById('auth-container-desktop');
-    if (desktopAuthContainer && session.userName) {
-        desktopAuthContainer.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 12px; justify-content: flex-end; width: 100%;">
-                <span style="font-size: 14px; font-weight: 600; color: #2E3F84; white-space: nowrap;">${session.userName}</span>
-            </div>
-        `;
-        desktopAuthContainer.style.opacity = '1';
-    }
-
-    const mobileAuth = document.getElementById('auth-container-mobile');
-    if (mobileAuth && session.userName) {
-        mobileAuth.innerHTML = `<div style="font-size: 14px; font-weight: 600; color: #2E3F84;">${session.userName}</div>`;
-        mobileAuth.style.opacity = '1';
-    }
 }
 
 restoreNavbarFromSavedSession();
@@ -692,6 +670,391 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+
+// ==========================================
+// GESTIONNAIRE DE COOKIES (Bandeau RGPD Fonctionnel)
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    const consent = localStorage.getItem('estimez_cookie_consent');
+
+    if (consent === 'all') {
+        loadOptionalScripts();
+    }
+
+    if (!consent) {
+        initCookieBanner();
+    }
+});
+
+function initCookieBanner() {
+    const banner = document.createElement('div');
+    banner.className = 'cookie-banner';
+    banner.innerHTML = `
+        <h3><i class="fas fa-cookie-bite" style="color: #F59E0B;"></i> Respect de votre vie privée</h3>
+        <p>Nous utilisons des cookies "essentiels" pour la connexion à votre espace. Nous souhaitons également utiliser des cookies optionnels pour analyser notre trafic de façon anonyme. Vous avez le choix !</p>
+        <div class="cookie-btns">
+            <button class="cookie-btn reject" id="cookie-reject">Refuser</button>
+            <button class="cookie-btn accept" id="cookie-accept">Tout accepter</button>
+        </div>
+    `;
+
+    document.body.appendChild(banner);
+
+    setTimeout(() => {
+        banner.classList.add('show');
+    }, 800);
+
+    document.getElementById('cookie-accept').addEventListener('click', () => {
+        localStorage.setItem('estimez_cookie_consent', 'all');
+        banner.classList.remove('show');
+        loadOptionalScripts();
+        setTimeout(() => banner.remove(), 500);
+    });
+
+    document.getElementById('cookie-reject').addEventListener('click', () => {
+        localStorage.setItem('estimez_cookie_consent', 'essential_only');
+        banner.classList.remove('show');
+        setTimeout(() => banner.remove(), 500);
+    });
+}
+
+function loadOptionalScripts() {
+    console.log("✅ Consentement accordé : Chargement des cookies de suivi et statistiques.");
+}
+
+
+// ==========================================
+// GESTION DES FORMULAIRES D'AUTHENTIFICATION AVANT CLERK INIT
+// ==========================================
+// On attache ces événements immédiatement au DOMContentLoaded pour garantir 
+// que les formulaires ne se soumettent pas dans le vide, même si l'API Clerk échoue.
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- CONNEXION ---
+    const loginForm = document.getElementById('clerk-login-form');
+    if (loginForm) {
+        const errorDiv = document.getElementById('error-message');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorDiv.textContent = '';
+
+            // Si Clerk n'a pas pu se charger (par exemple, erreur d'origine en localhost)
+            if (!window.Clerk || !window.Clerk.client) {
+                errorDiv.textContent = "Le service d'authentification est indisponible en environnement local sans clé de test.";
+                return;
+            }
+
+            const submitBtn = loginForm.querySelector('.btn-submit');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Connexion...';
+            submitBtn.disabled = true;
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const result = await window.Clerk.client.signIn.create({
+                    identifier: email,
+                    password: password,
+                });
+                if (result.status === 'complete') {
+                    await window.Clerk.setActive({ session: result.createdSessionId });
+                    window.location.href = new URL('index.html', window.location.href).href;
+                } else {
+                    errorDiv.textContent = "Une vérification supplémentaire est requise (2FA).";
+                }
+            } catch (err) {
+                let errMsg = err.errors && err.errors[0] ? err.errors[0].longMessage : 'Identifiants incorrects.';
+                if (errMsg.includes("couldn't find your account")) errMsg = "Cette adresse e-mail n'existe pas.";
+                if (errMsg.includes("incorrect")) errMsg = "Le mot de passe est incorrect.";
+                errorDiv.textContent = errMsg;
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Mot de passe oublié
+        const btnForgot = document.getElementById('btn-forgot-password');
+        const step1 = document.getElementById('login-step-1');
+        const stepCode = document.getElementById('login-step-forgot-code');
+        const stepReset = document.getElementById('login-step-forgot-reset');
+        const formTitle = document.getElementById('form-title');
+
+        if (btnForgot) {
+            btnForgot.addEventListener('click', async (e) => {
+                e.preventDefault();
+                errorDiv.textContent = '';
+                const emailInput = document.getElementById('email');
+
+                if (!emailInput.value || !emailInput.checkValidity()) {
+                    errorDiv.textContent = "Veuillez d'abord saisir une adresse e-mail valide dans le champ ci-dessus.";
+                    emailInput.focus();
+                    return;
+                }
+
+                if (!window.Clerk || !window.Clerk.client) {
+                    errorDiv.textContent = "Le service est indisponible en local.";
+                    return;
+                }
+
+                const origText = btnForgot.textContent;
+                btnForgot.textContent = "Envoi...";
+
+                try {
+                    const result = await window.Clerk.client.signIn.create({
+                        identifier: emailInput.value
+                    });
+
+                    const emailFactor = result.supportedFirstFactors.find(f => f.strategy === 'reset_password_email_code');
+                    if (!emailFactor) throw new Error("Récupération impossible pour cet e-mail.");
+
+                    await window.Clerk.client.signIn.prepareFirstFactor({
+                        strategy: 'reset_password_email_code',
+                        emailAddressId: emailFactor.emailAddressId
+                    });
+
+                    step1.classList.remove('active');
+                    stepCode.classList.add('active');
+                    formTitle.textContent = "Vérifiez vos e-mails";
+
+                } catch (err) {
+                    let errMsg = err.errors?.[0]?.longMessage || "Erreur lors de l'envoi.";
+                    if (errMsg.includes("couldn't find your account")) errMsg = "Cette adresse e-mail n'existe pas.";
+                    errorDiv.textContent = errMsg;
+                } finally {
+                    btnForgot.textContent = origText;
+                }
+            });
+        }
+
+        const btnVerifyReset = document.getElementById('btn-verify-reset');
+        if (btnVerifyReset) {
+            btnVerifyReset.addEventListener('click', async () => {
+                errorDiv.textContent = '';
+                const code = document.getElementById('reset-code').value;
+                if (!code) { errorDiv.textContent = "Veuillez entrer le code de vérification."; return; }
+
+                const origText = btnVerifyReset.textContent;
+                btnVerifyReset.textContent = "Vérification...";
+                try {
+                    await window.Clerk.client.signIn.attemptFirstFactor({
+                        strategy: 'reset_password_email_code',
+                        code: code
+                    });
+                    stepCode.classList.remove('active');
+                    stepReset.classList.add('active');
+                    formTitle.textContent = "Nouveau mot de passe";
+                } catch (err) {
+                    errorDiv.textContent = "Le code est incorrect ou a expiré.";
+                } finally {
+                    btnVerifyReset.textContent = origText;
+                }
+            });
+        }
+
+        const btnSavePwd = document.getElementById('btn-save-new-password');
+        if (btnSavePwd) {
+            btnSavePwd.addEventListener('click', async () => {
+                errorDiv.textContent = '';
+                const newPwd = document.getElementById('new-password').value;
+                if (!newPwd) { errorDiv.textContent = "Veuillez entrer un mot de passe valide."; return; }
+
+                const origText = btnSavePwd.textContent;
+                btnSavePwd.textContent = "Enregistrement...";
+                try {
+                    const result = await window.Clerk.client.signIn.resetPassword({
+                        password: newPwd
+                    });
+                    if (result.status === 'complete') {
+                        await window.Clerk.setActive({ session: result.createdSessionId });
+                        window.location.href = new URL('index.html', window.location.href).href;
+                    }
+                } catch (err) {
+                    let errMsg = err.errors?.[0]?.longMessage || "Erreur de réinitialisation.";
+                    if (errMsg.includes("password")) errMsg = "Le mot de passe n'est pas assez fort (8 caractères min).";
+                    errorDiv.textContent = errMsg;
+                    btnSavePwd.textContent = origText;
+                }
+            });
+        }
+
+        const btnBackLogin = document.getElementById('btn-back-to-login');
+        if (btnBackLogin) {
+            btnBackLogin.addEventListener('click', () => {
+                errorDiv.textContent = '';
+                stepCode.classList.remove('active');
+                step1.classList.add('active');
+                formTitle.textContent = "Bon retour parmi nous !";
+            });
+        }
+
+        const googleBtn = document.getElementById('btn-google');
+        if (googleBtn) {
+            googleBtn.addEventListener('click', async () => {
+                if (!window.Clerk || !window.Clerk.client) {
+                    errorDiv.textContent = "Le service SSO est indisponible en local.";
+                    return;
+                }
+                try {
+                    await window.Clerk.client.signIn.authenticateWithRedirect({
+                        strategy: "oauth_google",
+                        redirectUrl: new URL('sso-callback.html', window.location.href).href,
+                        redirectUrlComplete: new URL('index.html', window.location.href).href,
+                    });
+                } catch (err) {
+                    errorDiv.textContent = "Erreur de connexion avec Google.";
+                }
+            });
+        }
+    }
+
+    // --- INSCRIPTION ---
+    const regForm = document.getElementById('clerk-register-form');
+    if (regForm) {
+        const step1 = document.getElementById('reg-step-1');
+        const step2 = document.getElementById('reg-step-2');
+        const step3 = document.getElementById('reg-step-3');
+
+        const btnNext = document.getElementById('btn-next');
+        const btnBack = document.getElementById('btn-back');
+        const googleBtnReg = document.getElementById('reg-btn-google');
+        const errorDivReg = document.getElementById('reg-error-message');
+        const formTitle = document.getElementById('form-title');
+
+        if (googleBtnReg) {
+            googleBtnReg.addEventListener('click', async () => {
+                if (!window.Clerk || !window.Clerk.client) {
+                    errorDivReg.textContent = "Le service SSO est indisponible en local.";
+                    return;
+                }
+                try {
+                    await window.Clerk.client.signIn.authenticateWithRedirect({
+                        strategy: "oauth_google",
+                        redirectUrl: new URL('sso-callback.html', window.location.href).href,
+                        redirectUrlComplete: new URL('index.html', window.location.href).href,
+                    });
+                } catch (err) {
+                    errorDivReg.textContent = "Erreur de connexion avec Google.";
+                }
+            });
+        }
+
+        btnNext.addEventListener('click', () => {
+            const prenom = document.getElementById('prenom');
+            const nom = document.getElementById('nom');
+            const email = document.getElementById('email');
+
+            if (!prenom.checkValidity() || !nom.checkValidity() || !email.checkValidity()) {
+                regForm.reportValidity();
+                return;
+            }
+
+            errorDivReg.textContent = "";
+            step1.classList.remove('active');
+            step2.classList.add('active');
+        });
+
+        btnBack.addEventListener('click', () => {
+            errorDivReg.textContent = "";
+            step2.classList.remove('active');
+            step1.classList.add('active');
+        });
+
+        regForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorDivReg.textContent = "";
+
+            if (!window.Clerk || !window.Clerk.client) {
+                errorDivReg.textContent = "Le service d'inscription est indisponible en environnement local sans clé de test.";
+                return;
+            }
+
+            if (step2.classList.contains('active')) {
+                const prenom = document.getElementById('prenom').value;
+                const nom = document.getElementById('nom').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+                const terms = document.getElementById('terms').checked;
+
+                if (password !== confirmPassword) {
+                    errorDivReg.textContent = "Les mots de passe ne correspondent pas.";
+                    return;
+                }
+                if (!terms) {
+                    errorDivReg.textContent = "Veuillez accepter les CGU.";
+                    return;
+                }
+
+                const submitBtnReg = document.getElementById('btn-submit-reg');
+                const origText = submitBtnReg.textContent;
+                submitBtnReg.textContent = "Création en cours...";
+                submitBtnReg.disabled = true;
+
+                try {
+                    await window.Clerk.client.signUp.create({
+                        firstName: prenom,
+                        lastName: nom,
+                        emailAddress: email,
+                        password: password
+                    });
+
+                    await window.Clerk.client.signUp.prepareEmailAddressVerification();
+
+                    formTitle.textContent = "Vérifiez votre e-mail";
+                    document.getElementById('reg-footer').style.display = 'none';
+                    step2.classList.remove('active');
+                    step3.classList.add('active');
+
+                } catch (err) {
+                    let errMsg = err.errors && err.errors[0] ? err.errors[0].longMessage : "Une erreur est survenue.";
+                    if (errMsg.includes("already exists")) errMsg = "Cette adresse e-mail est déjà utilisée.";
+                    if (errMsg.includes("password")) errMsg = "Le mot de passe n'est pas assez fort.";
+                    errorDivReg.textContent = errMsg;
+                } finally {
+                    submitBtnReg.textContent = origText;
+                    submitBtnReg.disabled = false;
+                }
+            }
+
+            else if (step3.classList.contains('active')) {
+                const code = document.getElementById('code-verification').value;
+
+                if (!code) {
+                    errorDivReg.textContent = "Veuillez entrer le code à 6 chiffres.";
+                    return;
+                }
+
+                const verifyBtn = document.getElementById('btn-verify');
+                const origText = verifyBtn.textContent;
+                verifyBtn.textContent = "Vérification...";
+                verifyBtn.disabled = true;
+
+                try {
+                    const completeSignUp = await window.Clerk.client.signUp.attemptEmailAddressVerification({
+                        code: code
+                    });
+
+                    if (completeSignUp.status === 'complete') {
+                        await window.Clerk.setActive({ session: completeSignUp.createdSessionId });
+                        window.location.href = new URL('index.html', window.location.href).href;
+                    } else {
+                        errorDivReg.textContent = "Vérification incomplète, veuillez réessayer.";
+                    }
+                } catch (err) {
+                    errorDivReg.textContent = "Code incorrect ou expiré. Vérifiez vos e-mails.";
+                } finally {
+                    verifyBtn.textContent = origText;
+                    verifyBtn.disabled = false;
+                }
+            }
+        });
+    }
+});
+
+
 // ==========================================
 // LOGIQUE CLERK (AVEC GESTION DU CACHE SOLIDE ET ZÉRO FOUC)
 // ==========================================
@@ -714,7 +1077,7 @@ const clerkInterval = setInterval(async () => {
                     },
                     elements: {
                         // Forçage de l'avatar exactement à la même taille que le bouton gris pour un fade-in parfait (26x26)
-                        userButtonAvatarBox: { width: '26px', height: '26px' },
+                        userButtonAvatarBox: { width: '25.76px', height: '25.76px' },
 
                         modalContent: {
                             maxWidth: '850px',
@@ -891,357 +1254,9 @@ const clerkInterval = setInterval(async () => {
                     link.classList.remove('espace-active');
                     link.setAttribute('href', 'connexion.html');
                 });
-
-                // --- GESTION DES FORMULAIRES DE CONNEXION / INSCRIPTION ---
-                const loginForm = document.getElementById('clerk-login-form');
-                if (loginForm) {
-                    const googleBtn = document.getElementById('btn-google');
-                    const errorDiv = document.getElementById('error-message');
-                    const formTitle = document.getElementById('form-title');
-
-                    const btnForgot = document.getElementById('btn-forgot-password');
-                    const step1 = document.getElementById('login-step-1');
-                    const stepCode = document.getElementById('login-step-forgot-code');
-                    const stepReset = document.getElementById('login-step-forgot-reset');
-
-                    loginForm.addEventListener('submit', async (e) => {
-                        e.preventDefault();
-                        errorDiv.textContent = '';
-
-                        const submitBtn = loginForm.querySelector('.btn-submit');
-                        const originalText = submitBtn.textContent;
-                        submitBtn.textContent = 'Connexion...';
-                        submitBtn.disabled = true;
-
-                        const email = document.getElementById('email').value;
-                        const password = document.getElementById('password').value;
-
-                        try {
-                            const result = await window.Clerk.client.signIn.create({
-                                identifier: email,
-                                password: password,
-                            });
-                            if (result.status === 'complete') {
-                                await window.Clerk.setActive({ session: result.createdSessionId });
-                                window.location.href = new URL('index.html', window.location.href).href;
-                            } else {
-                                errorDiv.textContent = "Une vérification supplémentaire est requise (2FA).";
-                            }
-                        } catch (err) {
-                            let errMsg = err.errors[0]?.longMessage || 'Identifiants incorrects.';
-                            if (errMsg.includes("couldn't find your account")) errMsg = "Cette adresse e-mail n'existe pas.";
-                            if (errMsg.includes("incorrect")) errMsg = "Le mot de passe est incorrect.";
-                            errorDiv.textContent = errMsg;
-                        } finally {
-                            submitBtn.textContent = originalText;
-                            submitBtn.disabled = false;
-                        }
-                    });
-
-                    if (btnForgot) {
-                        btnForgot.addEventListener('click', async (e) => {
-                            e.preventDefault();
-                            errorDiv.textContent = '';
-                            const emailInput = document.getElementById('email');
-
-                            if (!emailInput.value || !emailInput.checkValidity()) {
-                                errorDiv.textContent = "Veuillez d'abord saisir une adresse e-mail valide dans le champ ci-dessus.";
-                                emailInput.focus();
-                                return;
-                            }
-
-                            const origText = btnForgot.textContent;
-                            btnForgot.textContent = "Envoi...";
-
-                            try {
-                                const result = await window.Clerk.client.signIn.create({
-                                    identifier: emailInput.value
-                                });
-
-                                const emailFactor = result.supportedFirstFactors.find(f => f.strategy === 'reset_password_email_code');
-                                if (!emailFactor) throw new Error("Récupération impossible pour cet e-mail.");
-
-                                await window.Clerk.client.signIn.prepareFirstFactor({
-                                    strategy: 'reset_password_email_code',
-                                    emailAddressId: emailFactor.emailAddressId
-                                });
-
-                                step1.classList.remove('active');
-                                stepCode.classList.add('active');
-                                formTitle.textContent = "Vérifiez vos e-mails";
-
-                            } catch (err) {
-                                let errMsg = err.errors?.[0]?.longMessage || "Erreur lors de l'envoi.";
-                                if (errMsg.includes("couldn't find your account")) errMsg = "Cette adresse e-mail n'existe pas.";
-                                errorDiv.textContent = errMsg;
-                            } finally {
-                                btnForgot.textContent = origText;
-                            }
-                        });
-                    }
-
-                    const btnVerifyReset = document.getElementById('btn-verify-reset');
-                    if (btnVerifyReset) {
-                        btnVerifyReset.addEventListener('click', async () => {
-                            errorDiv.textContent = '';
-                            const code = document.getElementById('reset-code').value;
-                            if (!code) { errorDiv.textContent = "Veuillez entrer le code de vérification."; return; }
-
-                            const origText = btnVerifyReset.textContent;
-                            btnVerifyReset.textContent = "Vérification...";
-                            try {
-                                await window.Clerk.client.signIn.attemptFirstFactor({
-                                    strategy: 'reset_password_email_code',
-                                    code: code
-                                });
-                                stepCode.classList.remove('active');
-                                stepReset.classList.add('active');
-                                formTitle.textContent = "Nouveau mot de passe";
-                            } catch (err) {
-                                errorDiv.textContent = "Le code est incorrect ou a expiré.";
-                            } finally {
-                                btnVerifyReset.textContent = origText;
-                            }
-                        });
-                    }
-
-                    const btnSavePwd = document.getElementById('btn-save-new-password');
-                    if (btnSavePwd) {
-                        btnSavePwd.addEventListener('click', async () => {
-                            errorDiv.textContent = '';
-                            const newPwd = document.getElementById('new-password').value;
-                            if (!newPwd) { errorDiv.textContent = "Veuillez entrer un mot de passe valide."; return; }
-
-                            const origText = btnSavePwd.textContent;
-                            btnSavePwd.textContent = "Enregistrement...";
-                            try {
-                                const result = await window.Clerk.client.signIn.resetPassword({
-                                    password: newPwd
-                                });
-                                if (result.status === 'complete') {
-                                    await window.Clerk.setActive({ session: result.createdSessionId });
-                                    window.location.href = new URL('index.html', window.location.href).href;
-                                }
-                            } catch (err) {
-                                let errMsg = err.errors?.[0]?.longMessage || "Erreur de réinitialisation.";
-                                if (errMsg.includes("password")) errMsg = "Le mot de passe n'est pas assez fort (8 caractères min).";
-                                errorDiv.textContent = errMsg;
-                                btnSavePwd.textContent = origText;
-                            }
-                        });
-                    }
-
-                    const btnBackLogin = document.getElementById('btn-back-to-login');
-                    if (btnBackLogin) {
-                        btnBackLogin.addEventListener('click', () => {
-                            errorDiv.textContent = '';
-                            stepCode.classList.remove('active');
-                            step1.classList.add('active');
-                            formTitle.textContent = "Bon retour parmi nous !";
-                        });
-                    }
-
-                    if (googleBtn) {
-                        googleBtn.addEventListener('click', async () => {
-                            try {
-                                await window.Clerk.client.signIn.authenticateWithRedirect({
-                                    strategy: "oauth_google",
-                                    redirectUrl: new URL('sso-callback.html', window.location.href).href,
-                                    redirectUrlComplete: new URL('index.html', window.location.href).href,
-                                });
-                            } catch (err) {
-                                errorDiv.textContent = "Erreur de connexion avec Google.";
-                            }
-                        });
-                    }
-                }
-
-                const regForm = document.getElementById('clerk-register-form');
-                if (regForm) {
-                    const step1 = document.getElementById('reg-step-1');
-                    const step2 = document.getElementById('reg-step-2');
-                    const step3 = document.getElementById('reg-step-3');
-
-                    const btnNext = document.getElementById('btn-next');
-                    const btnBack = document.getElementById('btn-back');
-                    const googleBtnReg = document.getElementById('reg-btn-google');
-                    const errorDivReg = document.getElementById('reg-error-message');
-                    const formTitle = document.getElementById('form-title');
-
-                    if (googleBtnReg) {
-                        googleBtnReg.addEventListener('click', async () => {
-                            try {
-                                await window.Clerk.client.signIn.authenticateWithRedirect({
-                                    strategy: "oauth_google",
-                                    redirectUrl: new URL('sso-callback.html', window.location.href).href,
-                                    redirectUrlComplete: new URL('index.html', window.location.href).href,
-                                });
-                            } catch (err) {
-                                errorDivReg.textContent = "Erreur de connexion avec Google.";
-                            }
-                        });
-                    }
-
-                    btnNext.addEventListener('click', () => {
-                        const prenom = document.getElementById('prenom');
-                        const nom = document.getElementById('nom');
-                        const email = document.getElementById('email');
-
-                        if (!prenom.checkValidity() || !nom.checkValidity() || !email.checkValidity()) {
-                            regForm.reportValidity();
-                            return;
-                        }
-
-                        errorDivReg.textContent = "";
-                        step1.classList.remove('active');
-                        step2.classList.add('active');
-                    });
-
-                    btnBack.addEventListener('click', () => {
-                        errorDivReg.textContent = "";
-                        step2.classList.remove('active');
-                        step1.classList.add('active');
-                    });
-
-                    regForm.addEventListener('submit', async (e) => {
-                        e.preventDefault();
-                        errorDivReg.textContent = "";
-
-                        if (step2.classList.contains('active')) {
-                            const prenom = document.getElementById('prenom').value;
-                            const nom = document.getElementById('nom').value;
-                            const email = document.getElementById('email').value;
-                            const password = document.getElementById('password').value;
-                            const confirmPassword = document.getElementById('confirm-password').value;
-                            const terms = document.getElementById('terms').checked;
-
-                            if (password !== confirmPassword) {
-                                errorDivReg.textContent = "Les mots de passe ne correspondent pas.";
-                                return;
-                            }
-                            if (!terms) {
-                                errorDivReg.textContent = "Veuillez accepter les CGU.";
-                                return;
-                            }
-
-                            const submitBtnReg = document.getElementById('btn-submit-reg');
-                            const origText = submitBtnReg.textContent;
-                            submitBtnReg.textContent = "Création en cours...";
-                            submitBtnReg.disabled = true;
-
-                            try {
-                                await window.Clerk.client.signUp.create({
-                                    firstName: prenom,
-                                    lastName: nom,
-                                    emailAddress: email,
-                                    password: password
-                                });
-
-                                await window.Clerk.client.signUp.prepareEmailAddressVerification();
-
-                                formTitle.textContent = "Vérifiez votre e-mail";
-                                document.getElementById('reg-footer').style.display = 'none';
-                                step2.classList.remove('active');
-                                step3.classList.add('active');
-
-                            } catch (err) {
-                                let errMsg = err.errors[0]?.longMessage || "Une erreur est survenue.";
-                                if (errMsg.includes("already exists")) errMsg = "Cette adresse e-mail est déjà utilisée.";
-                                if (errMsg.includes("password")) errMsg = "Le mot de passe n'est pas assez fort.";
-                                errorDivReg.textContent = errMsg;
-                            } finally {
-                                submitBtnReg.textContent = origText;
-                                submitBtnReg.disabled = false;
-                            }
-                        }
-
-                        else if (step3.classList.contains('active')) {
-                            const code = document.getElementById('code-verification').value;
-
-                            if (!code) {
-                                errorDivReg.textContent = "Veuillez entrer le code à 6 chiffres.";
-                                return;
-                            }
-
-                            const verifyBtn = document.getElementById('btn-verify');
-                            const origText = verifyBtn.textContent;
-                            verifyBtn.textContent = "Vérification...";
-                            verifyBtn.disabled = true;
-
-                            try {
-                                const completeSignUp = await window.Clerk.client.signUp.attemptEmailAddressVerification({
-                                    code: code
-                                });
-
-                                if (completeSignUp.status === 'complete') {
-                                    await window.Clerk.setActive({ session: completeSignUp.createdSessionId });
-                                    window.location.href = new URL('index.html', window.location.href).href;
-                                } else {
-                                    errorDivReg.textContent = "Vérification incomplète, veuillez réessayer.";
-                                }
-                            } catch (err) {
-                                errorDivReg.textContent = "Code incorrect ou expiré. Vérifiez vos e-mails.";
-                            } finally {
-                                verifyBtn.textContent = origText;
-                                verifyBtn.disabled = false;
-                            }
-                        }
-                    });
-                }
             }
         } catch (error) {
             console.error("Erreur de chargement Clerk :", error);
         }
     }
 }, 50);
-
-// ==========================================
-// GESTIONNAIRE DE COOKIES (Bandeau RGPD Fonctionnel)
-// ==========================================
-document.addEventListener('DOMContentLoaded', () => {
-    const consent = localStorage.getItem('estimez_cookie_consent');
-
-    if (consent === 'all') {
-        loadOptionalScripts();
-    }
-
-    if (!consent) {
-        initCookieBanner();
-    }
-});
-
-function initCookieBanner() {
-    const banner = document.createElement('div');
-    banner.className = 'cookie-banner';
-    banner.innerHTML = `
-        <h3><i class="fas fa-cookie-bite" style="color: #F59E0B;"></i> Respect de votre vie privée</h3>
-        <p>Nous utilisons des cookies "essentiels" pour la connexion à votre espace. Nous souhaitons également utiliser des cookies optionnels pour analyser notre trafic de façon anonyme. Vous avez le choix !</p>
-        <div class="cookie-btns">
-            <button class="cookie-btn reject" id="cookie-reject">Refuser</button>
-            <button class="cookie-btn accept" id="cookie-accept">Tout accepter</button>
-        </div>
-    `;
-
-    document.body.appendChild(banner);
-
-    setTimeout(() => {
-        banner.classList.add('show');
-    }, 800);
-
-    document.getElementById('cookie-accept').addEventListener('click', () => {
-        localStorage.setItem('estimez_cookie_consent', 'all');
-        banner.classList.remove('show');
-        loadOptionalScripts();
-        setTimeout(() => banner.remove(), 500);
-    });
-
-    document.getElementById('cookie-reject').addEventListener('click', () => {
-        localStorage.setItem('estimez_cookie_consent', 'essential_only');
-        banner.classList.remove('show');
-        setTimeout(() => banner.remove(), 500);
-    });
-}
-
-function loadOptionalScripts() {
-    console.log("✅ Consentement accordé : Chargement des cookies de suivi et statistiques.");
-}
