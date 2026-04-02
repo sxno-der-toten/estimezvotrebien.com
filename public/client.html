@@ -50,6 +50,24 @@
     <meta name="twitter:image" content="https://estimez-votre-bien.com/images/logo.png">
     <meta name="twitter:site" content="@estimezvotrebien">
     <meta name="robots" content="index, follow">
+    <script>
+        (function () {
+            const state = localStorage.getItem('clerk_auth_state') || 'logged_out';
+            document.documentElement.classList.add(state === 'logged_in' ? 'is-logged-in' : 'is-logged-out');
+
+            document.addEventListener('DOMContentLoaded', () => {
+                if (state === 'logged_in') {
+                    const cachedRole = localStorage.getItem('clerk_auth_role');
+                    document.querySelectorAll('.nav-espace-link').forEach(link => {
+                        link.textContent = 'Mon espace';
+                        link.classList.remove('espace-disabled');
+                        link.classList.add('espace-active');
+                        link.href = cachedRole === 'admin' ? 'admin.html' : 'client.html';
+                    });
+                }
+            });
+        })();
+    </script>
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -123,49 +141,35 @@
                             style="max-height: 45px; width: auto; display: block;">
                     </a>
                 </div>
-                <button class="hamburger-btn" id="hamburger-btn" aria-label="Ouvrir le menu"><i
-                        class="fas fa-bars"></i></button>
+                <button class="hamburger-btn" id="hamburger-btn" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
+                
                 <div class="nav-content" id="nav-content">
-                    <button class="close-menu-btn" id="close-menu-btn" aria-label="Fermer le menu"><i
-                            class="fas fa-times"></i></button>
+                    <button class="close-menu-btn" id="close-menu-btn" aria-label="Fermer le menu"><i class="fas fa-times"></i></button>
                     <div class="mobile-menu-logo mobile-only">
                         <a href="index.html" class="logo-link">
-                            <img src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
-                                style="max-height: 40px;">
+                            <img src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img" style="max-height: 40px;">
                         </a>
                     </div>
 
                     <ul class="nav-menu">
-                        <li><a href="index.html">Estimer</a></li>
+                                                <li><a href="index.html">Estimer</a></li>
                         <li><a href="acheter.html">Acheter</a></li>
                         <li><a href="vendre.html">Vendre</a></li>
                         <li><a href="guides.html">Guides</a></li>
                         <li><a href="faq.html">FAQ</a></li>
                         <li><a href="a_propos.html">À propos</a></li>
                         <li><a href="contact.html">Contact</a></li>
-                        <li class="auth-client-only"><a href="client.html"
-                                style="color: var(--primary-blue); font-weight: 700;">Espace client</a></li>
-                        <li class="auth-admin-only"><a href="admin.html">Espace admin</a></li>
-                    </ul>
-
-                    <div class="nav-cta">
-                        <div id="auth-container-mobile" class="mobile-only">
-                            <a href="connexion.html" class="mobile-login-link guest-only">Connexion</a>
-                            <div id="user-button-mobile" class="auth-required"></div>
+                        <li><a href="connexion.html" class="nav-espace-link espace-disabled">Espace</a></li>
+                    </ul><div class="nav-cta">
+                        <a href="connexion.html" class="login-circle guest-element" aria-label="Connexion"><i class="fas fa-user"></i></a>
+                        <div id="auth-container-mobile" class="mobile-only auth-wrapper">
+                            <div id="user-button-mobile" class="auth-element"></div>
                         </div>
 
-                        <div id="auth-container-desktop" class="desktop-only"
-                            style="min-width: 150px; height: 45px; display: flex; justify-content: flex-end; align-items: center;">
-                            <a href="connexion.html" class="btn-login guest-only">Connexion <i
-                                    class="fas fa-sign-in-alt" style="margin-left: 6px;"></i></a>
-                            <div class="auth-required" style="display: flex; align-items: center; gap: 12px;">
-                                <span id="user-name-display"
-                                    style="font-size: 14px; font-weight: 600; color: #2E3F84; white-space: nowrap;"></span>
-                                <div id="user-button-desktop"></div>
-                            </div>
+                        <div id="auth-container-desktop" class="desktop-only auth-wrapper">
+                            <div id="user-button-desktop" class="auth-element"></div>
                         </div>
                     </div>
-
                 </div>
             </nav>
         </div>

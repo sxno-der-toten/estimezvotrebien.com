@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /client.html
+Disallow: /connexion.html
+Disallow: /inscription.html
+Disallow: /sso-callback.html
+Sitemap: https://estimez-votre-bien.com/sitemap.xml

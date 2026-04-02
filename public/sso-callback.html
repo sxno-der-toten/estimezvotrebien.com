@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Connexion en cours...</title>
-    <link rel="icon" href="images/small_logo.png" type="image/png">
+  <link rel="icon" href="images/small_logo.png" type="image/png">
   <meta name="description" content="Connexion en cours... - estimez-votre-bien.com">
 
   <script async crossorigin="anonymous" data-clerk-publishable-key="pk_live_Y2xlcmsuZXN0aW1lei12b3RyZS1iaWVuLmNvbSQ"
@@ -69,6 +69,24 @@
   <meta name="twitter:site" content="@estimezvotrebien">
   <meta name="robots" content="index, follow">
   <!-- IA SEO schema for ChatGPT, Gemini and other agents -->
+  <script>
+    (function () {
+      const state = localStorage.getItem('clerk_auth_state') || 'logged_out';
+      document.documentElement.classList.add(state === 'logged_in' ? 'is-logged-in' : 'is-logged-out');
+
+      document.addEventListener('DOMContentLoaded', () => {
+        if (state === 'logged_in') {
+          const cachedRole = localStorage.getItem('clerk_auth_role');
+          document.querySelectorAll('.nav-espace-link').forEach(link => {
+            link.textContent = 'Mon espace';
+            link.classList.remove('espace-disabled');
+            link.classList.add('espace-active');
+            link.href = cachedRole === 'admin' ? 'admin.html' : 'client.html';
+          });
+        }
+      });
+    })();
+  </script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",

@@ -104,9 +104,9 @@ restoreNavbarFromSavedSession();
 // ==========================================
 // 1. INITIALISATION DE SWUP (Navigation Fluide)
 // ==========================================
-// Importez Swup via CDN dans vos HTML si ce n'est pas déjà fait
-// <script src="https://unpkg.com/swup@4"></script>
-const swup = new Swup();
+if (typeof Swup !== 'undefined') {
+    const swup = new Swup();
+}
 
 // ==========================================
 // 2. GESTION DES RÔLES ET LOCALSTORAGE
@@ -285,11 +285,8 @@ class EstimationTool {
 
         input.addEventListener('input', (e) => {
             clearTimeout(timeout);
-
-            // On enlève les espaces vides à la fin pour éviter de lancer une requête pour rien
             const query = e.target.value.trim();
 
-            // On demande au moins 3 caractères ET au moins une lettre (pour éviter de chercher juste "10 ")
             if (query.length < 3 || !/[a-zA-Z]/.test(query)) {
                 if (suggestionsBox) suggestionsBox.innerHTML = '';
                 this.validateStep();
@@ -299,10 +296,7 @@ class EstimationTool {
             timeout = setTimeout(async () => {
                 try {
                     const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`);
-
-                    // Si l'API trouve que c'est encore trop vague (Erreur 400), on ignore en silence
                     if (response.status === 400) return;
-
                     if (!response.ok) throw new Error("Erreur réseau");
                     const data = await response.json();
 
@@ -323,7 +317,6 @@ class EstimationTool {
                         });
                     }
                 } catch (error) {
-                    // On garde le log pour les vraies erreurs (panne de serveur, etc.)
                     console.error("L'autocomplétion API a échoué:", error);
                 }
             }, 100);
@@ -563,7 +556,6 @@ class EstimationTool {
 
         setTimeout(() => {
             if (!isVendrePage && !isAchat) {
-                // Redirection Estimation vers page Premium (pas de prix affiché)
                 const extrasArray = [
                     (data.get('Garage') || data.get('garage')) ? 'Garage/Parking' : '',
                     (data.get('Piscine') || data.get('piscine')) ? 'Piscine' : '',
@@ -587,7 +579,6 @@ class EstimationTool {
                 });
                 window.location.href = `votre-estimation.html?${paramsUrl.toString()}`;
             } else {
-                // Pages Acheter ou Vendre
                 const paramsUrl = new URLSearchParams({
                     email: data.get('email'),
                     phone: data.get('phone'),
@@ -599,18 +590,15 @@ class EstimationTool {
     }
 }
 
+// ==========================================
+// INITIALISATION DOM ET EVENEMENTS
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.nav-espace-link').forEach(link => {
-        const parentLi = link.closest('li');
-        if (parentLi) {
-            parentLi.style.display = 'none';
-            parentLi.style.opacity = '0';
-            parentLi.style.transition = 'opacity 0.4s ease';
-        }
-    });
 
+    // Initialisation du formulaire d'estimation
     new EstimationTool();
 
+    // Menu Hamburger
     const hamburgerBtn = document.getElementById('hamburger-btn');
     const closeMenuBtn = document.getElementById('close-menu-btn');
     const navContent = document.getElementById('nav-content');
@@ -629,6 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // FAQ Accordéon
     document.querySelectorAll('.faq-question').forEach(question => {
         question.addEventListener('click', function () {
             const item = this.parentElement;
@@ -638,9 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ==========================================
-    // GESTION DE LA PAGE CONTACT ET TOAST
-    // ==========================================
+    // Gestion de la page de contact et du toast
     if (window.location.pathname.includes('contact.html')) {
         const urlParams = new URLSearchParams(window.location.search);
 
@@ -706,7 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// LOGIQUE CLERK, DASHBOARD ET UI CLERK
+// LOGIQUE CLERK (AVEC GESTION DU CACHE SOLIDE ET ZÉRO FOUC)
 // ==========================================
 const clerkInterval = setInterval(async () => {
     if (window.Clerk) {
@@ -726,6 +713,9 @@ const clerkInterval = setInterval(async () => {
                         fontFamily: "'Inter', sans-serif"
                     },
                     elements: {
+                        // Forçage de l'avatar exactement à la même taille que le bouton gris pour un fade-in parfait (26x26)
+                        userButtonAvatarBox: { width: '26px', height: '26px' },
+
                         modalContent: {
                             maxWidth: '850px',
                             width: '90%',
@@ -808,69 +798,39 @@ const clerkInterval = setInterval(async () => {
                     return;
                 }
 
-                const isAdmin = isClerkAdmin(window.Clerk.user);
-                const roleText = isAdmin ? 'admin' : 'client';
-                const roleHref = isAdmin ? 'admin.html' : 'client.html';
-                const userName = window.Clerk.user.fullName || window.Clerk.user.firstName || "Mon espace";
+                // --- MISE A JOUR DU CACHE ET DE L'UI ---
+                const role = (window.Clerk.user?.publicMetadata?.role || window.Clerk.user?.unsafeMetadata?.role || '').toString().toLowerCase();
+                const isAdmin = role === 'admin';
 
-                saveClerkSession({
-                    userId: window.Clerk.user.id,
-                    userName,
-                    isAdmin,
-                    roleText,
-                    roleHref
-                });
+                localStorage.setItem('clerk_auth_state', 'logged_in');
+                localStorage.setItem('clerk_auth_role', isAdmin ? 'admin' : 'client');
 
-                // On affiche l'Espace (car l'utilisateur est connecté) en fondu
+                document.documentElement.classList.add('is-logged-in');
+                document.documentElement.classList.remove('is-logged-out');
+
                 document.querySelectorAll('.nav-espace-link').forEach(link => {
-                    const parentLi = link.closest('li');
-                    if (parentLi) {
-                        parentLi.style.display = 'block';
-                        setTimeout(() => parentLi.style.opacity = '1', 10);
-                    }
-
-                    const roleSpan = link.querySelector('.nav-espace-role');
-                    if (roleSpan) {
-                        link.setAttribute('href', roleHref);
-                        roleSpan.textContent = roleText;
-                        setTimeout(() => {
-                            roleSpan.style.opacity = '1';
-                        }, 50);
-                    } else {
-                        link.textContent = `Espace ${roleText}`;
-                        link.setAttribute('href', roleHref);
-                    }
+                    link.textContent = 'Mon espace';
+                    link.classList.remove('espace-disabled');
+                    link.classList.add('espace-active');
+                    link.setAttribute('href', isAdmin ? 'admin.html' : 'client.html');
                 });
 
-                const desktopAuthContainer = document.getElementById('auth-container-desktop');
-                if (desktopAuthContainer) {
-                    const userName = window.Clerk.user.fullName || window.Clerk.user.firstName || "Mon espace";
-                    desktopAuthContainer.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 12px; justify-content: flex-end; width: 100%;">
-                            <span style="font-size: 14px; font-weight: 600; color: #2E3F84; white-space: nowrap;">${userName}</span>
-                            <div id="user-button-desktop"></div>
-                        </div>
-                    `;
-                    window.Clerk.mountUserButton(document.getElementById('user-button-desktop'), {
-                        afterSignOutUrl: new URL('index.html', window.location.href).href
-                    });
-
-                    // On affiche le bloc en fondu
-                    setTimeout(() => desktopAuthContainer.style.opacity = '1', 50);
+                // Montage de l'avatar (qui remplacera l'icône grise en fade in)
+                const desktopBtn = document.getElementById('user-button-desktop');
+                if (desktopBtn && !desktopBtn.hasChildNodes()) {
+                    window.Clerk.mountUserButton(desktopBtn, { afterSignOutUrl: new URL('index.html', window.location.href).href });
                 }
 
-                const mobileAuth = document.getElementById('auth-container-mobile');
-                if (mobileAuth) {
-                    mobileAuth.innerHTML = '<div id="user-button-mobile"></div>';
-                    window.Clerk.mountUserButton(document.getElementById('user-button-mobile'), {
-                        afterSignOutUrl: new URL('index.html', window.location.href).href
-                    });
+                const mobileBtn = document.getElementById('user-button-mobile');
+                if (mobileBtn && !mobileBtn.hasChildNodes()) {
+                    window.Clerk.mountUserButton(mobileBtn, { afterSignOutUrl: new URL('index.html', window.location.href).href });
                 }
 
                 if (window.location.pathname.includes('client.html')) {
                     loadClientDashboard(window.Clerk.user.id);
                 }
 
+                // Customisation de la modale Clerk (Option Espace Client/Admin dans le menu Clerk)
                 setInterval(() => {
                     const popover = document.querySelector('.cl-userButtonPopoverCard');
                     if (popover && !document.getElementById('custom-clerk-link')) {
@@ -918,25 +878,21 @@ const clerkInterval = setInterval(async () => {
                 }, 200);
 
             } else {
-                clearSavedClerkSession();
-
                 // --- UTILISATEUR DÉCONNECTÉ ---
+                localStorage.setItem('clerk_auth_state', 'logged_out');
+                localStorage.removeItem('clerk_auth_role');
+
+                document.documentElement.classList.add('is-logged-out');
+                document.documentElement.classList.remove('is-logged-in');
+
                 document.querySelectorAll('.nav-espace-link').forEach(link => {
-                    const parentLi = link.closest('li');
-                    if (parentLi) {
-                        parentLi.style.display = 'none';
-                        parentLi.style.opacity = '0';
-                    }
+                    link.textContent = 'Espace';
+                    link.classList.add('espace-disabled');
+                    link.classList.remove('espace-active');
+                    link.setAttribute('href', 'connexion.html');
                 });
 
-                const desktopAuthContainer = document.getElementById('auth-container-desktop');
-                if (desktopAuthContainer) {
-                    if (!desktopAuthContainer.innerHTML.includes('Connexion')) {
-                        desktopAuthContainer.innerHTML = '<a href="connexion.html" style="background-color: #6C83D9; color: white; padding: 10px 24px; border-radius: 50px; font-weight: 600; text-decoration: none; font-size: 14px; box-shadow: 0 4px 6px rgba(108, 131, 217, 0.2); transition: all 0.3s ease;" onmouseover="this.style.backgroundColor=\'#566DBA\'; this.style.transform=\'translateY(-2px)\';" onmouseout="this.style.backgroundColor=\'#6C83D9\'; this.style.transform=\'translateY(0)\';">Connexion <i class="fas fa-user" style="margin-left: 6px; font-size: 12px;"></i></a>';
-                    }
-                    setTimeout(() => desktopAuthContainer.style.opacity = '1', 50);
-                }
-
+                // --- GESTION DES FORMULAIRES DE CONNEXION / INSCRIPTION ---
                 const loginForm = document.getElementById('clerk-login-form');
                 if (loginForm) {
                     const googleBtn = document.getElementById('btn-google');
@@ -1243,22 +1199,18 @@ const clerkInterval = setInterval(async () => {
 // GESTIONNAIRE DE COOKIES (Bandeau RGPD Fonctionnel)
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. On vérifie si l'utilisateur a déjà fait un choix dans le passé
     const consent = localStorage.getItem('estimez_cookie_consent');
 
-    // 2. S'il a déjà "Tout accepté", on charge les scripts de suivi directement
     if (consent === 'all') {
         loadOptionalScripts();
     }
 
-    // 3. S'il n'a jamais fait de choix, on crée et on affiche le bandeau
     if (!consent) {
         initCookieBanner();
     }
 });
 
 function initCookieBanner() {
-    // Création de la modale en HTML
     const banner = document.createElement('div');
     banner.className = 'cookie-banner';
     banner.innerHTML = `
@@ -1270,45 +1222,26 @@ function initCookieBanner() {
         </div>
     `;
 
-    // On l'injecte dans la page
     document.body.appendChild(banner);
 
-    // Léger délai pour déclencher l'animation d'apparition fluide
     setTimeout(() => {
         banner.classList.add('show');
     }, 800);
 
-    // ACTION : L'utilisateur clique sur "Tout accepter"
     document.getElementById('cookie-accept').addEventListener('click', () => {
-        localStorage.setItem('estimez_cookie_consent', 'all'); // On sauvegarde son choix
-        banner.classList.remove('show'); // On cache le bandeau
-
-        loadOptionalScripts(); // On déclenche Google Analytics / Pixels
-
-        setTimeout(() => banner.remove(), 500); // On supprime le HTML de la page
+        localStorage.setItem('estimez_cookie_consent', 'all');
+        banner.classList.remove('show');
+        loadOptionalScripts();
+        setTimeout(() => banner.remove(), 500);
     });
 
-    // ACTION : L'utilisateur clique sur "Refuser"
     document.getElementById('cookie-reject').addEventListener('click', () => {
-        localStorage.setItem('estimez_cookie_consent', 'essential_only'); // On sauvegarde son refus
+        localStorage.setItem('estimez_cookie_consent', 'essential_only');
         banner.classList.remove('show');
-
-        // On NE DÉCLENCHE PAS loadOptionalScripts()
-
         setTimeout(() => banner.remove(), 500);
     });
 }
 
-// Fonction "conteneur" pour tes futurs scripts de suivi
 function loadOptionalScripts() {
     console.log("✅ Consentement accordé : Chargement des cookies de suivi et statistiques.");
-
-    // C'est ICI que tu copieras/colleras tes scripts Google Analytics ou Meta Pixel plus tard.
-    // Exemple de format :
-    /*
-    const script = document.createElement('script');
-    script.src = "https://www.googletagmanager.com/gtag/js?id=TON_ID_GOOGLE";
-    script.async = true;
-    document.head.appendChild(script);
-    */
 }

@@ -25,29 +25,6 @@
     --hero-image-height: 300px;
 }
 
-html {
-    zoom: 0.92;
-}
-
-.hero-fullscreen,
-.guides-hero-fullscreen {
-    zoom: 1.087;
-}
-
-@supports not (zoom: 1) {
-    body {
-        transform: scale(0.92);
-        transform-origin: top center;
-        width: calc(100% / 0.92);
-    }
-
-    .hero-fullscreen,
-    .guides-hero-fullscreen {
-        transform: scale(1.087);
-        transform-origin: top center;
-    }
-}
-
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 14px;
@@ -90,96 +67,6 @@ h3 {
 
 p {
     margin-bottom: 1rem;
-}
-
-/* ==========================================
-   BANDEAU COOKIES RGPD
-   ========================================== */
-.cookie-banner {
-    position: fixed;
-    bottom: -100%;
-    /* Caché en bas par défaut */
-    left: 20px;
-    max-width: 380px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(46, 63, 132, 0.15);
-    padding: 20px;
-    z-index: 999999;
-    /* Toujours au-dessus de tout */
-    transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    border: 1px solid #E3E8F5;
-    font-family: 'Inter', sans-serif;
-}
-
-.cookie-banner.show {
-    bottom: 20px;
-    /* Remonte avec l'animation */
-}
-
-.cookie-banner h3 {
-    margin: 0 0 10px 0;
-    color: #2E3F84;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.cookie-banner p {
-    color: #6B7280;
-    font-size: 12px;
-    line-height: 1.5;
-    margin: 0 0 15px 0;
-}
-
-.cookie-btns {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.cookie-btn {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: center;
-}
-
-.cookie-btn.accept {
-    background-color: var(--primary-blue, #6C83D9);
-    color: white;
-}
-
-.cookie-btn.accept:hover {
-    background-color: #566DBA;
-}
-
-.cookie-btn.reject {
-    background-color: #F3F4F6;
-    color: #4B5563;
-}
-
-.cookie-btn.reject:hover {
-    background-color: #E5E7EB;
-}
-
-/* Version Mobile */
-@media (max-width: 480px) {
-    .cookie-banner {
-        left: 10px;
-        right: 10px;
-        max-width: none;
-    }
-
-    .cookie-banner.show {
-        bottom: 10px;
-    }
 }
 
 .rounded-image {
@@ -292,9 +179,11 @@ p {
 .header {
     background-color: var(--white);
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10000 !important;
+    width: 100%;
+    inset: 0 auto auto 0;
 }
 
 /* ✨ NOUVEAU : On élargit UNIQUEMENT le container du header pour faire respirer le menu */
@@ -304,20 +193,11 @@ p {
     /* Un peu plus de marge sur les bords de l'écran */
 }
 
-.card-hover-anim {
-    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-}
-
-.card-hover-anim:hover {
-    transform: translateY(-8px) !important;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08) !important;
-}
-
 .nav {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 0;
+    padding: 0.6rem 0;
 }
 
 .nav-brand .logo {
@@ -539,7 +419,6 @@ p {
 .desktop-only {
     opacity: 1 !important;
     min-width: 150px;
-    display: inline-flex !important;
     justify-content: flex-end;
     align-items: center;
 }
@@ -552,6 +431,12 @@ p {
     display: flex;
     align-items: center;
     gap: 2rem;
+}
+
+.nav-cta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 @media (max-width: 992px) {
@@ -636,7 +521,7 @@ p {
         text-decoration: none;
     }
 
-    .nav-content .nav-cta {
+    .nav-content {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
@@ -645,17 +530,16 @@ p {
         margin-bottom: 2rem;
     }
 
+    .nav-content .nav-cta {
+        align-items: center;
+        width: 100%;
+    }
+
     .mobile-login-link {
         color: rgba(255, 255, 255, 0.8) !important;
         text-decoration: underline;
         font-weight: 600;
         font-size: 16px;
-    }
-
-    .nav-cta .btn-login {
-        background-color: white !important;
-        color: #7b85df !important;
-        width: auto;
     }
 
     .mobile-socials {
@@ -864,31 +748,184 @@ p {
 }
 
 /* ==========================================
-   CORRECTION DÉFINITIVE CLERK (Bande blanche, Voile noir & SCROLL)
+   11. ANTI-FOUC & SWUP (NAVIGATION FLUIDE)
    ========================================== */
 
-/* 1. On empêche Clerk de bloquer le scroll et de décaler la page */
-html,
-body,
-html[style],
-body[style] {
-    overflow-y: auto !important;
-    /* Rétablit le scroll vertical ! */
-    padding-right: 0 !important;
-    /* Empêche le décalage de la page */
+/* --- GESTION NAVIGATION SWUP --- */
+.transition-fade {
+    transition: 0.4s;
+    opacity: 1;
 }
 
-/* 2. On rend le voile sombre géant (120% de l'écran) pour boucher n'importe quel trou possible */
-.cl-modalBackdrop {
-    width: 120vw !important;
-    height: 120vh !important;
-    top: -10vh !important;
-    left: -10vw !important;
-    right: auto !important;
-    bottom: auto !important;
-    max-width: none !important;
-    max-height: none !important;
+html.is-leaving .transition-fade {
+    opacity: 0;
+}
+
+/* --- LOGIQUE DES RÔLES (Anti-FOUC) --- */
+/* Masquage par défaut des zones privées */
+.auth-client-only,
+.auth-admin-only,
+.auth-required {
+    display: none !important;
+}
+
+/* Si loggué en tant que Client */
+html.is-client .auth-client-only {
+    display: block !important;
+}
+
+/* Si loggué en tant qu'Admin */
+html.is-admin .auth-admin-only {
+    display: block !important;
+}
+
+/* Cache le bouton connexion si déjà loggué */
+html.is-logged-in .guest-only {
+    display: none !important;
+}
+
+/* Affiche les éléments communs connectés */
+html.is-logged-in .auth-required {
+    display: flex !important;
+    align-items: center !important;
+    /* Ajout pour l'alignement vertical */
+}
+
+/* --- Bouton Connexion Nouveau Design --- */
+.btn-login {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, #4A65D1 100%);
+    color: #FFFFFF !important;
+    padding: 10px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(108, 131, 217, 0.3);
+    border: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 131, 217, 0.45);
+}
+
+/* Garde le style original épuré sur mobile pour le menu hamburger (fond bleu) */
+@media (max-width: 992px) {
+    .nav-cta .btn-login {
+        background: #FFFFFF !important;
+        color: #7b85df !important;
+        box-shadow: none !important;
+        width: auto;
+        padding: 10px 24px !important;
+    }
+}
+
+/* ==========================================
+   12. OVERRIDES CLERK (Modale & Popover)
+   ========================================== */
+
+/* --- 1. Modale de Profil (Taille corrigée) --- */
+/* On annule le scale destructeur */
+.cl-modalContent {
     transform: none !important;
-    position: fixed !important;
-    /* Garde le voile fixe même si on scrolle en dessous */
+}
+
+/* Dimensions respectueuses de la grille 2 colonnes, mais bridées en hauteur */
+.cl-modalContent .cl-cardBox {
+    width: 880px !important;
+    /* Largeur idéale pour le mode desktop */
+    max-width: 95vw !important;
+    /* Sécurité pour les petits écrans */
+    max-height: 80vh !important;
+    /* Plafond strict : 80% de la hauteur de l'écran */
+    min-height: 400px !important;
+    /* Annule l'énorme min-height natif */
+    border-radius: 20px !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Force le scroll proprement à l'intérieur de la modale */
+.cl-scrollBox {
+    overflow-y: auto !important;
+    max-height: 100% !important;
+}
+
+
+/* --- 2. Personnalisation du Popover (Petit menu sous l'avatar) --- */
+.cl-userButtonPopoverCard,
+.cl-popoverBox {
+    background-color: var(--white) !important;
+    border: 1px solid var(--card-border) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 30px rgba(108, 131, 217, 0.15) !important;
+}
+
+.cl-userPreviewTextContainer,
+.cl-userButtonPopoverActionButtonText {
+    color: var(--title-blue) !important;
+    font-weight: 600 !important;
+}
+
+.cl-userPreviewSecondaryIdentifier {
+    color: var(--text-gray) !important;
+}
+
+.cl-userButtonPopoverActionButton:hover,
+#custom-clerk-link:hover {
+    background-color: var(--hero-bg) !important;
+    color: var(--primary-blue) !important;
+}
+
+.cl-userButtonPopoverActionButtonIcon,
+.cl-userButtonPopoverActionButton svg {
+    color: var(--primary-blue) !important;
+}
+
+.cl-userButtonPopoverCard .cl-internal-15y2b9r,
+.cl-dividerRow {
+    border-bottom-color: var(--card-border) !important;
+}
+
+/* Masquer le logo "Secured by Clerk" en bas du menu pour gagner de la place */
+.cl-internal-b3al6g,
+.cl-internal-1x7qnwz {
+    display: none !important;
+}
+
+/* ==========================================
+   13. CORRECTION ALIGNEMENT AVATAR CLERK
+   ========================================== */
+
+/* 1. Aligne parfaitement le span du prénom et le bouton */
+#auth-container-desktop>div {
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* 2. Bloque la hauteur stricte pour empêcher le bouton de glisser vers le bas */
+#user-button-desktop,
+#user-button-mobile {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 32px !important;
+    /* Taille standard de l'avatar Clerk */
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* 3. Neutralise les marges fantômes internes de Clerk */
+#user-button-desktop>div,
+#user-button-mobile>div,
+.cl-rootBox,
+.cl-userButtonTrigger {
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 32px !important;
 }
