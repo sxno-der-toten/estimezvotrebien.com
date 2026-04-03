@@ -1089,7 +1089,7 @@ const clerkInterval = setInterval(async () => {
                             maxWidth: '850px',
                             width: '90%',
                             height: 'auto',
-                            minHeight: '500px',
+                            minHeight: '56vh',
                             maxHeight: '90vh',
                             position: 'fixed',
                             top: '50%',
@@ -1098,8 +1098,9 @@ const clerkInterval = setInterval(async () => {
                             borderRadius: '20px',
                             boxShadow: '0 25px 50px -12px rgba(46, 63, 132, 0.25)'
                         },
-
                         cardBox: { width: '100%', height: '100%', boxShadow: 'none' },
+                        scrollBox: { borderRadius: '0 20px 20px 0' },
+                        navbar: { height: '56vh', background: '#FAFBFE', borderRight: '1px solid #E3E8F5', padding: '20px 15px', borderRadius: '20px 0 0 20px' },
                         scrollBox: { borderRadius: '0 20px 20px 0' },
                         navbar: { background: '#FAFBFE', borderRight: '1px solid #E3E8F5', padding: '20px 15px', borderRadius: '20px 0 0 20px' },
                         navbarButton: { borderRadius: '10px', color: '#6B7280', padding: '12px 15px', marginBottom: '5px' },
