@@ -1195,11 +1195,61 @@ const clerkInterval = setInterval(async () => {
                     window.Clerk.mountUserButton(desktopBtn, { afterSignOutUrl: new URL('index.html', window.location.href).href });
                 }
 
+                // ── Bloc profil mobile custom ──────────────────────────────
                 const mobileBtn = document.getElementById('user-button-mobile');
                 if (mobileBtn && !mobileBtn.hasChildNodes()) {
-                    window.Clerk.mountUserButton(mobileBtn, { afterSignOutUrl: new URL('index.html', window.location.href).href });
+                    // On monte l'avatar Clerk (pointer-events: none côté CSS,
+                    // le clic est capturé par le bloc parent)
+                    window.Clerk.mountUserButton(mobileBtn, {
+                        afterSignOutUrl: new URL('index.html', window.location.href).href
+                    });
                 }
 
+                // Injecte le nom complet dans le drawer
+                const profileName = document.getElementById('mobile-profile-name');
+                if (profileName && window.Clerk.user) {
+                    const u = window.Clerk.user;
+                    const fullName = [u.firstName, u.lastName].filter(Boolean).join(' ') || u.primaryEmailAddress?.emailAddress || 'Mon compte';
+                    profileName.textContent = fullName;
+                }
+
+                // Toggle du dropdown inversé
+                const profileBlock = document.getElementById('mobile-profile-block');
+                const manageBtn = document.getElementById('mobile-manage-account');
+                const signOutBtn = document.getElementById('mobile-sign-out');
+
+                if (profileBlock) {
+                    profileBlock.addEventListener('click', (e) => {
+                        // Empêche la propagation depuis les boutons enfants
+                        if (e.target.closest('#mobile-manage-account') || e.target.closest('#mobile-sign-out')) return;
+                        const isOpen = profileBlock.classList.toggle('dropdown-open');
+                        profileBlock.setAttribute('aria-expanded', String(isOpen));
+                    });
+
+                    // Ferme si clic en dehors
+                    document.addEventListener('click', (e) => {
+                        if (!profileBlock.contains(e.target)) {
+                            profileBlock.classList.remove('dropdown-open');
+                            profileBlock.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+                }
+
+                if (manageBtn) {
+                    manageBtn.addEventListener('click', () => {
+                        profileBlock?.classList.remove('dropdown-open');
+                        window.Clerk.openUserProfile();
+                    });
+                }
+
+                if (signOutBtn) {
+                    signOutBtn.addEventListener('click', async () => {
+                        profileBlock?.classList.remove('dropdown-open');
+                        await window.Clerk.signOut();
+                        window.location.href = new URL('index.html', window.location.href).href;
+                    });
+                }
+                // ─────────────────────────────────────────────────────────────
                 if (window.location.pathname.includes('client.html')) {
                     loadClientDashboard(window.Clerk.user.id);
                 }

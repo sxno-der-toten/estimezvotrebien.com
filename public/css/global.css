@@ -1140,3 +1140,203 @@ html.is-logged-in .guest-element {
 html.is-logged-out .auth-wrapper {
     display: none !important;
 }
+
+/* ==========================================
+   15. MOBILE DRAWER — PROFIL & CONNEXION
+   ========================================== */
+
+/* ── Bouton Pill "Connexion" (mode déconnecté) ── */
+.mobile-login-pill {
+    display: none;
+    /* masqué par défaut, affiché via media query */
+}
+
+@media (max-width: 992px) {
+
+    /* Pill connexion : affiché uniquement dans le drawer */
+    .mobile-login-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 14px 24px;
+        border-radius: 50px;
+        background: linear-gradient(135deg, var(--primary-blue) 0%, #4A65D1 100%);
+        color: #FFFFFF !important;
+        font-size: 15px;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 6px 20px rgba(108, 131, 217, 0.35);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .mobile-login-pill i {
+        font-size: 13px;
+        transition: transform 0.2s ease;
+    }
+
+    .mobile-login-pill:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px rgba(108, 131, 217, 0.45);
+    }
+
+    .mobile-login-pill:hover i {
+        transform: translateX(3px);
+    }
+
+    /* Masquer l'ancien login-circle (suppression doublon) */
+    .login-circle.guest-element {
+        display: none !important;
+    }
+
+    /* ── Bloc profil connecté ── */
+    .mobile-profile-block {
+        position: relative;
+        display: none;
+        /* géré par html.is-logged-in */
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 10px 14px;
+        background-color: #F3F4F6;
+        border-radius: 16px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        user-select: none;
+    }
+
+    html.is-logged-in .mobile-profile-block {
+        display: flex;
+    }
+
+    .mobile-profile-block:hover {
+        background-color: #E9EBF0;
+    }
+
+    /* Avatar Clerk verrouillé à 25.76px */
+    .mobile-profile-avatar,
+    #user-button-mobile,
+    #user-button-mobile>div,
+    #user-button-mobile .cl-rootBox,
+    #user-button-mobile .cl-userButtonTrigger {
+        width: 25.76px !important;
+        height: 25.76px !important;
+        min-width: 25.76px !important;
+        min-height: 25.76px !important;
+        border-radius: 50% !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        pointer-events: none;
+        /* le clic est géré par le bloc parent */
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    /* Infos texte (prénom + nom) */
+    .mobile-profile-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .mobile-profile-name {
+        display: block;
+        font-size: 14px;
+        font-weight: 700;
+        color: #2E3F84;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Chevron rotatif */
+    .mobile-profile-chevron {
+        font-size: 12px;
+        color: #9CA3AF;
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        flex-shrink: 0;
+    }
+
+    .mobile-profile-block.dropdown-open .mobile-profile-chevron {
+        transform: rotate(180deg);
+        /* pointe vers le haut quand ouvert */
+    }
+
+    /* ── Dropdown inversé (bottom sheet) ── */
+    .mobile-profile-dropdown {
+        position: absolute;
+        bottom: calc(100% + 8px);
+        /* s'ouvre VERS LE HAUT */
+        left: 0;
+        right: 0;
+        background-color: #FFFFFF;
+        border-radius: 16px;
+        box-shadow: 0 -4px 24px rgba(46, 63, 132, 0.12);
+        border: 1px solid #F3F4F6;
+        overflow: hidden;
+        z-index: 10;
+
+        /* État initial : caché, décalé vers le bas */
+        opacity: 0;
+        transform: translateY(8px);
+        pointer-events: none;
+        transition:
+            opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+            transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* État actif : slide-up + fade-in */
+    .mobile-profile-block.dropdown-open .mobile-profile-dropdown {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    /* Items du dropdown */
+    .mobile-dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 14px 18px;
+        background: none;
+        border: none;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        color: #2E3F84;
+        cursor: pointer;
+        text-align: left;
+        transition: background-color 0.15s ease;
+    }
+
+    .mobile-dropdown-item i {
+        font-size: 14px;
+        color: var(--primary-blue);
+        width: 16px;
+        text-align: center;
+    }
+
+    .mobile-dropdown-item:hover {
+        background-color: #F3F4F6;
+    }
+
+    .mobile-dropdown-item--danger {
+        color: #DC2626;
+    }
+
+    .mobile-dropdown-item--danger i {
+        color: #DC2626;
+    }
+
+    .mobile-dropdown-item--danger:hover {
+        background-color: #FEF2F2;
+    }
+
+    .mobile-dropdown-divider {
+        height: 1px;
+        background-color: #F3F4F6;
+        margin: 0;
+    }
+}

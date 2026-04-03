@@ -219,15 +219,42 @@
                         <li><a href="connexion.html" class="nav-espace-link espace-disabled">Mon espace</a></li>
                     </ul>
                     <div class="nav-cta">
-                        <a href="connexion.html" class="login-circle guest-element" aria-label="Connexion"><i
-                                class="fas fa-user"></i></a>
-                        <div id="auth-container-mobile" class="mobile-only auth-wrapper">
-                            <div id="user-button-mobile" class="auth-element"></div>
+
+                        <!-- ══ MODE DÉCONNECTÉ : bouton Pill (visible via .guest-element) ══ -->
+                        <a href="connexion.html" class="mobile-login-pill guest-element" aria-label="Connexion">
+                            Connexion <i class="fas fa-arrow-right"></i>
+                        </a>
+
+                        <!-- ══ MODE CONNECTÉ : bloc profil custom (visible via html.is-logged-in) ══ -->
+                        <div class="mobile-profile-block auth-required" id="mobile-profile-block" role="button"
+                            tabindex="0" aria-haspopup="true" aria-expanded="false">
+                            <div class="mobile-profile-avatar" id="mobile-profile-avatar">
+                                <!-- L'avatar Clerk sera monté ici via JS -->
+                                <div id="user-button-mobile" class="auth-element"></div>
+                            </div>
+                            <div class="mobile-profile-info">
+                                <span class="mobile-profile-name" id="mobile-profile-name">…</span>
+                            </div>
+                            <i class="fas fa-chevron-up mobile-profile-chevron" id="mobile-profile-chevron"></i>
+
+                            <!-- ══ Dropdown inversé (bottom sheet) ══ -->
+                            <div class="mobile-profile-dropdown" id="mobile-profile-dropdown" role="menu">
+                                <button class="mobile-dropdown-item" id="mobile-manage-account" role="menuitem">
+                                    <i class="fas fa-sliders"></i> Gérer le compte
+                                </button>
+                                <div class="mobile-dropdown-divider"></div>
+                                <button class="mobile-dropdown-item mobile-dropdown-item--danger" id="mobile-sign-out"
+                                    role="menuitem">
+                                    <i class="fas fa-right-from-bracket"></i> Se déconnecter
+                                </button>
+                            </div>
                         </div>
 
+                        <!-- Avatar desktop (inchangé) -->
                         <div id="auth-container-desktop" class="desktop-only auth-wrapper">
                             <div id="user-button-desktop" class="auth-element"></div>
                         </div>
+
                     </div>
                 </div>
             </nav>
