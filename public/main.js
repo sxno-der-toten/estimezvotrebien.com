@@ -595,6 +595,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ── Fermeture au clic sur l'overlay (voile extérieur) ──────────
+    document.addEventListener('click', (e) => {
+        const navContent = document.getElementById('nav-content');
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+
+        // Si le menu est ouvert ET que le clic est en dehors du drawer ET en dehors du bouton hamburger
+        if (
+            navContent &&
+            navContent.classList.contains('active') &&
+            !navContent.contains(e.target) &&
+            !hamburgerBtn.contains(e.target)
+        ) {
+            navContent.classList.remove('active');
+            document.body.classList.remove('menu-open');
+        }
+    });
+    // ───────────────────────────────────────────────────────────────
+
     // FAQ Accordéon
     document.querySelectorAll('.faq-question').forEach(question => {
         question.addEventListener('click', function () {

@@ -469,7 +469,7 @@ p {
         position: fixed;
         top: 0;
         right: -100%;
-        width: 80%;
+        width: 70%;
         /* ← 80% comme demandé */
         max-width: 360px;
         height: 100vh;
