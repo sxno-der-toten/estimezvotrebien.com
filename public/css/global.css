@@ -527,7 +527,7 @@ p {
 
     .mobile-menu-logo {
         display: block;
-        margin-top: 0.5rem;
+        margin-top: -0.5rem;
         margin-bottom: 1.5rem;
         text-align: right;
         width: 100%;
