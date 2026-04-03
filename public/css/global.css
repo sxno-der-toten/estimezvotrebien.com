@@ -433,6 +433,90 @@ p {
 }
 
 @media (max-width: 992px) {
+
+    /* ── Overlay (body pseudo-element) ── */
+    body.menu-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 60, 0.35);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 998;
+    }
+
+    body.menu-open {
+        overflow: hidden;
+    }
+
+    /* ── Bouton hamburger ── */
+    .hamburger-btn {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 22px;
+        color: var(--primary-blue);
+        cursor: pointer;
+        z-index: 100;
+        padding: 6px;
+    }
+
+    /* ── Drawer : conteneur principal ── */
+    .nav-content {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        /* ← 80% comme demandé */
+        max-width: 360px;
+        height: 100vh;
+        background-color: #FAFBFE;
+        /* fond blanc légèrement grisé */
+        border-radius: 30px 0 0 30px;
+        /* coins arrondis côté gauche */
+        flex-direction: column;
+        align-items: flex-end;
+        /* tout collé à droite */
+        padding: 2rem 1.75rem 2.5rem;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 999;
+        overflow-y: auto;
+        box-shadow: -12px 0 40px rgba(46, 63, 132, 0.12);
+        gap: 0;
+    }
+
+    .nav-content.active {
+        right: 0;
+    }
+
+    /* ── Bouton fermeture (X) dans cercle ── */
+    .close-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 1.25rem;
+        right: 1.25rem;
+        width: 40px;
+        height: 40px;
+        background-color: #F3F4F6;
+        border: none;
+        border-radius: 50%;
+        color: #2E3F84;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .close-menu-btn:hover {
+        background-color: #E5E7EB;
+    }
+
+    /* ── Logo mobile (discret, aligné à droite) ── */
     .mobile-only {
         display: flex !important;
     }
@@ -441,135 +525,269 @@ p {
         display: none !important;
     }
 
-    .nav-brand .logo {
-        font-size: 18px !important;
-    }
-
-    .hamburger-btn {
-        display: block;
-        background: none;
-        border: none;
-        font-size: 24px;
-        color: var(--primary-blue);
-        cursor: pointer;
-        z-index: 100;
-    }
-
-    .nav-content {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 85%;
-        max-width: 400px;
-        height: 100vh;
-        background-color: #7b85df;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 2.5rem;
-        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 999;
-        overflow-y: auto;
-        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
-        gap: 0;
-    }
-
-    .nav-content.active {
-        right: 0;
-    }
-
-    .close-menu-btn {
-        display: block;
-        position: absolute;
-        top: 1.5rem;
-        right: 1.5rem;
-        background: none;
-        border: none;
-        color: white;
-        font-size: 26px;
-        cursor: pointer;
-    }
-
     .mobile-menu-logo {
         display: block;
-        margin-bottom: 2rem;
-        opacity: 0.6;
+        margin-top: 0.5rem;
+        margin-bottom: 1.5rem;
+        text-align: right;
+        width: 100%;
     }
 
-    .mobile-menu-logo .logo {
-        color: #1A2B5E;
-        font-size: 18px;
+    .mobile-menu-logo .logo-img {
+        max-height: 32px;
+        opacity: 0.75;
     }
 
+    /* ── Séparateur fin ── */
+    .mobile-menu-logo {
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #F3F4F6;
+        width: 100%;
+    }
+
+    /* ── Liste de navigation ── */
     .nav-menu {
         flex-direction: column;
         width: 100%;
-        gap: 1.2rem;
-        margin-bottom: 2.5rem;
+        gap: 0;
+        /* espacement géré via padding */
+        margin-bottom: 0;
         display: flex;
+        align-items: flex-end;
+        /* liens collés à droite */
     }
 
     .nav-menu li {
         width: 100%;
+        border-bottom: 1px solid #F3F4F6;
+    }
+
+    .nav-menu li:last-child {
+        border-bottom: none;
     }
 
     .nav-menu a {
-        color: white !important;
-        font-size: 20px;
+        color: #2E3F84 !important;
+        font-size: 17px;
         font-weight: 700;
         display: flex;
         justify-content: space-between;
+        /* texte à gauche, icône à droite */
         align-items: center;
         text-decoration: none;
+        padding: 1rem 0;
+        /* grand padding vertical anti-missclick */
+        width: 100%;
+        gap: 12px;
+        transition: color 0.2s ease;
     }
 
+    .nav-menu a:hover {
+        color: var(--primary-blue) !important;
+    }
+
+    /* Icônes FontAwesome à droite de chaque lien */
+    .nav-menu li:nth-child(1) a::after {
+        content: '\f015';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* Estimer → maison */
+    .nav-menu li:nth-child(2) a::after {
+        content: '\f002';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* Acheter → loupe */
+    .nav-menu li:nth-child(3) a::after {
+        content: '\f0e7';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* Vendre → éclair */
+    .nav-menu li:nth-child(4) a::after {
+        content: '\f02d';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* Guides → livre */
+    .nav-menu li:nth-child(5) a::after {
+        content: '\f059';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* FAQ → ? */
+    .nav-menu li:nth-child(6) a::after {
+        content: '\f005';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* À propos → étoile */
+    .nav-menu li:nth-child(7) a::after {
+        content: '\f0e0';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* Contact → enveloppe */
+    .nav-menu li:nth-child(8) a::after {
+        content: '\f007';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* Mon espace → user */
+
+    /* ── Zone auth (CTA mobile) ── */
     .nav-content .nav-cta {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        gap: 1.2rem;
+        align-items: flex-end;
+        /* aligné à droite */
+        gap: 1rem;
         width: 100%;
-        margin-bottom: 2rem;
+        margin-top: 1.75rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #F3F4F6;
     }
 
-    .mobile-login-link {
-        color: rgba(255, 255, 255, 0.8) !important;
-        text-decoration: underline;
-        font-weight: 600;
-        font-size: 16px;
+    /* ── Mode DÉCONNECTÉ : bouton Pill avec dégradé ── */
+    .guest-element.login-circle {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        height: auto;
+        padding: 14px 24px;
+        border-radius: 50px;
+        background: linear-gradient(135deg, var(--primary-blue) 0%, #4A65D1 100%);
+        color: #FFFFFF !important;
+        font-size: 15px;
+        font-weight: 700;
+        box-shadow: 0 6px 20px rgba(108, 131, 217, 0.35);
+        text-decoration: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
+    .guest-element.login-circle::before {
+        content: '\f007';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+    }
+
+    .guest-element.login-circle:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px rgba(108, 131, 217, 0.45);
+    }
+
+    /* ── Mode CONNECTÉ : header profil dans le drawer ── */
+    .auth-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        /* avatar à droite */
+        gap: 10px;
+        width: 100%;
+    }
+
+    /* Avatar Clerk verrouillé à 25.76px */
+    #user-button-mobile,
+    #user-button-mobile>div,
+    #user-button-mobile .cl-rootBox,
+    #user-button-mobile .cl-userButtonTrigger {
+        width: 25.76px !important;
+        height: 25.76px !important;
+        min-width: 25.76px !important;
+        min-height: 25.76px !important;
+        border-radius: 50% !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Réseaux sociaux : alignés à droite */
     .mobile-socials {
         display: flex;
-        gap: 1rem;
+        gap: 0.75rem;
+        justify-content: flex-end;
+        width: 100%;
+        margin-top: 0.5rem;
     }
 
     .mobile-socials a {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 40px;
-        height: 40px;
-        background-color: white;
-        color: #7b85df;
+        width: 38px;
+        height: 38px;
+        background-color: #F3F4F6;
+        color: #2E3F84;
         border-radius: 50%;
-        font-size: 18px;
+        font-size: 16px;
         text-decoration: none;
+        transition: background-color 0.2s ease, color 0.2s ease;
     }
 
-    body.menu-open::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
+    .mobile-socials a:hover {
+        background-color: var(--primary-blue);
+        color: #FFFFFF;
+    }
+
+    /* Lien connexion texte (fallback) */
+    .mobile-login-link {
+        color: #2E3F84 !important;
+        text-decoration: underline;
+        font-weight: 600;
+        font-size: 15px;
+        text-align: right;
         width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.4);
-        z-index: 998;
-        backdrop-filter: blur(2px);
     }
 
-    body.menu-open {
-        overflow: hidden;
+    /* Logo dans la navbar mobile (topbar) */
+    .nav-brand .logo {
+        font-size: 18px !important;
+    }
+
+    .nav-brand img,
+    .nav-brand .logo-img {
+        max-height: 20px !important;
+        width: auto !important;
+        display: block;
     }
 }
 
