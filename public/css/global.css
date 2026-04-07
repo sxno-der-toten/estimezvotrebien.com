@@ -682,6 +682,34 @@ html.is-logged-in #user-button-mobile:empty {
         display: block;
         margin: 0 auto;
     }
+
+    .footer-top {
+        /* On force une seule colonne au lieu de deux */
+        grid-template-columns: 1fr !important;
+        gap: 2.5rem;
+        /* On augmente l'espace entre les blocs verticaux */
+        text-align: center;
+    }
+
+    .footer-column ul {
+        align-items: center;
+        /* Centre les liens du menu */
+    }
+
+    .footer-bottom-flex {
+        /* On s'assure que le bas du footer est aussi sur une colonne */
+        grid-template-columns: 1fr !important;
+        justify-items: center;
+        gap: 1.5rem;
+    }
+
+    .footer-logo,
+    .footer-copyright,
+    .footer-socials {
+        justify-self: center !important;
+        text-align: center;
+    }
+
 }
 
 @media (max-width: 992px) {
