@@ -383,24 +383,6 @@ p {
     color: var(--primary-blue);
 }
 
-@media (max-width: 992px) {
-    .footer-top {
-        grid-template-columns: repeat(2, 1fr);
-        row-gap: 2rem;
-    }
-
-    .footer-bottom-flex {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        justify-items: center;
-    }
-
-    .footer-logo,
-    .footer-socials {
-        justify-self: center;
-    }
-}
-
 @media (max-width: 576px) {
     .footer-top {
         grid-template-columns: 1fr;
@@ -432,364 +414,6 @@ p {
     gap: 1rem;
 }
 
-@media (max-width: 992px) {
-
-    /* ── Overlay (body pseudo-element) ── */
-    body.menu-open::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(15, 23, 60, 0.35);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        z-index: 998;
-    }
-
-    body.menu-open {
-        overflow: hidden;
-    }
-
-    /* ── Bouton hamburger ── */
-    .hamburger-btn {
-        display: block;
-        background: none;
-        border: none;
-        font-size: 22px;
-        color: var(--primary-blue);
-        cursor: pointer;
-        z-index: 100;
-        padding: 6px;
-    }
-
-    /* ── Drawer : conteneur principal ── */
-    .nav-content {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 70%;
-        /* ← 80% comme demandé */
-        max-width: 360px;
-        height: 100vh;
-        background-color: #FAFBFE;
-        /* fond blanc légèrement grisé */
-        border-radius: 30px 0 0 30px;
-        /* coins arrondis côté gauche */
-        flex-direction: column;
-        align-items: flex-end;
-        /* tout collé à droite */
-        padding: 2rem 1.75rem 2.5rem;
-        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 999;
-        overflow-y: auto;
-        box-shadow: -12px 0 40px rgba(46, 63, 132, 0.12);
-        gap: 0;
-    }
-
-    .nav-content.active {
-        right: 0;
-    }
-
-    /* ── Bouton fermeture (X) dans cercle ── */
-    .close-menu-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 1.25rem;
-        right: 1.25rem;
-        width: 40px;
-        height: 40px;
-        background-color: #F3F4F6;
-        border: none;
-        border-radius: 50%;
-        color: #2E3F84;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-        flex-shrink: 0;
-    }
-
-    .close-menu-btn:hover {
-        background-color: #E5E7EB;
-    }
-
-    /* ── Logo mobile (discret, aligné à droite) ── */
-    .mobile-only {
-        display: flex !important;
-    }
-
-    .desktop-only {
-        display: none !important;
-    }
-
-    .mobile-menu-logo {
-        display: block;
-        margin-top: -0.5rem;
-        margin-bottom: 1.5rem;
-        text-align: right;
-        width: 100%;
-    }
-
-    .mobile-menu-logo .logo-img {
-        max-height: 32px;
-        opacity: 0.75;
-    }
-
-    /* ── Séparateur fin ── */
-    .mobile-menu-logo {
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid #F3F4F6;
-        width: 100%;
-    }
-
-    /* ── Liste de navigation ── */
-    .nav-menu {
-        flex-direction: column;
-        width: 100%;
-        gap: 0;
-        /* espacement géré via padding */
-        margin-bottom: 0;
-        display: flex;
-        align-items: flex-end;
-        /* liens collés à droite */
-    }
-
-    .nav-menu li {
-        width: 100%;
-        border-bottom: 1px solid #F3F4F6;
-    }
-
-    .nav-menu li:last-child {
-        border-bottom: none;
-    }
-
-    .nav-menu a {
-        color: #2E3F84 !important;
-        font-size: 17px;
-        font-weight: 700;
-        display: flex;
-        justify-content: space-between;
-        /* texte à gauche, icône à droite */
-        align-items: center;
-        text-decoration: none;
-        padding: 1rem 0;
-        /* grand padding vertical anti-missclick */
-        width: 100%;
-        gap: 12px;
-        transition: color 0.2s ease;
-    }
-
-    .nav-menu a:hover {
-        color: var(--primary-blue) !important;
-    }
-
-    /* Icônes FontAwesome à droite de chaque lien */
-    .nav-menu li:nth-child(1) a::after {
-        content: '\f015';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        font-size: 14px;
-        color: var(--primary-blue);
-        opacity: 0.6;
-    }
-
-    /* Estimer → maison */
-    .nav-menu li:nth-child(2) a::after {
-        content: '\f002';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        font-size: 14px;
-        color: var(--primary-blue);
-        opacity: 0.6;
-    }
-
-    /* Acheter → loupe */
-    .nav-menu li:nth-child(3) a::after {
-        content: '\f0e7';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        font-size: 14px;
-        color: var(--primary-blue);
-        opacity: 0.6;
-    }
-
-    /* Vendre → éclair */
-    .nav-menu li:nth-child(4) a::after {
-        content: '\f02d';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        font-size: 14px;
-        color: var(--primary-blue);
-        opacity: 0.6;
-    }
-
-    /* Guides → livre */
-    .nav-menu li:nth-child(5) a::after {
-        content: '\f059';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        font-size: 14px;
-        color: var(--primary-blue);
-        opacity: 0.6;
-    }
-
-    /* FAQ → ? */
-    .nav-menu li:nth-child(6) a::after {
-        content: '\f005';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        font-size: 14px;
-        color: var(--primary-blue);
-        opacity: 0.6;
-    }
-
-    /* À propos → étoile */
-    .nav-menu li:nth-child(7) a::after {
-        content: '\f0e0';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        font-size: 14px;
-        color: var(--primary-blue);
-        opacity: 0.6;
-    }
-
-    /* Contact → enveloppe */
-    .nav-menu li:nth-child(8) a::after {
-        content: '\f007';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        font-size: 14px;
-        color: var(--primary-blue);
-        opacity: 0.6;
-    }
-
-    /* Mon espace → user */
-
-    /* ── Zone auth (CTA mobile) ── */
-    .nav-content .nav-cta {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        /* aligné à droite */
-        gap: 1rem;
-        width: 100%;
-        margin-top: 1.75rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #F3F4F6;
-    }
-
-    /* ── Mode DÉCONNECTÉ : bouton Pill avec dégradé ── */
-    .guest-element.login-circle {
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        width: 100%;
-        height: auto;
-        padding: 14px 24px;
-        border-radius: 50px;
-        background: linear-gradient(135deg, var(--primary-blue) 0%, #4A65D1 100%);
-        color: #FFFFFF !important;
-        font-size: 15px;
-        font-weight: 700;
-        box-shadow: 0 6px 20px rgba(108, 131, 217, 0.35);
-        text-decoration: none;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .guest-element.login-circle::before {
-        content: '\f007';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        font-size: 14px;
-    }
-
-    .guest-element.login-circle:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 28px rgba(108, 131, 217, 0.45);
-    }
-
-    /* ── Mode CONNECTÉ : header profil dans le drawer ── */
-    .auth-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        /* avatar à droite */
-        gap: 10px;
-        width: 100%;
-    }
-
-    /* Avatar Clerk verrouillé à 25.76px */
-    #user-button-mobile,
-    #user-button-mobile>div,
-    #user-button-mobile .cl-rootBox,
-    #user-button-mobile .cl-userButtonTrigger {
-        width: 25.76px !important;
-        height: 25.76px !important;
-        min-width: 25.76px !important;
-        min-height: 25.76px !important;
-        border-radius: 50% !important;
-        overflow: hidden !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-    /* Réseaux sociaux : alignés à droite */
-    .mobile-socials {
-        display: flex;
-        gap: 0.75rem;
-        justify-content: flex-end;
-        width: 100%;
-        margin-top: 0.5rem;
-    }
-
-    .mobile-socials a {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 38px;
-        height: 38px;
-        background-color: #F3F4F6;
-        color: #2E3F84;
-        border-radius: 50%;
-        font-size: 16px;
-        text-decoration: none;
-        transition: background-color 0.2s ease, color 0.2s ease;
-    }
-
-    .mobile-socials a:hover {
-        background-color: var(--primary-blue);
-        color: #FFFFFF;
-    }
-
-    /* Lien connexion texte (fallback) */
-    .mobile-login-link {
-        color: #2E3F84 !important;
-        text-decoration: underline;
-        font-weight: 600;
-        font-size: 15px;
-        text-align: right;
-        width: 100%;
-    }
-
-    /* Logo dans la navbar mobile (topbar) */
-    .nav-brand .logo {
-        font-size: 18px !important;
-    }
-
-    .nav-brand img,
-    .nav-brand .logo-img {
-        max-height: 20px !important;
-        width: auto !important;
-        display: block;
-    }
-}
 
 /* ======
    9. BOUTONS FLOTTANTS (Retour & Remonter)
@@ -840,120 +464,6 @@ p {
 
 #grid {
     scroll-margin-top: 120px;
-}
-
-@media (max-width: 992px) {
-    .top-btn {
-        bottom: 20px;
-        right: 20px;
-        width: 45px;
-        height: 45px;
-        font-size: 16px;
-    }
-}
-
-/* ======
-   10. RESPONSIVE MOBILE : RÉPARÉ
-====== */
-@media (max-width: 768px) {
-
-    .nav {
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-    }
-
-    .nav-brand,
-    .hamburger-btn {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    .nav-brand .logo {
-        font-size: 16px !important;
-    }
-
-    .nav-brand img,
-    .nav-brand .logo-img {
-        max-height: 20px !important;
-        width: auto !important;
-        display: block;
-        margin: 0 auto;
-    }
-
-    .desktop-only {
-        display: none !important;
-    }
-
-    .nav-menu {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: wrap !important;
-        justify-content: center !important;
-        gap: 8px 15px !important;
-    }
-
-    .nav-menu a {
-        font-size: 14px !important;
-    }
-
-    .nav-cta {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        margin-top: 5px;
-    }
-
-    .content-grid,
-    .bento-grid,
-    .factors-grid,
-    .improvement-grid,
-    .professional-situations,
-    .specifics-grid,
-    .pros-cons-grid,
-    .checklist-grid,
-    .agency-features-grid,
-    .contact-grid,
-    .mission-content {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 20px !important;
-    }
-
-    .bento-card,
-    .factor-card,
-    .improvement-card,
-    .situation-card,
-    .specific-card,
-    .pc-box {
-        width: 100% !important;
-    }
-
-    .table-of-contents,
-    .vs-table-container,
-    .charges-table,
-    table {
-        overflow-x: auto;
-        display: block;
-        width: 100%;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .form-row {
-        flex-direction: column !important;
-        gap: 15px !important;
-    }
-
-    .form-group,
-    .half-width {
-        width: 100% !important;
-    }
-
-    .map-container iframe {
-        height: 300px !important;
-        width: 100% !important;
-    }
 }
 
 /* ==========================================
@@ -1012,16 +522,6 @@ html.is-logged-in .auth-required {
     box-shadow: 0 6px 20px rgba(108, 131, 217, 0.45);
 }
 
-@media (max-width: 992px) {
-    .nav-cta .btn-login {
-        background: #FFFFFF !important;
-        color: #7b85df !important;
-        box-shadow: none !important;
-        width: auto;
-        padding: 10px 24px !important;
-    }
-}
-
 /* ==========================================
    12. OVERRIDES CLERK (Modale & Popover)
    ========================================== */
@@ -1030,12 +530,19 @@ html.is-logged-in .auth-required {
 }
 
 .cl-modalContent .cl-cardBox {
-    width: 880px !important;
-    max-width: 95vw !important;
-    max-height: 80vh !important;
-    min-height: 400px !important;
+    width: 100vh;
+    max-width: 100vh;
+    max-height: 100vh !important;
+    margin-top: 80vh;
+    min-height: 65vh !important;
     border-radius: 20px !important;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2) !important;
+}
+
+.cl-internal-1xuu4jk {
+    position: absolute;
+    top: 2vh;
+    right: 2vh
 }
 
 .cl-scrollBox {
@@ -1083,62 +590,61 @@ html.is-logged-in .auth-required {
 }
 
 /* ==========================================
-   13. CORRECTION ALIGNEMENT AVATAR CLERK
+   13. ALIGNEMENT NAVBAR & CTA
    ========================================== */
-
-#auth-container-desktop>div {
-    display: flex !important;
-    align-items: center !important;
+.nav-cta-desktop-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 8vh;
+    /* Réserve l'espace pour éviter que le menu ne bouge */
+    height: 45px;
 }
 
-#user-button-desktop,
-#user-button-mobile {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    height: 32px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-#user-button-desktop>div,
-#user-button-mobile>div,
-.cl-rootBox,
-.cl-userButtonTrigger {
-    display: flex !important;
-    align-items: center !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    height: 32px !important;
+/* On s'assure que l'avatar et le bouton sont centrés sur la même ligne */
+#auth-container-desktop,
+.btn-login.desktop-only {
+    display: flex;
+    align-items: center;
+    margin: 0;
 }
 
 /* ==========================================
-   14. NOUVEAU : TOGGLE PLACEHOLDER / AVATAR (ZÉRO FOUC)
+   14. ANTI-FOUC & SKELETON (ZERO SAUT)
    ========================================== */
-.login-circle {
-    width: 25.76px;
-    height: 25.76px;
-    border-radius: 50%;
-    background-color: #F3F4F6;
-    color: var(--primary-blue);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    text-decoration: none;
-    transition: background-color 0.2s ease;
-}
 
-.login-circle:hover {
-    background-color: #E5E7EB;
-}
-
+/* 1. Règle d'or : On cache immédiatement selon l'état du localStorage */
 html.is-logged-in .guest-element {
     display: none !important;
 }
 
-html.is-logged-out .auth-wrapper {
+html.is-logged-out .auth-element {
     display: none !important;
+}
+
+/* 2. Le Placeholder (Rond gris) pour l'avatar qui charge */
+html.is-logged-in #user-button-desktop:empty,
+html.is-logged-in #user-button-mobile:empty {
+    display: block !important;
+    width: 25.75px;
+    height: 25.75px;
+    border-radius: 50%;
+    background-color: #F3F4F6;
+    animation: skeleton-pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes skeleton-pulse {
+    0% {
+        background-color: #F3F4F6;
+    }
+
+    50% {
+        background-color: #E5E7EB;
+    }
+
+    100% {
+        background-color: #F3F4F6;
+    }
 }
 
 /* ==========================================
@@ -1151,7 +657,118 @@ html.is-logged-out .auth-wrapper {
     /* masqué par défaut, affiché via media query */
 }
 
+@media (max-width: 768px) {
+
+    .nav {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    .nav-brand,
+    .hamburger-btn {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .nav-brand .logo {
+        font-size: 16px !important;
+    }
+
+    .nav-brand img,
+    .nav-brand .logo-img {
+        max-height: 20px !important;
+        width: auto !important;
+        display: block;
+        margin: 0 auto;
+    }
+}
+
 @media (max-width: 992px) {
+
+    /* ==========================================
+       OVERRIDES CLERK MOBILE (< 992px)
+       ========================================== */
+    .cl-modalContent {
+        display: flex !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        /* CORRECTION 1 : Enlève la marge vide aux coins */
+        background-color: transparent !important;
+    }
+
+    .cl-modalContent .cl-cardBox {
+        /* On annule tes valeurs desktop (100vh et margin 80vh) qui cassaient tout sur mobile */
+        width: 100% !important;
+        max-width: 90dvh !important;
+        /* Taille max sur tablette/grand tel */
+        height: 85dvh !important;
+        /* Ratio 9:16 parfait */
+        max-height: 85dvh !important;
+        min-height: auto !important;
+        margin-top: 0 !important;
+        /* CRUCIAL: on écrase ton 80vh du desktop */
+        margin: auto !important;
+    }
+
+    .cl-internal-1xuu4jk {
+        position: absolute !important;
+        /* CORRECTION 2 : Force l'ancrage du bouton */
+        top: 5px !important;
+        right: 5px !important;
+        margin: 0 !important;
+    }
+
+    /* On s'assure que ça ne déborde pas sur les côtés */
+    .cl-scrollBox {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .cl-navbar,
+    .cl-internal-x6vhx3 {
+        max-width: 20dvh;
+    }
+
+    .cl-userButtonPopoverCard,
+    .cl-popoverBox {
+        background-color: var(--white) !important;
+        border: 1px solid var(--card-border) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(108, 131, 217, 0.15) !important;
+    }
+
+    .cl-userPreviewTextContainer,
+    .cl-userButtonPopoverActionButtonText {
+        color: var(--title-blue) !important;
+        font-weight: 600 !important;
+    }
+
+    .cl-userPreviewSecondaryIdentifier {
+        color: var(--text-gray) !important;
+    }
+
+    .cl-userButtonPopoverActionButton:hover,
+    #custom-clerk-link:hover {
+        background-color: var(--hero-bg) !important;
+        color: var(--primary-blue) !important;
+    }
+
+    .cl-userButtonPopoverActionButtonIcon,
+    .cl-userButtonPopoverActionButton svg {
+        color: var(--primary-blue) !important;
+    }
+
+    .cl-userButtonPopoverCard .cl-internal-15y2b9r,
+    .cl-dividerRow {
+        border-bottom-color: var(--card-border) !important;
+    }
+
+    .cl-internal-b3al6g,
+    .cl-internal-1x7qnwz {
+        display: none !important;
+    }
 
     /* Pill connexion : affiché uniquement dans le drawer */
     .mobile-login-pill {
@@ -1338,5 +955,399 @@ html.is-logged-out .auth-wrapper {
         height: 1px;
         background-color: #F3F4F6;
         margin: 0;
+    }
+
+    .nav-cta .btn-login {
+        background: #FFFFFF !important;
+        color: #7b85df !important;
+        box-shadow: none !important;
+        width: auto;
+        padding: 10px 24px !important;
+    }
+
+    /* ── Overlay (body pseudo-element) ── */
+    body.menu-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 60, 0.35);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 998;
+    }
+
+    body.menu-open {
+        overflow: hidden;
+    }
+
+    /* ── Bouton hamburger ── */
+    .hamburger-btn {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 22px;
+        color: var(--primary-blue);
+        cursor: pointer;
+        z-index: 100;
+        padding: 6px;
+    }
+
+    /* ── Drawer : conteneur principal ── */
+    .nav-content {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        max-width: 360px;
+        height: 100dvh;
+        /* dvh est parfait pour iOS */
+        max-height: 100dvh;
+        background-color: #FAFBFE;
+        border-radius: 30px 0 0 30px;
+        flex-direction: column;
+        align-items: flex-end;
+        /* On réduit les paddings haut/bas ici : */
+        padding: 1.5rem 1.5rem 2rem;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 999;
+        /* On s'assure que le scroll fonctionne si l'écran est vraiment minuscule */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        box-shadow: -12px 0 40px rgba(46, 63, 132, 0.12);
+        gap: 0;
+    }
+
+    .nav-content.active {
+        right: 0;
+    }
+
+    /* ── Bouton fermeture (X) dans cercle ── */
+    .close-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 1.25rem;
+        right: 1.25rem;
+        width: 40px;
+        height: 40px;
+        background-color: #F3F4F6;
+        border: none;
+        border-radius: 50%;
+        color: #2E3F84;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .close-menu-btn:hover {
+        background-color: #E5E7EB;
+    }
+
+    /* ── Logo mobile (discret, aligné à droite) ── */
+    .mobile-only {
+        display: flex !important;
+    }
+
+    .desktop-only {
+        display: none !important;
+    }
+
+    .mobile-menu-logo {
+        display: block;
+        margin-top: -0.5rem;
+        margin-bottom: 1.5rem;
+        text-align: right;
+        width: 100%;
+    }
+
+    .mobile-menu-logo .logo-img {
+        max-height: 32px;
+        opacity: 0.75;
+    }
+
+    /* ── Séparateur fin ── */
+    .mobile-menu-logo {
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #F3F4F6;
+        width: 100%;
+    }
+
+    /* ── Liste de navigation ── */
+    .nav-menu {
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
+        /* espacement géré via padding */
+        margin-bottom: 0;
+        display: flex;
+        align-items: flex-end;
+        /* liens collés à droite */
+    }
+
+    .nav-menu li {
+        width: 100%;
+        border-bottom: 1px solid #F3F4F6;
+    }
+
+    .nav-menu li:last-child {
+        border-bottom: none;
+    }
+
+    .nav-menu a {
+        color: #2E3F84 !important;
+        font-size: 15px;
+        /* Légèrement réduit (15px au lieu de 17px) */
+        font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-decoration: none;
+        /* On réduit le padding vertical ici (0.7rem au lieu de 1rem) : */
+        padding: 0.7rem 0;
+        width: 100%;
+        gap: 12px;
+        transition: color 0.2s ease;
+    }
+
+    .nav-menu a:hover {
+        color: var(--primary-blue) !important;
+    }
+
+    /* Icônes FontAwesome à droite de chaque lien */
+    .nav-menu li:nth-child(1) a::after {
+        content: '\f015';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* Estimer → maison */
+    .nav-menu li:nth-child(2) a::after {
+        content: '\f002';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* Acheter → loupe */
+    .nav-menu li:nth-child(3) a::after {
+        content: '\f0e7';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* Vendre → éclair */
+    .nav-menu li:nth-child(4) a::after {
+        content: '\f02d';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* Guides → livre */
+    .nav-menu li:nth-child(5) a::after {
+        content: '\f059';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* FAQ → ? */
+
+    .faq-question h3 {
+        font-size: 1rem;
+    }
+
+    .nav-menu li:nth-child(6) a::after {
+        content: '\f005';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* À propos → étoile */
+    .nav-menu li:nth-child(7) a::after {
+        content: '\f0e0';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* Contact → enveloppe */
+    .nav-menu li:nth-child(8) a::after {
+        content: '\f007';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+        color: var(--primary-blue);
+        opacity: 0.6;
+    }
+
+    /* Mon espace → user */
+
+    /* ── Zone auth (CTA mobile) ── */
+    .nav-content .nav-cta {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 1rem;
+        width: 100%;
+        /* On réduit l'espace au-dessus de la ligne de séparation : */
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #F3F4F6;
+    }
+
+    /* ── Mode DÉCONNECTÉ : bouton Pill avec dégradé ── */
+    .guest-element.login-circle {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        height: auto;
+        padding: 14px 24px;
+        border-radius: 50px;
+        background: linear-gradient(135deg, var(--primary-blue) 0%, #4A65D1 100%);
+        color: #FFFFFF !important;
+        font-size: 15px;
+        font-weight: 700;
+        box-shadow: 0 6px 20px rgba(108, 131, 217, 0.35);
+        text-decoration: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .guest-element.login-circle::before {
+        content: '\f007';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+    }
+
+    .guest-element.login-circle:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px rgba(108, 131, 217, 0.45);
+    }
+
+    /* ── Mode CONNECTÉ : header profil dans le drawer ── */
+    .auth-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        /* avatar à droite */
+        gap: 10px;
+        width: 100%;
+    }
+
+    /* Avatar Clerk verrouillé à 25.76px */
+    #user-button-mobile,
+    #user-button-mobile>div,
+    #user-button-mobile .cl-rootBox,
+    #user-button-mobile .cl-userButtonTrigger {
+        width: 25.76px !important;
+        height: 25.76px !important;
+        min-width: 25.76px !important;
+        min-height: 25.76px !important;
+        border-radius: 50% !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Réseaux sociaux : alignés à droite */
+    .mobile-socials {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: flex-end;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .mobile-socials a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        background-color: #F3F4F6;
+        color: #2E3F84;
+        border-radius: 50%;
+        font-size: 16px;
+        text-decoration: none;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .mobile-socials a:hover {
+        background-color: var(--primary-blue);
+        color: #FFFFFF;
+    }
+
+    /* Lien connexion texte (fallback) */
+    .mobile-login-link {
+        color: #2E3F84 !important;
+        text-decoration: underline;
+        font-weight: 600;
+        font-size: 15px;
+        text-align: right;
+        width: 100%;
+    }
+
+    /* Logo dans la navbar mobile (topbar) */
+    .nav-brand .logo {
+        font-size: 18px !important;
+    }
+
+    .nav-brand img,
+    .nav-brand .logo-img {
+        max-height: 20px !important;
+        width: auto !important;
+        display: block;
+    }
+
+    .footer-top {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 2rem;
+    }
+
+    .footer-bottom-flex {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        justify-items: center;
+    }
+
+    .footer-logo,
+    .footer-socials {
+        justify-self: center;
+    }
+
+    .top-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        font-size: 16px;
     }
 }

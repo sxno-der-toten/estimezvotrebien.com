@@ -1,15 +1,18 @@
 // ==========================================
-// CONFIGURATION SUPABASE
+// CONFIGURATION SUPABASE (Protégée contre le double chargement)
 // ==========================================
-const supabaseUrl = 'https://crswkagawmfksizojgsf.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNyc3drYWdhd21ma3Npem9qZ3NmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MDgyMjAsImV4cCI6MjA5MDE4NDIyMH0.hymLWw0vjv0HW_5DX5xE9DXJdbEo_OOyjIZ9qagWRnw';
+if (!window.supabaseUrl) {
+    window.supabaseUrl = 'https://crswkagawmfksizojgsf.supabase.co';
+    window.supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNyc3drYWdhd21ma3Npem9qZ3NmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MDgyMjAsImV4cCI6MjA5MDE4NDIyMH0.hymLWw0vjv0HW_5DX5xE9DXJdbEo_OOyjIZ9qagWRnw';
+}
 
 // On crée une instance claire et on la stocke globalement
 if (!window.supabaseClient && window.supabase) {
-    window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+    window.supabaseClient = window.supabase.createClient(window.supabaseUrl, window.supabaseKey);
 }
 
-const CLERK_SESSION_KEY = 'estimez_clerk_saved_session';
+// On utilise 'var' car contrairement à 'const', il accepte d'être rechargé plusieurs fois sans faire d'erreur
+var CLERK_SESSION_KEY = 'estimez_clerk_saved_session';
 
 function saveClerkSession(session) {
     try {
@@ -83,7 +86,7 @@ restoreNavbarFromSavedSession();
 // 1. INITIALISATION DE SWUP (Navigation Fluide)
 // ==========================================
 if (typeof Swup !== 'undefined') {
-    const swup = new Swup();
+    var swup = new Swup();
 }
 
 // ==========================================
@@ -210,7 +213,7 @@ async function loadClientDashboard(userId) {
 // ==========================================
 // OUTIL D'ESTIMATION EXISTANT
 // ==========================================
-class EstimationTool {
+window.EstimationTool = class {
     constructor() {
         this.currentStep = 1;
         this.totalSteps = 6;
@@ -574,7 +577,7 @@ class EstimationTool {
 document.addEventListener('DOMContentLoaded', () => {
 
     // Initialisation du formulaire d'estimation
-    new EstimationTool();
+    new window.EstimationTool();
 
     // Menu Hamburger
     const hamburgerBtn = document.getElementById('hamburger-btn');
@@ -1076,7 +1079,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 // LOGIQUE CLERK (AVEC GESTION DU CACHE SOLIDE ET ZÉRO FOUC)
 // ==========================================
-const clerkInterval = setInterval(async () => {
+var clerkInterval = setInterval(async () => {
     if (window.Clerk) {
         clearInterval(clerkInterval);
 
@@ -1096,31 +1099,37 @@ const clerkInterval = setInterval(async () => {
                     elements: {
                         userButtonAvatarBox: { width: '25.76px', height: '25.76px' },
 
-                        /* MODIFICATIONS ICI */
                         userButtonPopoverCard: {
-                            left: 'auto !important',
-                            right: '30px !important', /* MODIFICATION ICI */
+                            right: '50vh !important',
                             transform: 'translateX(0) !important'
                         },
 
+                        navbar: { height: 0 },
+
+                        // --- MODIFICATION ICI POUR LE BUREAU ---
                         modalContent: {
-                            maxWidth: '850px',
-                            width: '90%',
-                            height: 'auto',
-                            minHeight: '56vh',
-                            maxHeight: '90vh',
-                            position: 'fixed',
-                            top: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            margin: '0',
-                            borderRadius: '20px',
+                            maxWidth: '100vh',
+                            width: '100vw',
+                            height: '85vh',
+                            margin: 'auto !important', /* Le !important force le centrage au milieu du voile gris */
+                            position: 'relative !important', /* On annule les positions fixes/absolues calculées par Clerk */
+                            inset: 'auto !important', /* Nettoie les 'top' et 'left' injectés par le JS de Clerk */
+                            transform: 'none !important', /* Nettoie la translation */
                             boxShadow: '0 25px 50px -12px rgba(46, 63, 132, 0.25)'
                         },
+
+                        /* Le conteneur parent (voile gris) doit être un flex center */
+                        modalBackdrop: {
+                            display: 'flex !important',
+                            alignItems: 'center !important',
+                            justifyContent: 'center !important'
+                        },
+                        // ----------------------------------------
+
                         cardBox: { width: '100%', height: '100%', boxShadow: 'none' },
-                        scrollBox: { borderRadius: '0 20px 20px 0' },
-                        navbar: { height: '56vh', background: '#FAFBFE', borderRight: '1px solid #E3E8F5', padding: '20px 15px', borderRadius: '20px 0 0 20px' },
-                        scrollBox: { borderRadius: '0 20px 20px 0' },
-                        navbar: { background: '#FAFBFE', borderRight: '1px solid #E3E8F5', padding: '20px 15px', borderRadius: '20px 0 0 20px' },
+                        scrollBox: { borderRadius: '0 20px 20px 0', height: '100%' },
+                        navbar: { height: '100%', background: '#FAFBFE', borderRight: '1px solid #E3E8F5', padding: '20px 15px', borderRadius: '20px 0 0 20px' },
+
                         navbarButton: { borderRadius: '10px', color: '#6B7280', padding: '12px 15px', marginBottom: '5px' },
                         navbarButton__active: { backgroundColor: '#EEF2FF', color: '#6C83D9', fontWeight: '600' },
                         headerTitle: { color: '#2E3F84', fontSize: '22px', fontWeight: '800' },
