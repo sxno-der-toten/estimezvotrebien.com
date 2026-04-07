@@ -14,6 +14,7 @@
       "src": "https://estimez-votre-bien.com/images/small_logo.png",
       "type": "image/png",
       "sizes": "1200x1200",
+      "purpose": "any maskable",
       "isSquare": true,
       "isPng": true,
       "isWebp": false,
@@ -26,6 +27,7 @@
   ],
   "id": "index.html",
   "lang": "fr",
+  "iarc_rating_id": "e92ee347-195c-449e-ba60-b6058d84a7e9",
   "shortcuts": [
     {
       "name": "Estimer",
