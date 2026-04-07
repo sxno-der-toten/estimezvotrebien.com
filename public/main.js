@@ -304,13 +304,14 @@ window.EstimationTool = class {
         });
 
         // ==========================================
-        // GESTIONNAIRE MOBILE "SWUP-PROOF" (DÉLÉGATION)
+        // GESTION MOBILE SWUP-PROOF (DÉLÉGATION)
         // ==========================================
         document.addEventListener('click', (e) => {
-            // 1. Toggle de la pop-up (clic sur le bloc profil)
             const profileBlock = e.target.closest('#mobile-profile-block');
+
+            // 1. Si on clique sur le bloc profil (ou le pseudo/chevron)
             if (profileBlock) {
-                // Empêche d'ouvrir/fermer si on clique sur les boutons internes
+                // Empêche d'ouvrir/fermer si on clique précisément sur un bouton du menu
                 if (!e.target.closest('#mobile-manage-account') && !e.target.closest('#mobile-sign-out')) {
                     const isOpen = profileBlock.classList.toggle('dropdown-open');
                     profileBlock.setAttribute('aria-expanded', String(isOpen));
@@ -325,15 +326,18 @@ window.EstimationTool = class {
 
             // 3. Clic sur "Se déconnecter"
             if (e.target.closest('#mobile-sign-out')) {
-                if (window.Clerk) window.Clerk.signOut().then(() => {
-                    window.location.href = 'index.html';
-                });
+                if (window.Clerk) {
+                    window.Clerk.signOut().then(() => {
+                        window.location.href = 'index.html';
+                    });
+                }
             }
 
-            // 4. Fermer la pop-up si on clique ailleurs sur l'écran
+            // 4. Fermer la pop-up si on clique n'importe où ailleurs
             if (!profileBlock && !e.target.closest('.mobile-profile-dropdown')) {
                 document.querySelectorAll('.mobile-profile-block').forEach(block => {
                     block.classList.remove('dropdown-open');
+                    block.setAttribute('aria-expanded', 'false');
                 });
             }
         });
@@ -1274,37 +1278,6 @@ var clerkInterval = setInterval(async () => {
                 const manageBtn = document.getElementById('mobile-manage-account');
                 const signOutBtn = document.getElementById('mobile-sign-out');
 
-                if (profileBlock) {
-                    profileBlock.addEventListener('click', (e) => {
-                        // Empêche la propagation depuis les boutons enfants
-                        if (e.target.closest('#mobile-manage-account') || e.target.closest('#mobile-sign-out')) return;
-                        const isOpen = profileBlock.classList.toggle('dropdown-open');
-                        profileBlock.setAttribute('aria-expanded', String(isOpen));
-                    });
-
-                    // Ferme si clic en dehors
-                    document.addEventListener('click', (e) => {
-                        if (!profileBlock.contains(e.target)) {
-                            profileBlock.classList.remove('dropdown-open');
-                            profileBlock.setAttribute('aria-expanded', 'false');
-                        }
-                    });
-                }
-
-                if (manageBtn) {
-                    manageBtn.addEventListener('click', () => {
-                        profileBlock?.classList.remove('dropdown-open');
-                        window.Clerk.openUserProfile();
-                    });
-                }
-
-                if (signOutBtn) {
-                    signOutBtn.addEventListener('click', async () => {
-                        profileBlock?.classList.remove('dropdown-open');
-                        await window.Clerk.signOut();
-                        window.location.href = new URL('index.html', window.location.href).href;
-                    });
-                }
                 // ─────────────────────────────────────────────────────────────
                 if (window.location.pathname.includes('client.html')) {
                     loadClientDashboard(window.Clerk.user.id);
@@ -1330,3 +1303,13 @@ var clerkInterval = setInterval(async () => {
         }
     }
 }, 50);
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+            console.log('PWA Service Worker enregistré !');
+        }).catch(err => {
+            console.log('Erreur SW:', err);
+        });
+    });
+}
