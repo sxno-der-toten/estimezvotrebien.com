@@ -136,8 +136,8 @@ async function loadClientDashboard(userId) {
             nameEl.textContent = msgData.agent_name;
             msgEl.textContent = msgData.content;
         } else if (nameEl && msgEl) {
-            nameEl.textContent = "Sarah - Astella Agency";
-            msgEl.textContent = "Bienvenue ! Je prépare actuellement votre dossier. N'hésitez pas à me contacter si vous avez des questions.";
+            nameEl.textContent = "Bienvenue !";
+            msgEl.textContent = "Nous préparons actuellement votre dossier. N'hésitez pas à nous contacter si vous avez des questions.";
         }
 
         const { data: salesData } = await window.supabaseClient
