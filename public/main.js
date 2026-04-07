@@ -303,9 +303,38 @@ window.EstimationTool = class {
             }, 100);
         });
 
+        // ==========================================
+        // GESTIONNAIRE MOBILE "SWUP-PROOF" (DÉLÉGATION)
+        // ==========================================
         document.addEventListener('click', (e) => {
-            if (e.target !== input && suggestionsBox && !suggestionsBox.contains(e.target)) {
-                suggestionsBox.innerHTML = '';
+            // 1. Toggle de la pop-up (clic sur le bloc profil)
+            const profileBlock = e.target.closest('#mobile-profile-block');
+            if (profileBlock) {
+                // Empêche d'ouvrir/fermer si on clique sur les boutons internes
+                if (!e.target.closest('#mobile-manage-account') && !e.target.closest('#mobile-sign-out')) {
+                    const isOpen = profileBlock.classList.toggle('dropdown-open');
+                    profileBlock.setAttribute('aria-expanded', String(isOpen));
+                }
+            }
+
+            // 2. Clic sur "Gérer le compte"
+            if (e.target.closest('#mobile-manage-account')) {
+                if (window.Clerk) window.Clerk.openUserProfile();
+                document.getElementById('mobile-profile-block')?.classList.remove('dropdown-open');
+            }
+
+            // 3. Clic sur "Se déconnecter"
+            if (e.target.closest('#mobile-sign-out')) {
+                if (window.Clerk) window.Clerk.signOut().then(() => {
+                    window.location.href = 'index.html';
+                });
+            }
+
+            // 4. Fermer la pop-up si on clique ailleurs sur l'écran
+            if (!profileBlock && !e.target.closest('.mobile-profile-dropdown')) {
+                document.querySelectorAll('.mobile-profile-block').forEach(block => {
+                    block.classList.remove('dropdown-open');
+                });
             }
         });
     }
