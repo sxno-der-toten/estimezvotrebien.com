@@ -875,38 +875,42 @@ html.is-logged-in #user-button-mobile:empty {
     }
 
     .mobile-profile-block.dropdown-open .mobile-profile-chevron {
-        transform: rotate(180deg);
-        /* pointe vers le haut quand ouvert */
+        transform: rotate(180deg) !important;
+        color: var(--primary-blue) !important;
     }
 
     /* ── Dropdown inversé (bottom sheet) ── */
     .mobile-profile-dropdown {
         position: absolute;
-        bottom: calc(100% + 8px);
-        /* s'ouvre VERS LE HAUT */
+        bottom: 100% !important;
+        /* Apparaît au-dessus du nom */
         left: 0;
         right: 0;
-        background-color: #FFFFFF;
-        border-radius: 16px;
-        box-shadow: 0 -4px 24px rgba(46, 63, 132, 0.12);
-        border: 1px solid #F3F4F6;
-        overflow: hidden;
-        z-index: 10;
+        margin-bottom: 15px;
+        /* Espace avec le pseudo */
 
-        /* État initial : caché, décalé vers le bas */
+        background-color: #FFFFFF !important;
+        border-radius: 16px !important;
+        box-shadow: 0 -10px 40px rgba(46, 63, 132, 0.2) !important;
+        border: 1px solid #E3E8F5 !important;
+
+        /* État initial : Invisible mais prêt */
+        display: flex !important;
+        flex-direction: column;
         opacity: 0;
-        transform: translateY(8px);
-        pointer-events: none;
-        transition:
-            opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-            transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+        visibility: hidden;
+        transform: translateY(10px);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 100000 !important;
+        /* Doit être au-dessus de tout le reste du menu */
     }
 
     /* État actif : slide-up + fade-in */
     .mobile-profile-block.dropdown-open .mobile-profile-dropdown {
-        opacity: 1;
-        transform: translateY(0);
-        pointer-events: auto;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateY(0) !important;
+        pointer-events: auto !important;
     }
 
     /* Items du dropdown */
@@ -1013,7 +1017,7 @@ html.is-logged-in #user-button-mobile:empty {
         transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 999;
         /* On s'assure que le scroll fonctionne si l'écran est vraiment minuscule */
-        overflow-y: auto;
+        overflow-y: visible !important;
         -webkit-overflow-scrolling: touch;
         box-shadow: -12px 0 40px rgba(46, 63, 132, 0.12);
         gap: 0;

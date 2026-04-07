@@ -4,7 +4,7 @@
 <head>
 
     <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="EstimezBien">
     <link rel="apple-touch-icon" href="images/appstore-images/ios/192.png">
@@ -126,14 +126,28 @@
 
                         <a href="connexion.html" class="mobile-login-pill mobile-only guest-element">Connexion <i
                                 class="fas fa-arrow-right"></i></a>
+
                         <div class="mobile-profile-block mobile-only auth-element" id="mobile-profile-block">
                             <div class="mobile-profile-avatar">
                                 <div id="user-button-mobile"></div>
                             </div>
-                            <div class="mobile-profile-info"><span class="mobile-profile-name"
-                                    id="mobile-profile-name">…</span></div>
+                            <div class="mobile-profile-info">
+                                <span class="mobile-profile-name" id="mobile-profile-name">…</span>
+                            </div>
                             <i class="fas fa-chevron-up mobile-profile-chevron"></i>
+
+                            <div class="mobile-profile-dropdown" id="mobile-profile-dropdown" role="menu">
+                                <button class="mobile-dropdown-item" id="mobile-manage-account" role="menuitem">
+                                    <i class="fas fa-sliders"></i> Gérer le compte
+                                </button>
+                                <div class="mobile-dropdown-divider"></div>
+                                <button class="mobile-dropdown-item mobile-dropdown-item--danger" id="mobile-sign-out"
+                                    role="menuitem">
+                                    <i class="fas fa-right-from-bracket"></i> Se déconnecter
+                                </button>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </nav>

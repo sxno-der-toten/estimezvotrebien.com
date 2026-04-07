@@ -302,45 +302,6 @@ window.EstimationTool = class {
                 }
             }, 100);
         });
-
-        // ==========================================
-        // GESTION MOBILE SWUP-PROOF (DÉLÉGATION)
-        // ==========================================
-        document.addEventListener('click', (e) => {
-            const profileBlock = e.target.closest('#mobile-profile-block');
-
-            // 1. Si on clique sur le bloc profil (ou le pseudo/chevron)
-            if (profileBlock) {
-                // Empêche d'ouvrir/fermer si on clique précisément sur un bouton du menu
-                if (!e.target.closest('#mobile-manage-account') && !e.target.closest('#mobile-sign-out')) {
-                    const isOpen = profileBlock.classList.toggle('dropdown-open');
-                    profileBlock.setAttribute('aria-expanded', String(isOpen));
-                }
-            }
-
-            // 2. Clic sur "Gérer le compte"
-            if (e.target.closest('#mobile-manage-account')) {
-                if (window.Clerk) window.Clerk.openUserProfile();
-                document.getElementById('mobile-profile-block')?.classList.remove('dropdown-open');
-            }
-
-            // 3. Clic sur "Se déconnecter"
-            if (e.target.closest('#mobile-sign-out')) {
-                if (window.Clerk) {
-                    window.Clerk.signOut().then(() => {
-                        window.location.href = 'index.html';
-                    });
-                }
-            }
-
-            // 4. Fermer la pop-up si on clique n'importe où ailleurs
-            if (!profileBlock && !e.target.closest('.mobile-profile-dropdown')) {
-                document.querySelectorAll('.mobile-profile-block').forEach(block => {
-                    block.classList.remove('dropdown-open');
-                    block.setAttribute('aria-expanded', 'false');
-                });
-            }
-        });
     }
 
     updateUI() {
@@ -1133,24 +1094,22 @@ var clerkInterval = setInterval(async () => {
                         userButtonAvatarBox: { width: '25.76px', height: '25.76px' },
 
                         userButtonPopoverCard: {
-                            right: '50vh !important',
+                            right: '20px !important', /* Au lieu de 50vh */
                             transform: 'translateX(0) !important'
                         },
 
-                        navbar: { height: 0 },
+                        /* Supprime la ligne 'navbar: { height: 0 }' ici */
 
-                        // --- MODIFICATION ICI POUR LE BUREAU ---
                         modalContent: {
-                            maxWidth: '100vh',
-                            width: '100vw',
+                            maxWidth: '800px', /* Taille pro pour le bureau */
+                            width: '95vw',
                             height: '85vh',
-                            margin: 'auto !important', /* Le !important force le centrage au milieu du voile gris */
-                            position: 'relative !important', /* On annule les positions fixes/absolues calculées par Clerk */
-                            inset: 'auto !important', /* Nettoie les 'top' et 'left' injectés par le JS de Clerk */
-                            transform: 'none !important', /* Nettoie la translation */
+                            margin: 'auto !important',
+                            position: 'relative !important',
+                            inset: 'auto !important',
+                            transform: 'none !important',
                             boxShadow: '0 25px 50px -12px rgba(46, 63, 132, 0.25)'
                         },
-
                         /* Le conteneur parent (voile gris) doit être un flex center */
                         modalBackdrop: {
                             display: 'flex !important',
@@ -1304,9 +1263,43 @@ var clerkInterval = setInterval(async () => {
     }
 }, 50);
 
+// ==========================================
+// GESTION MOBILE UNIVERSELLE (ANTI-DOUBLE CLIC)
+// ==========================================
+if (!window.mobileMenuInitialized) {
+    document.addEventListener('click', (e) => {
+        const profileBlock = e.target.closest('#mobile-profile-block');
+
+        if (profileBlock) {
+            // Empêche le toggle si on clique sur les boutons internes
+            if (!e.target.closest('#mobile-manage-account') && !e.target.closest('#mobile-sign-out')) {
+                const isOpen = profileBlock.classList.toggle('dropdown-open');
+                profileBlock.setAttribute('aria-expanded', String(isOpen));
+            }
+        } else if (!e.target.closest('.mobile-profile-dropdown')) {
+            // Ferme si on clique ailleurs
+            document.querySelectorAll('.mobile-profile-block').forEach(block => {
+                block.classList.remove('dropdown-open');
+            });
+        }
+
+        // Action : Gérer le compte
+        if (e.target.closest('#mobile-manage-account')) {
+            window.Clerk?.openUserProfile();
+            document.getElementById('mobile-profile-block')?.classList.remove('dropdown-open');
+        }
+
+        // Action : Se déconnecter
+        if (e.target.closest('#mobile-sign-out')) {
+            window.Clerk?.signOut().then(() => window.location.href = 'index.html');
+        }
+    });
+    window.mobileMenuInitialized = true;
+}
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then(reg => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
             console.log('PWA Service Worker enregistré !');
         }).catch(err => {
             console.log('Erreur SW:', err);

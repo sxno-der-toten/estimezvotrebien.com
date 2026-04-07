@@ -1,0 +1,48 @@
+{
+  "background_color": "#fafbfe",
+  "description": "Découvrez la valeur réelle de votre bien immobilier. Obtenez une estimation claire, fiable et sans surprise.",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "EstimezVotreBien",
+  "orientation": "portrait",
+  "scope": "/",
+  "short_name": "EstimezVotreBien",
+  "start_url": "/index.html",
+  "theme_color": "#6c83d9",
+  "icons": [
+    {
+      "src": "https://estimez-votre-bien.com/images/small_logo.png",
+      "type": "image/png",
+      "sizes": "1200x1200",
+      "isSquare": true,
+      "isPng": true,
+      "isWebp": false,
+      "isJpg": false,
+      "width": 1200,
+      "is512x512": false,
+      "is256x256": false,
+      "is192x192": false
+    }
+  ],
+  "id": "index.html",
+  "lang": "fr",
+  "shortcuts": [
+    {
+      "name": "Estimer",
+      "url": "index.html"
+    },
+    {
+      "name": "Acheter",
+      "url": "acheter.html"
+    },
+    {
+      "name": "Vendre",
+      "url": "vendre.html"
+    }
+  ],
+  "categories": [
+    "business",
+    "lifestyle",
+    "utilities"
+  ]
+}
