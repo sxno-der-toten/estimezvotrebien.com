@@ -968,66 +968,46 @@
         let globalLeads = [], globalMandates = [], globalProfiles = [];
         let adminSupabase;
 
-        // 1. FONCTION POUR LES ONGLETS (Appelée manuellement pour Swup)
-        function initAdminTabs() {
-            console.log("Séquençage des onglets...");
-            const tabs = document.querySelectorAll('.tab-btn');
-            tabs.forEach(btn => {
-                // On clone le bouton pour supprimer les anciens events et éviter les doublons
-                const newBtn = btn.cloneNode(true);
-                btn.parentNode.replaceChild(newBtn, btn);
-
-                newBtn.addEventListener('click', () => {
-                    const tabId = newBtn.getAttribute('data-tab');
+        // FONCTION ONGLETS : On l'appelle à chaque fois
+        function initTabs() {
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.onclick = () => { // On utilise .onclick pour écraser les anciens events
+                    const tabId = btn.getAttribute('data-tab');
                     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
                     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-                    newBtn.classList.add('active');
-                    const target = document.getElementById(tabId);
-                    if (target) target.classList.add('active');
-                });
+                    btn.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                };
             });
         }
 
-        // 2. INITIALISATION GÉNÉRALE
         const checkReady = setInterval(() => {
             if (window.supabaseClient && window.Clerk?.isReady) {
                 clearInterval(checkReady);
                 adminSupabase = window.supabaseClient;
-                initAdminPanel();
-                initAdminTabs(); // Active les clics sur les onglets
+                initTabs();
+                refreshAll();
             }
         }, 100);
 
-        // Support Swup : Relance les onglets quand on navigue vers cette page
+        // FIX SWUP : Relance tout quand on change de page
         if (window.swactive) {
             window.swactive.hooks.on('page:view', () => {
-                initAdminTabs();
+                initTabs();
                 if (window.supabaseClient) refreshAll();
             });
         }
 
-        async function initAdminPanel() {
-            if (!window.Clerk.user) {
-                window.location.href = 'connexion.html';
-                return;
-            }
-            refreshAll();
-        }
-
         async function refreshAll() {
-            try {
-                // On récupère les profils d'abord
-                const { data: profs, error: errP } = await adminSupabase.from('profiles').select('*');
-                if (errP) console.error("Erreur RLS Profiles:", errP.message);
-                globalProfiles = profs || [];
+            // On récupère les profils d'abord pour débloquer l'autocomplete
+            const { data: profs } = await adminSupabase.from('profiles').select('*');
+            globalProfiles = profs || [];
 
-                setupAutocomplete();
-                loadStats();
-                loadLeads();
-                loadMandates();
-            } catch (err) {
-                console.error("Erreur refreshAll:", err);
-            }
+            setupAutocomplete();
+            loadStats();
+            loadLeads();
+            loadMandates();
         }
 
         async function loadStats() {
