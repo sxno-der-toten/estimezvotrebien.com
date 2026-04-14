@@ -733,9 +733,26 @@ function hideAndRemoveBanner(banner) {
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', checkCookieConsent);
 
-// Support pour Swup : On vérifie le consentement à chaque changement de page
-if (typeof window.swup !== 'undefined' && window.swup.hooks) {
-    window.swup.hooks.on('page:view', checkCookieConsent);
+// ==========================================
+// INITIALISATION SWUP (Version 4)
+// ==========================================
+// On crée l'instance Swup pour activer la navigation fluide
+var swup;
+try {
+    if (typeof Swup !== 'undefined') {
+        swup = new Swup(); // On initialise le moteur
+
+        // On écoute les changements de page pour revérifier les cookies
+        swup.hooks.on('page:view', () => {
+            if (typeof checkCookieConsent === 'function') {
+                checkCookieConsent();
+            }
+        });
+
+        console.log("🚀 Swup est actif !");
+    }
+} catch (e) {
+    console.warn("Swup n'a pas pu être initialisé (ID #swup manquant ?)");
 }
 
 // ==========================================
