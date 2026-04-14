@@ -687,26 +687,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // ==========================================
-// GESTIONNAIRE DE COOKIES (Bandeau RGPD Fonctionnel)
+// SYSTÈME DE CONSENTEMENT RGPD (Version Pro)
 // ==========================================
-document.addEventListener('DOMContentLoaded', () => {
+function checkCookieConsent() {
     const consent = localStorage.getItem('estimez_cookie_consent');
 
+    // Si l'utilisateur a déjà accepté, on charge les outils de stats
     if (consent === 'all') {
-        loadOptionalScripts();
+        activateAnalytics();
     }
-
-    if (!consent) {
+    // Sinon, s'il n'a pas encore fait de choix, on affiche le bandeau
+    else if (!consent) {
         initCookieBanner();
     }
-});
+}
 
 function initCookieBanner() {
+    // Évite les doublons si la fonction est rappelée par erreur
+    if (document.querySelector('.cookie-banner')) return;
+
     const banner = document.createElement('div');
     banner.className = 'cookie-banner';
     banner.innerHTML = `
         <h3><i class="fas fa-cookie-bite" style="color: #F59E0B;"></i> Respect de votre vie privée</h3>
-        <p>Nous utilisons des cookies "essentiels" pour la connexion à votre espace. Nous souhaitons également utiliser des cookies optionnels pour analyser notre trafic de façon anonyme. Vous avez le choix !</p>
+        <p>Nous utilisons des cookies essentiels au fonctionnement de votre espace. Nous souhaitons également utiliser des outils d'analyse anonymes pour améliorer nos services.</p>
         <div class="cookie-btns">
             <button class="cookie-btn reject" id="cookie-reject">Refuser</button>
             <button class="cookie-btn accept" id="cookie-accept">Tout accepter</button>
@@ -715,28 +719,39 @@ function initCookieBanner() {
 
     document.body.appendChild(banner);
 
-    setTimeout(() => {
-        banner.classList.add('show');
-    }, 800);
+    // Animation d'entrée
+    setTimeout(() => banner.classList.add('show'), 500);
 
+    // Événements de clic
     document.getElementById('cookie-accept').addEventListener('click', () => {
-        localStorage.setItem('estimez_cookie_consent', 'all');
-        banner.classList.remove('show');
-        loadOptionalScripts();
-        setTimeout(() => banner.remove(), 500);
+        localStorage.setItem('estimez_cookie_consent', 'all'); // Sauvegarde le choix
+        hideAndRemoveBanner(banner);
+        activateAnalytics(); // Déclenche les stats
     });
 
     document.getElementById('cookie-reject').addEventListener('click', () => {
-        localStorage.setItem('estimez_cookie_consent', 'essential_only');
-        banner.classList.remove('show');
-        setTimeout(() => banner.remove(), 500);
+        localStorage.setItem('estimez_cookie_consent', 'essential_only'); // Sauvegarde le refus
+        hideAndRemoveBanner(banner);
     });
 }
 
-function loadOptionalScripts() {
-    console.log("✅ Consentement accordé : Chargement des cookies de suivi et statistiques.");
+function hideAndRemoveBanner(banner) {
+    banner.classList.remove('show');
+    setTimeout(() => banner.remove(), 500); // Supprime du DOM après l'animation
 }
 
+function activateAnalytics() {
+    console.log("🚀 Cookies analytiques activés : Vous pouvez maintenant charger Google Analytics.");
+    /* C'est ici que tu colleras ton code Google Analytics ou Facebook Pixel plus tard */
+}
+
+// Initialisation au chargement de la page
+document.addEventListener('DOMContentLoaded', checkCookieConsent);
+
+// Support pour Swup : On vérifie le consentement à chaque changement de page
+if (typeof swup !== 'undefined') {
+    swup.on('contentReplaced', checkCookieConsent);
+}
 
 // ==========================================
 // GESTION DES FORMULAIRES D'AUTHENTIFICATION AVANT CLERK INIT
