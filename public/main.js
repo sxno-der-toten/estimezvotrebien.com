@@ -679,14 +679,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+
 // ==========================================
 // SYSTÈME DE CONSENTEMENT RGPD (Version Pro)
 // ==========================================
 function checkCookieConsent() {
     const consent = localStorage.getItem('estimez_cookie_consent');
+
+    // Si l'utilisateur a déjà accepté, on charge les outils de stats
     if (consent === 'all') {
         activateAnalytics();
-    } else if (!consent) {
+    }
+    // Sinon, s'il n'a pas encore fait de choix, on affiche le bandeau
+    else if (!consent) {
         initCookieBanner();
     }
 }
@@ -696,36 +701,41 @@ function initCookieBanner() {
     const banner = document.createElement('div');
     banner.className = 'cookie-banner';
     banner.innerHTML = `
-        <h3><i class="fas fa-cookie-bite" style="color: #F59E0B;"></i> Respect de votre vie privée</h3>
-        <p>Nous utilisons des cookies essentiels au fonctionnement de votre espace. Nous souhaitons également utiliser des outils d'analyse anonymes pour améliorer nos services.</p>
+        <h3><i class="fas fa-cookie-bite"></i> Vie privée</h3>
+        <p>Nous utilisons des cookies pour optimiser votre espace client.</p>
         <div class="cookie-btns">
             <button class="cookie-btn reject" id="cookie-reject">Refuser</button>
             <button class="cookie-btn accept" id="cookie-accept">Tout accepter</button>
-        </div>
-    `;
-
+        </div>`;
     document.body.appendChild(banner);
-
-    const acceptBtn = banner.querySelector('#cookie-accept');
-    const rejectBtn = banner.querySelector('#cookie-reject');
-
-    if (acceptBtn) {
-        acceptBtn.onclick = () => {
-            localStorage.setItem('estimez_cookie_consent', 'all');
-            hideAndRemoveBanner(banner);
-            activateAnalytics();
-        };
-    }
-
-    if (rejectBtn) {
-        rejectBtn.onclick = () => {
-            localStorage.setItem('estimez_cookie_consent', 'essential_only');
-            hideAndRemoveBanner(banner);
-        };
-    }
-
     setTimeout(() => banner.classList.add('show'), 500);
+
+    document.getElementById('cookie-accept').onclick = () => {
+        localStorage.setItem('estimez_cookie_consent', 'all');
+        banner.remove();
+    };
+    document.getElementById('cookie-reject').onclick = () => {
+        localStorage.setItem('estimez_cookie_consent', 'essential');
+        banner.remove();
+    };
 }
+document.addEventListener('DOMContentLoaded', initCookieBanner);
+
+function hideAndRemoveBanner(banner) {
+    banner.classList.remove('show');
+    setTimeout(() => banner.remove(), 500); // Supprime du DOM après l'animation
+}
+
+// function activateAnalytics() {
+//     console.log("🚀 Cookies analytiques activés : Vous pouvez maintenant charger Google Analytics.");
+//     /* C'est ici que tu colleras ton code Google Analytics ou Facebook Pixel plus tard */
+// }
+
+// Initialisation au chargement de la page
+document.addEventListener('DOMContentLoaded', checkCookieConsent);
+
+
+
 
 function hideAndRemoveBanner(banner) {
     banner.classList.remove('show');
@@ -736,6 +746,7 @@ function activateAnalytics() {
     console.log("🚀 Cookies analytiques activés.");
 }
 
+// Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', checkCookieConsent);
 
 // ==========================================
@@ -746,6 +757,7 @@ try {
     if (typeof Swup !== 'undefined') {
         swactive = new Swup(); // On initialise l'instance
 
+        // Syntaxe correcte pour Swup 4 : .hooks.on
         swactive.hooks.on('page:view', () => {
             if (typeof checkCookieConsent === 'function') {
                 checkCookieConsent();
@@ -1088,89 +1100,48 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// --- LOGIQUE REDIRECTION ET AUTH ---
-function updateNavbarLinks(user) {
-    const role = (user?.publicMetadata?.role || user?.unsafeMetadata?.role || '').toString().toLowerCase();
-    const isAdmin = role === 'admin';
-    const targetPage = isAdmin ? 'admin.html' : 'client.html';
-
-    document.querySelectorAll('.nav-espace-link').forEach(link => {
-        link.href = targetPage;
-        link.classList.remove('espace-disabled');
-        link.classList.add('espace-active');
-        link.textContent = 'Mon espace';
-    });
-
-    // Sauvegarde immédiate pour Swup
-    localStorage.setItem('app_auth_state', 'logged_in');
-    localStorage.setItem('app_user_role', isAdmin ? 'admin' : 'client');
-}
-
-// ==========================================
-// LOGIQUE CLERK AMÉLIORÉE (ZÉRO BLOCAGE)
-// ==========================================
+// --- LOGIQUE CLERK (Correction Déconnexion & FOUC) ---
 var clerkInterval = setInterval(async () => {
     if (window.Clerk) {
         clearInterval(clerkInterval);
         try {
-            if (!window.Clerk.isReady) {
-                await window.Clerk.load({
-                    appearance: {
-                        variables: { colorPrimary: '#6C83D9', fontFamily: "'Inter', sans-serif" },
-                        elements: {
-                            userButtonAvatarBox: { width: '25.76px', height: '25.76px' },
-                            userButtonPopoverCard: { right: '20px !important' },
-                            modalContent: { maxWidth: '800px', width: '95vw', height: '85vh', margin: 'auto !important' }
-                        }
-                    }
-                });
-            }
+            if (!window.Clerk.isReady) await window.Clerk.load();
 
             if (window.Clerk.user) {
                 const user = window.Clerk.user;
-                updateNavbarLinks(user); // Fix le "double clic"
+                const role = (user.publicMetadata?.role || user.unsafeMetadata?.role || 'client').toString().toLowerCase();
+                const isAdmin = role === 'admin';
 
-                // Sync profil avec Supabase (On ne bloque pas si ça échoue)
-                if (window.supabaseClient) {
-                    window.supabaseClient.from('profiles').upsert({
-                        id: user.id,
-                        email: user.primaryEmailAddress?.emailAddress,
-                        first_name: user.firstName,
-                        last_name: user.lastName,
-                        updated_at: new Date()
-                    }).then(({ error }) => { if (error) console.warn("Note: Synchro profil ignorée (Base vide ?)"); });
-                }
+                // Sauvegarde immédiate pour empêcher le FOUC au prochain chargement
+                localStorage.setItem('app_auth_state', 'logged_in');
+                localStorage.setItem('app_user_role', isAdmin ? 'admin' : 'client');
+
+                // Mise à jour immédiate des liens "Mon espace" (Fix Double Clic)
+                document.querySelectorAll('.nav-espace-link').forEach(link => {
+                    link.href = isAdmin ? 'admin.html' : 'client.html';
+                    link.classList.remove('espace-disabled');
+                    link.textContent = 'Mon espace';
+                });
 
                 document.documentElement.classList.add('is-logged-in');
                 document.documentElement.classList.remove('is-logged-out');
 
-                // Montage des boutons
+                // Montage des boutons avec URL de déconnexion propre
                 const desktopBtn = document.getElementById('user-button-desktop');
-                if (desktopBtn) {
-                    desktopBtn.innerHTML = '';
-                    window.Clerk.mountUserButton(desktopBtn, { afterSignOutUrl: './' });
-                }
+                if (desktopBtn) window.Clerk.mountUserButton(desktopBtn, { afterSignOutUrl: window.location.origin + './' });
 
                 const mobileBtn = document.getElementById('user-button-mobile');
-                if (mobileBtn) {
-                    mobileBtn.innerHTML = '';
-                    window.Clerk.mountUserButton(mobileBtn, { afterSignOutUrl: './' });
-                }
+                if (mobileBtn) window.Clerk.mountUserButton(mobileBtn, { afterSignOutUrl: window.location.origin + './' });
 
-                const profileName = document.getElementById('mobile-profile-name');
-                if (profileName) profileName.textContent = [user.firstName, user.lastName].filter(Boolean).join(' ') || 'Mon compte';
             } else {
-                localStorage.setItem('clerk_auth_state', 'logged_out');
+                // Nettoyage si déconnecté
                 localStorage.setItem('app_auth_state', 'logged_out');
                 localStorage.removeItem('app_user_role');
                 document.documentElement.classList.add('is-logged-out');
-                document.documentElement.classList.remove('is-logged-in');
             }
-        } catch (error) {
-            console.error("Erreur d'initialisation Clerk :", error);
-        }
+        } catch (e) { console.error("Erreur Clerk:", e); }
     }
-}, 100);
+}, 50);
 
 // ==========================================
 // GESTION MOBILE UNIVERSELLE (ANTI-DOUBLE CLIC)
@@ -1178,30 +1149,19 @@ var clerkInterval = setInterval(async () => {
 if (!window.mobileMenuInitialized) {
     document.addEventListener('click', (e) => {
         const profileBlock = e.target.closest('#mobile-profile-block');
-
-        if (profileBlock) {
-            // Empêche le toggle si on clique sur les boutons internes
-            if (!e.target.closest('#mobile-manage-account') && !e.target.closest('#mobile-sign-out')) {
-                const isOpen = profileBlock.classList.toggle('dropdown-open');
-                profileBlock.setAttribute('aria-expanded', String(isOpen));
-            }
+        if (profileBlock && !e.target.closest('#mobile-manage-account') && !e.target.closest('#mobile-sign-out')) {
+            profileBlock.classList.toggle('dropdown-open');
         } else if (!e.target.closest('.mobile-profile-dropdown')) {
-            // Ferme si on clique ailleurs
-            document.querySelectorAll('.mobile-profile-block').forEach(block => {
-                block.classList.remove('dropdown-open');
-            });
+            document.querySelectorAll('.mobile-profile-block').forEach(b => b.classList.remove('dropdown-open'));
         }
 
-        // Action : Gérer le compte
-        if (e.target.closest('#mobile-manage-account')) {
-            window.Clerk?.openUserProfile();
-            document.getElementById('mobile-profile-block')?.classList.remove('dropdown-open');
-        }
-
-        // Action : Se déconnecter
         if (e.target.closest('#mobile-sign-out')) {
+            // On vide le localStorage AVANT de déconnecter pour éviter le bug de navbar
+            localStorage.setItem('app_auth_state', 'logged_out');
+            localStorage.removeItem('app_user_role');
             window.Clerk?.signOut().then(() => window.location.href = './');
         }
+        if (e.target.closest('#mobile-manage-account')) window.Clerk?.openUserProfile();
     });
     window.mobileMenuInitialized = true;
 }
