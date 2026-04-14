@@ -795,7 +795,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 if (result.status === 'complete') {
                     await window.Clerk.setActive({ session: result.createdSessionId });
-                    window.location.href = new URL('index.html', window.location.href).href;
+                    window.location.href = 'index.html';
                 } else {
                     errorDiv.textContent = "Une vérification supplémentaire est requise (2FA).";
                 }
@@ -904,7 +904,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     if (result.status === 'complete') {
                         await window.Clerk.setActive({ session: result.createdSessionId });
-                        window.location.href = new URL('index.html', window.location.href).href;
+                        window.location.href = 'index.html';
                     }
                 } catch (err) {
                     let errMsg = err.errors?.[0]?.longMessage || "Erreur de réinitialisation.";
@@ -1074,7 +1074,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (completeSignUp.status === 'complete') {
                         await window.Clerk.setActive({ session: completeSignUp.createdSessionId });
-                        window.location.href = new URL('index.html', window.location.href).href;
+                        window.location.href = 'index.html';
                     } else {
                         errorDivReg.textContent = "Vérification incomplète, veuillez réessayer.";
                     }
@@ -1208,7 +1208,7 @@ var clerkInterval = setInterval(async () => {
                 }
 
                 if (window.location.pathname.includes('connexion.html') || window.location.pathname.includes('inscription.html')) {
-                    window.location.href = new URL('index.html', window.location.href).href;
+                    window.location.href = 'index.html';
                     return;
                 }
 

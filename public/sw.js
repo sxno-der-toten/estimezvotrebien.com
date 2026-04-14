@@ -18,7 +18,21 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(event.request).then((response) => {
-            return response || fetch(event.request);
+            if (response) return response;
+
+            return fetch(event.request).then((networkResponse) => {
+                // Si le serveur essaie de rediriger (ex: / vers index.html), 
+                // on renvoie la réponse sans la mettre en cache pour ne pas fâcher Safari.
+                if (networkResponse.redirected) {
+                    return networkResponse;
+                }
+                return networkResponse;
+            }).catch(() => {
+                // Fallback si on est hors ligne et que la ressource n'est pas en cache
+                if (event.request.mode === 'navigate') {
+                    return caches.match('index.html');
+                }
+            });
         })
     );
 });
