@@ -965,33 +965,30 @@
 
     <script src="main.js"></script>
     <script>
-        let globalLeads = [];
-        let globalMandates = [];
-        let globalProfiles = [];
-        let itemToDeleteId = null;
-        let itemToDeleteType = null;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tabId = btn.getAttribute('data-tab');
-                    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.getElementById(tabId).classList.add('active');
-                });
-            });
-        });
-
+        let globalLeads = [], globalMandates = [], globalProfiles = [];
         let adminSupabase;
+
+        // Chargement ultra-rapide des données dès que Supabase est là
         const checkReady = setInterval(() => {
-            // Utilisation de isReady pour garantir que Clerk est totalement chargé
-            if (window.supabaseClient && window.Clerk && window.Clerk.isReady) {
+            if (window.supabaseClient && window.Clerk?.isReady) {
                 clearInterval(checkReady);
                 adminSupabase = window.supabaseClient;
                 initAdminPanel();
             }
         }, 100);
+
+        async function initAdminPanel() {
+            if (!window.Clerk.user) return window.location.href = 'connexion.html';
+
+            // 1. On récupère les profils TOUT DE SUITE pour l'autocomplétion
+            const { data: profs } = await adminSupabase.from('profiles').select('*');
+            globalProfiles = profs || [];
+
+            setupAutocomplete(); // On active la recherche immédiatement
+            loadStats();
+            loadLeads();
+            loadMandates();
+        }
 
         async function initAdminPanel() {
             if (!window.Clerk || !window.Clerk.user) {
@@ -1186,62 +1183,51 @@
             document.getElementById(`msg-step-${step}`).style.display = 'block';
         };
 
+        // FIX AUTOCOMPLETE (Sécurité contre les noms vides)
         function setupAutocomplete() {
             const input = document.getElementById('user-search');
             const suggestionsBox = document.getElementById('user-suggestions');
-            const hiddenIdInput = document.getElementById('user-select-id');
-
             if (!input) return;
 
-            input.addEventListener('input', (e) => {
+            input.oninput = (e) => {
                 const query = e.target.value.toLowerCase();
                 suggestionsBox.innerHTML = '';
-                hiddenIdInput.value = '';
-
                 if (query.length < 2) return;
 
                 const filtered = globalProfiles.filter(p => {
-                    const fullName = `${p.first_name || ''} ${p.last_name || ''}`.toLowerCase();
-                    const email = (p.email || '').toLowerCase();
-                    const id = (p.id || '').toLowerCase();
-                    return fullName.includes(query) || email.includes(query) || id.includes(query);
+                    const name = `${p.first_name || ''} ${p.last_name || ''}`.toLowerCase();
+                    return name.includes(query) || (p.email || '').toLowerCase().includes(query);
                 });
 
-                if (filtered.length === 0) {
-                    suggestionsBox.innerHTML = '<li style="color:#9CA3AF; justify-content:center;">Aucun client trouvé</li>';
-                    return;
-                }
-
-                suggestionsBox.innerHTML = filtered.map(p => {
-                    const initial = p.first_name ? p.first_name.charAt(0).toUpperCase() : 'C';
-                    const avatarHtml = p.image_url ? `<img src="${p.image_url}">` : initial;
-
-                    return `
-                <li data-id="${p.id}" data-name="${p.first_name || ''} ${p.last_name || ''}">
-                    <div class="client-avatar">${avatarHtml}</div>
-                    <div class="client-info-auto">
-                        <strong>${p.first_name || 'Client'} ${p.last_name || ''}</strong>
-                        <span>${p.email || p.id}</span>
-                    </div>
+                suggestionsBox.innerHTML = filtered.map(p => `
+                <li onclick="selectUser('${p.id}', '${p.first_name || 'Client'} ${p.last_name || ''}')">
+                    <div class="client-avatar">${(p.first_name || 'C').charAt(0)}</div>
+                    <div class="client-info-auto"><strong>${p.first_name || ''} ${p.last_name || ''}</strong><span>${p.email}</span></div>
                 </li>
-                `;
-                }).join('');
-
-                suggestionsBox.querySelectorAll('li[data-id]').forEach(li => {
-                    li.addEventListener('click', () => {
-                        input.value = li.getAttribute('data-name').trim() || li.getAttribute('data-id');
-                        hiddenIdInput.value = li.getAttribute('data-id');
-                        suggestionsBox.innerHTML = '';
-                    });
-                });
-            });
-
-            document.addEventListener('click', (e) => {
-                if (e.target !== input && !suggestionsBox.contains(e.target)) {
-                    suggestionsBox.innerHTML = '';
-                }
-            });
+            `).join('');
+            };
         }
+
+        window.selectUser = (id, name) => {
+            document.getElementById('user-search').value = name;
+            document.getElementById('user-select-id').value = id;
+            document.getElementById('user-suggestions').innerHTML = '';
+        };
+
+        window.sendMessage = async function () {
+            const userId = document.getElementById('user-select-id').value;
+            const content = document.getElementById('msg-content').value;
+            if (!userId || !content) return alert("Sélectionnez un client.");
+
+            const { error } = await adminSupabase.from('expert_messages').upsert({
+                clerk_user_id: userId,
+                content: content,
+                agent_name: document.getElementById('agent-display').value || 'Expert'
+            }, { onConflict: 'clerk_user_id' });
+
+            if (!error) { showToast("Message envoyé !"); goToMsgStep(1); }
+            else alert("Erreur : " + error.message);
+        };
 
         function showToast(message) {
             const toast = document.createElement('div');
