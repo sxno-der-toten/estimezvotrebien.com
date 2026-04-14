@@ -38,20 +38,25 @@ function clearSavedClerkSession() {
     }
 }
 
+// --- LOGIQUE REDIRECTION ET AUTH (Fix Double Clic) ---
 function updateNavbarLinks(user) {
-    const role = (user?.publicMetadata?.role || user?.unsafeMetadata?.role || '').toString().toLowerCase();
+    if (!user) return;
+    const role = (user.publicMetadata?.role || user.unsafeMetadata?.role || 'client').toString().toLowerCase();
     const isAdmin = role === 'admin';
     const targetPage = isAdmin ? 'admin.html' : 'client.html';
 
+    // On met à jour TOUS les liens immédiatement
     document.querySelectorAll('.nav-espace-link').forEach(link => {
         link.href = targetPage;
         link.classList.remove('espace-disabled');
+        link.classList.add('espace-active');
         link.textContent = 'Mon espace';
     });
 
-    // Sauvegarde immédiate pour Swup
+    // Sauvegarde pour le prochain chargement de page (Anti-FOUC)
     localStorage.setItem('app_auth_state', 'logged_in');
     localStorage.setItem('app_user_role', isAdmin ? 'admin' : 'client');
+    saveClerkSession({ isAdmin: isAdmin });
 }
 
 function isClerkAdmin(user) {
@@ -1120,6 +1125,7 @@ var clerkInterval = setInterval(async () => {
 
             if (window.Clerk.user) {
                 const user = window.Clerk.user;
+                updateNavbarLinks(user);
 
                 // Sync profil avec Supabase (On ne bloque pas si ça échoue)
                 if (window.supabaseClient) {

@@ -271,24 +271,31 @@
 
     <script src="main.js"></script>
     <script>
+        function bootClient() {
+            if (window.Clerk?.isReady && window.Clerk.user) {
+                const user = window.Clerk.user;
+                document.getElementById('dash-greeting').textContent = `Bonjour, ${user.firstName || 'Client'} 👋`;
+                if (typeof loadClientDashboard === 'function') {
+                    loadClientDashboard(user.id);
+                }
+            } else if (window.Clerk?.isReady && !window.Clerk.user) {
+                window.location.href = 'connexion.html';
+            }
+        }
+
         window.addEventListener('load', () => {
             const checkClerk = setInterval(() => {
-                if (window.Clerk?.isReady && window.Clerk.user) {
+                if (window.Clerk?.isReady) {
                     clearInterval(checkClerk);
-                    const user = window.Clerk.user;
-
-                    // Affichage immédiat du prénom
-                    document.getElementById('dash-greeting').textContent = `Bonjour, ${user.firstName || 'Client'} 👋`;
-
-                    // Appel manuel de la récupération Supabase définie dans main.js
-                    if (typeof loadClientDashboard === 'function') {
-                        loadClientDashboard(user.id);
-                    }
-                } else if (window.Clerk?.isReady && !window.Clerk.user) {
-                    window.location.href = 'connexion.html';
+                    bootClient();
                 }
             }, 100);
         });
+
+        // Support Swup
+        if (window.swactive) {
+            window.swactive.hooks.on('page:view', bootClient);
+        }
     </script>
 </body>
 
