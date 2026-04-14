@@ -1069,114 +1069,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-
 // ==========================================
-// LOGIQUE CLERK (AVEC GESTION DU CACHE SOLIDE ET ZÉRO FOUC)
+// LOGIQUE CLERK AMÉLIORÉE (ZÉRO BLOCAGE)
 // ==========================================
 var clerkInterval = setInterval(async () => {
     if (window.Clerk) {
         clearInterval(clerkInterval);
 
         try {
-            await window.Clerk.load({
-                appearance: {
-                    variables: {
-                        colorPrimary: '#6C83D9',
-                        colorBackground: '#FFFFFF',
-                        colorText: '#2E3F84',
-                        colorTextSecondary: '#6B7280',
-                        colorDanger: '#EF4444',
-                        colorSuccess: '#10B981',
-                        borderRadius: '12px',
-                        fontFamily: "'Inter', sans-serif"
-                    },
-                    elements: {
-                        userButtonAvatarBox: { width: '25.76px', height: '25.76px' },
-
-                        userButtonPopoverCard: {
-                            right: '20px !important', /* Au lieu de 50vh */
-                            transform: 'translateX(0) !important'
-                        },
-
-                        /* Supprime la ligne 'navbar: { height: 0 }' ici */
-
-                        modalContent: {
-                            maxWidth: '800px', /* Taille pro pour le bureau */
-                            width: '95vw',
-                            height: '85vh',
-                            margin: 'auto !important',
-                            position: 'relative !important',
-                            inset: 'auto !important',
-                            transform: 'none !important',
-                            boxShadow: '0 25px 50px -12px rgba(46, 63, 132, 0.25)'
-                        },
-                        /* Le conteneur parent (voile gris) doit être un flex center */
-                        modalBackdrop: {
-                            display: 'flex !important',
-                            alignItems: 'center !important',
-                            justifyContent: 'center !important'
-                        },
-                        // ----------------------------------------
-
-                        cardBox: { width: '100%', height: '100%', boxShadow: 'none' },
-                        scrollBox: { borderRadius: '0 20px 20px 0', height: '100%' },
-                        navbar: { height: '100%', background: '#FAFBFE', borderRight: '1px solid #E3E8F5', padding: '20px 15px', borderRadius: '20px 0 0 20px' },
-
-                        navbarButton: { borderRadius: '10px', color: '#6B7280', padding: '12px 15px', marginBottom: '5px' },
-                        navbarButton__active: { backgroundColor: '#EEF2FF', color: '#6C83D9', fontWeight: '600' },
-                        headerTitle: { color: '#2E3F84', fontSize: '22px', fontWeight: '800' },
-                        profileSectionTitleText: { color: '#2E3F84', fontWeight: '700', borderBottom: '1px solid #E3E8F5', paddingBottom: '10px', marginBottom: '15px' },
-                        formButtonPrimary: { backgroundColor: '#6C83D9', color: '#fff', borderRadius: '50px', padding: '10px 24px', textTransform: 'none', fontWeight: '600', boxShadow: 'none', "&:hover": { backgroundColor: '#566DBA' } },
-                        profileSectionPrimaryButton: { color: '#6C83D9', fontWeight: '600', "&:hover": { backgroundColor: '#EEF2FF', borderRadius: '10px' } },
-                        badge: { backgroundColor: '#EEF2FF', color: '#6C83D9', fontWeight: '600', borderRadius: '50px' },
-                        userButtonPopoverActionButton: { borderRadius: '10px', "&:hover": { backgroundColor: '#EEF2FF' } },
-                        userButtonPopoverActionButtonText: { color: '#2E3F84', fontWeight: '600' },
-                        userButtonPopoverActionButtonIcon: { color: '#6C83D9' },
-                        userPreviewMainIdentifier: { color: '#2E3F84', fontWeight: '700' },
-                        userPreviewSecondaryIdentifier: { color: '#6B7280' }
+            // On ne charge Clerk que s'il n'est pas déjà prêt
+            if (!window.Clerk.isReady) {
+                await window.Clerk.load({
+                    appearance: {
+                        variables: { colorPrimary: '#6C83D9', fontFamily: "'Inter', sans-serif" },
+                        elements: {
+                            userButtonAvatarBox: { width: '25.76px', height: '25.76px' },
+                            userButtonPopoverCard: { right: '20px !important' },
+                            modalContent: { maxWidth: '800px', width: '95vw', height: '85vh', margin: 'auto !important' }
+                        }
                     }
-                },
-                localization: {
-                    userButton: { action__manageAccount: "Gérer le compte", action__signOut: "Se déconnecter" },
-                    userProfile: {
-                        navbar: { title: "Compte", description: "Gérez les informations de votre compte.", account: "Profil", security: "Sécurité" },
-                        start: {
-                            headerTitle__account: "Détails du profil",
-                            headerTitle__security: "Sécurité",
-                            profileSection: { title: "Profil", primaryButton: "Mettre à jour le profil" },
-                            emailAddressesSection: { title: "Adresses e-mail", primaryButton: "Ajouter une adresse e-mail", detailsAction__primary: "Principale", detailsAction__nonPrimary: "Définir comme principale", detailsAction__remove: "Supprimer" },
-                            connectedAccountsSection: { title: "Comptes connectés", primaryButton: "Connecter un compte", action__connect: "Connecter", action__disconnect: "Déconnecter" },
-                            passwordSection: { title: "Mot de passe", primaryButton: "Modifier le mot de passe" },
-                            dangerSection: { title: "Zone de danger", deleteAccountTitle: "Supprimer le compte", deleteAccountDescription: "Supprimez définitivement votre compte et toutes vos données.", deleteAccountButton: "Supprimer le compte" }
-                        },
-                        profilePage: { title: "Modifier le profil", imageFormTitle: "Photo de profil", imageFormSubtitle: "Mettez à jour votre photo." },
-                        securityPage: { title: "Sécurité" },
-                        formButtonPrimary: "Enregistrer",
-                        formButtonReset: "Annuler"
-                    },
-                    badge__primary: "Principal",
-                    badge__unverified: "Non vérifié"
-                }
-            });
+                });
+            }
 
             if (window.Clerk.user) {
-                /* MODIFICATION ICI */
-                const styleId = 'fix-clerk-userpopover-position';
-                if (!document.getElementById(styleId)) {
-                    const styleElem = document.createElement('style');
-                    styleElem.id = styleId;
-                    styleElem.textContent = `
-                        .cl-userButtonPopoverCard,
-                        .cl-userButtonPopover {
-                            right: 90px !important;
-                            margin-top: 8px !important;
-                        }
-                    `;
-                    document.head.appendChild(styleElem);
-                }
-
                 const user = window.Clerk.user;
 
+                // Sync profil avec Supabase (On ne bloque pas si ça échoue)
                 if (window.supabaseClient) {
                     window.supabaseClient.from('profiles').upsert({
                         id: user.id,
@@ -1184,81 +1102,49 @@ var clerkInterval = setInterval(async () => {
                         first_name: user.firstName,
                         last_name: user.lastName,
                         updated_at: new Date()
-                    }).then(({ error }) => { if (error) console.error("Erreur synchro profil:", error); });
+                    }).then(({ error }) => { if (error) console.warn("Note: Synchro profil ignorée (Base vide ?)"); });
                 }
 
-                if (window.location.pathname.includes('connexion.html') || window.location.pathname.includes('inscription.html')) {
-                    window.location.href = './';
-                    return;
-                }
-
-                // --- MISE A JOUR DU CACHE ET DE L'UI ---
-                const role = (window.Clerk.user?.publicMetadata?.role || window.Clerk.user?.unsafeMetadata?.role || '').toString().toLowerCase();
+                // MISE A JOUR UI
+                const role = (user.publicMetadata?.role || user.unsafeMetadata?.role || '').toString().toLowerCase();
                 const isAdmin = role === 'admin';
 
+                // On met à jour le localStorage pour les scripts de page
                 localStorage.setItem('clerk_auth_state', 'logged_in');
                 localStorage.setItem('clerk_auth_role', isAdmin ? 'admin' : 'client');
+                localStorage.setItem('app_auth_state', 'logged_in');
+                localStorage.setItem('app_user_role', isAdmin ? 'admin' : 'client');
 
                 document.documentElement.classList.add('is-logged-in');
                 document.documentElement.classList.remove('is-logged-out');
 
-                document.querySelectorAll('.nav-espace-link').forEach(link => {
-                    link.textContent = 'Mon espace';
-                    link.classList.remove('espace-disabled');
-                    link.classList.add('espace-active');
-                    link.setAttribute('href', isAdmin ? 'admin.html' : 'client.html');
-                });
-
+                // Montage des boutons (On vide d'abord pour éviter les bugs Swup)
                 const desktopBtn = document.getElementById('user-button-desktop');
-                if (desktopBtn && !desktopBtn.hasChildNodes()) {
-                    window.Clerk.mountUserButton(desktopBtn, { afterSignOutUrl: new URL('./', window.location.href).href });
+                if (desktopBtn) {
+                    desktopBtn.innerHTML = '';
+                    window.Clerk.mountUserButton(desktopBtn, { afterSignOutUrl: window.location.origin });
                 }
 
-                // ── Bloc profil mobile custom ──────────────────────────────
                 const mobileBtn = document.getElementById('user-button-mobile');
-                if (mobileBtn && !mobileBtn.hasChildNodes()) {
-                    // On monte l'avatar Clerk (pointer-events: none côté CSS,
-                    // le clic est capturé par le bloc parent)
-                    window.Clerk.mountUserButton(mobileBtn, {
-                        afterSignOutUrl: new URL('./', window.location.href).href
-                    });
+                if (mobileBtn) {
+                    mobileBtn.innerHTML = '';
+                    window.Clerk.mountUserButton(mobileBtn, { afterSignOutUrl: window.location.origin });
                 }
 
-                // Injecte le nom complet dans le drawer
+                // Injecte le nom dans le drawer
                 const profileName = document.getElementById('mobile-profile-name');
-                if (profileName && window.Clerk.user) {
-                    const u = window.Clerk.user;
-                    const fullName = [u.firstName, u.lastName].filter(Boolean).join(' ') || u.primaryEmailAddress?.emailAddress || 'Mon compte';
-                    profileName.textContent = fullName;
-                }
-
-                // Toggle du dropdown inversé
-                const profileBlock = document.getElementById('mobile-profile-block');
-                const manageBtn = document.getElementById('mobile-manage-account');
-                const signOutBtn = document.getElementById('mobile-sign-out');
-
-                // ─────────────────────────────────────────────────────────────
-                if (window.location.pathname.includes('client.html')) {
-                    loadClientDashboard(window.Clerk.user.id);
+                if (profileName) {
+                    profileName.textContent = [user.firstName, user.lastName].filter(Boolean).join(' ') || 'Mon compte';
                 }
 
             } else {
-                // --- UTILISATEUR DÉCONNECTÉ ---
+                // Déconnecté
                 localStorage.setItem('clerk_auth_state', 'logged_out');
-                localStorage.removeItem('clerk_auth_role');
-
                 document.documentElement.classList.add('is-logged-out');
                 document.documentElement.classList.remove('is-logged-in');
-
-                document.querySelectorAll('.nav-espace-link').forEach(link => {
-                    link.textContent = 'Mon espace';
-                    link.classList.add('espace-disabled');
-                    link.classList.remove('espace-active');
-                    link.setAttribute('href', 'connexion.html');
-                });
             }
         } catch (error) {
-            console.error("Erreur de chargement Clerk :", error);
+            console.error("Erreur d'initialisation Clerk :", error);
         }
     }
 }, 50);

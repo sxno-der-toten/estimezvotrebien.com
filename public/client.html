@@ -271,10 +271,11 @@
 
     <script src="main.js"></script>
     <script>
-        // Logique de sécurisation : on attend que main.js charge Clerk pour éviter les conflits
+        // Logique de sécurisation : on attend que Clerk soit prêt pour éviter les conflits
         window.addEventListener('load', () => {
             const checkClerk = setInterval(() => {
-                if (window.Clerk && window.Clerk.user !== undefined) {
+                // Utilisation de isReady pour garantir que l'objet Clerk est totalement initialisé
+                if (window.Clerk && window.Clerk.isReady) {
                     clearInterval(checkClerk);
                     if (window.Clerk.user) {
                         document.getElementById('dash-greeting').textContent = `Bonjour, ${window.Clerk.user.firstName} 👋`;
@@ -282,6 +283,7 @@
                             loadClientDashboard(window.Clerk.user.id);
                         }
                     } else {
+                        // Si l'utilisateur n'est pas connecté, redirection
                         window.location.href = 'connexion.html';
                     }
                 }
