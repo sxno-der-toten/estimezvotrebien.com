@@ -718,20 +718,6 @@ function initCookieBanner() {
 
     // Animation d'entrée
     setTimeout(() => banner.classList.add('show'), 500);
-
-    // Événements de clic (Attachement direct)
-    acceptBtn.onclick = () => {
-        console.log("Cookie: Accepté");
-        localStorage.setItem('estimez_cookie_consent', 'all');
-        hideAndRemoveBanner(banner);
-        activateAnalytics();
-    };
-
-    rejectBtn.onclick = () => {
-        console.log("Cookie: Refusé");
-        localStorage.setItem('estimez_cookie_consent', 'essential_only');
-        hideAndRemoveBanner(banner);
-    };
 }
 
 function hideAndRemoveBanner(banner) {
@@ -739,10 +725,10 @@ function hideAndRemoveBanner(banner) {
     setTimeout(() => banner.remove(), 500); // Supprime du DOM après l'animation
 }
 
-function activateAnalytics() {
-    console.log("🚀 Cookies analytiques activés : Vous pouvez maintenant charger Google Analytics.");
-    /* C'est ici que tu colleras ton code Google Analytics ou Facebook Pixel plus tard */
-}
+// function activateAnalytics() {
+//     console.log("🚀 Cookies analytiques activés : Vous pouvez maintenant charger Google Analytics.");
+//     /* C'est ici que tu colleras ton code Google Analytics ou Facebook Pixel plus tard */
+// }
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', checkCookieConsent);
@@ -1309,14 +1295,4 @@ if (!window.mobileMenuInitialized) {
         }
     });
     window.mobileMenuInitialized = true;
-}
-
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then(reg => {
-            console.log('PWA Service Worker enregistré !');
-        }).catch(err => {
-            console.log('Erreur SW:', err);
-        });
-    });
 }
