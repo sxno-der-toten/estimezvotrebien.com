@@ -703,7 +703,6 @@ function checkCookieConsent() {
 }
 
 function initCookieBanner() {
-    // Évite les doublons si la fonction est rappelée par erreur
     if (document.querySelector('.cookie-banner')) return;
 
     const banner = document.createElement('div');
@@ -719,20 +718,26 @@ function initCookieBanner() {
 
     document.body.appendChild(banner);
 
+    // On récupère les boutons directement à l'intérieur de NOTRE banner
+    const acceptBtn = banner.querySelector('#cookie-accept');
+    const rejectBtn = banner.querySelector('#cookie-reject');
+
     // Animation d'entrée
     setTimeout(() => banner.classList.add('show'), 500);
 
-    // Événements de clic
-    document.getElementById('cookie-accept').addEventListener('click', () => {
-        localStorage.setItem('estimez_cookie_consent', 'all'); // Sauvegarde le choix
+    // Événements de clic (Attachement direct)
+    acceptBtn.onclick = () => {
+        console.log("Cookie: Accepté");
+        localStorage.setItem('estimez_cookie_consent', 'all');
         hideAndRemoveBanner(banner);
-        activateAnalytics(); // Déclenche les stats
-    });
+        activateAnalytics();
+    };
 
-    document.getElementById('cookie-reject').addEventListener('click', () => {
-        localStorage.setItem('estimez_cookie_consent', 'essential_only'); // Sauvegarde le refus
+    rejectBtn.onclick = () => {
+        console.log("Cookie: Refusé");
+        localStorage.setItem('estimez_cookie_consent', 'essential_only');
         hideAndRemoveBanner(banner);
-    });
+    };
 }
 
 function hideAndRemoveBanner(banner) {
