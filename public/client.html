@@ -271,23 +271,23 @@
 
     <script src="main.js"></script>
     <script>
-        // Logique de sécurisation : on attend que Clerk soit prêt pour éviter les conflits
         window.addEventListener('load', () => {
             const checkClerk = setInterval(() => {
-                // Utilisation de isReady pour garantir que l'objet Clerk est totalement initialisé
-                if (window.Clerk && window.Clerk.isReady) {
+                if (window.Clerk?.isReady && window.Clerk.user) {
                     clearInterval(checkClerk);
-                    if (window.Clerk.user) {
-                        document.getElementById('dash-greeting').textContent = `Bonjour, ${window.Clerk.user.firstName} 👋`;
-                        if (typeof loadClientDashboard === 'function') {
-                            loadClientDashboard(window.Clerk.user.id);
-                        }
-                    } else {
-                        // Si l'utilisateur n'est pas connecté, redirection
-                        window.location.href = 'connexion.html';
+                    const user = window.Clerk.user;
+
+                    // Affichage immédiat du prénom
+                    document.getElementById('dash-greeting').textContent = `Bonjour, ${user.firstName || 'Client'} 👋`;
+
+                    // Appel manuel de la récupération Supabase définie dans main.js
+                    if (typeof loadClientDashboard === 'function') {
+                        loadClientDashboard(user.id);
                     }
+                } else if (window.Clerk?.isReady && !window.Clerk.user) {
+                    window.location.href = 'connexion.html';
                 }
-            }, 50);
+            }, 100);
         });
     </script>
 </body>
