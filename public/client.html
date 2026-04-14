@@ -166,7 +166,7 @@
         <div class="container">
             <nav class="nav">
                 <div class="nav-brand" style="white-space: nowrap; display: flex; align-items: center;">
-                    <a href="./" class="logo-link">
+                    <a href="index.html" class="logo-link">
                         <img src="images/logo.png" alt="EstimezVotreBien.com" class="logo-img"
                             style="max-height: 45px; width: auto; display: block;">
                     </a>
@@ -178,14 +178,14 @@
                     <button class="close-menu-btn" id="close-menu-btn" aria-label="Fermer le menu"><i
                             class="fas fa-times"></i></button>
                     <div class="mobile-menu-logo mobile-only">
-                        <a href="./" class="logo-link">
+                        <a href="index.html" class="logo-link">
                             <img src="images/small_logo.png" alt="EstimezVotreBien.com" class="logo-img"
                                 style="max-height: 40px; width: auto; display: block;">
                         </a>
                     </div>
 
                     <ul class="nav-menu">
-                        <li><a href="./">Estimer</a></li>
+                        <li><a href="index.html">Estimer</a></li>
                         <li><a href="acheter.html">Acheter</a></li>
                         <li><a href="vendre.html">Vendre</a></li>
                         <li><a href="guides.html">Guides</a></li>
@@ -271,31 +271,22 @@
 
     <script src="main.js"></script>
     <script>
-        function bootClient() {
-            if (window.Clerk?.isReady && window.Clerk.user) {
-                const user = window.Clerk.user;
-                document.getElementById('dash-greeting').textContent = `Bonjour, ${user.firstName || 'Client'} 👋`;
-                if (typeof loadClientDashboard === 'function') {
-                    loadClientDashboard(user.id);
-                }
-            } else if (window.Clerk?.isReady && !window.Clerk.user) {
-                window.location.href = 'connexion.html';
-            }
-        }
-
+        // Logique de sécurisation : on attend que main.js charge Clerk pour éviter les conflits
         window.addEventListener('load', () => {
             const checkClerk = setInterval(() => {
-                if (window.Clerk?.isReady) {
+                if (window.Clerk && window.Clerk.user !== undefined) {
                     clearInterval(checkClerk);
-                    bootClient();
+                    if (window.Clerk.user) {
+                        document.getElementById('dash-greeting').textContent = `Bonjour, ${window.Clerk.user.firstName} 👋`;
+                        if (typeof loadClientDashboard === 'function') {
+                            loadClientDashboard(window.Clerk.user.id);
+                        }
+                    } else {
+                        window.location.href = 'connexion.html';
+                    }
                 }
-            }, 100);
+            }, 50);
         });
-
-        // Support Swup
-        if (window.swactive) {
-            window.swactive.hooks.on('page:view', bootClient);
-        }
     </script>
 </body>
 
