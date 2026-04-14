@@ -27,13 +27,17 @@ const checkReady = setInterval(() => {
 }, 100);
 
 async function initAdminPanel() {
+    if (!window.Clerk || !window.Clerk.user) {
+        window.location.href = 'connexion.html';
+        return;
+    }
+
     const user = window.Clerk.user;
     const role = (user?.publicMetadata?.role || user?.unsafeMetadata?.role || '').toString().toLowerCase();
-    const isAdmin = role === 'admin';
 
-    if (!user || !isAdmin) {
-        alert("Accès interdit : Cette page est réservée aux administrateurs.");
-        window.location.href = 'index.html';
+    if (role !== 'admin') {
+        alert("Accès interdit.");
+        window.location.href = './';
         return;
     }
     refreshAll();
@@ -41,7 +45,8 @@ async function initAdminPanel() {
 
 async function refreshAll() {
     try {
-        const { data: profilesData } = await adminSupabase.from('profiles').select('*');
+        const { data: profilesData, error: pError } = await adminSupabase.from('profiles').select('*');
+        if (pError) console.error("Erreur Profils:", pError);
         globalProfiles = profilesData || [];
 
         setupAutocomplete();
@@ -49,7 +54,7 @@ async function refreshAll() {
         loadLeads();
         loadMandates();
     } catch (err) {
-        console.error("Erreur refreshAll:", err);
+        console.error("Erreur générale Refresh:", err);
     }
 }
 

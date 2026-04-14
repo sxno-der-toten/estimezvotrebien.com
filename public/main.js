@@ -734,25 +734,85 @@ function hideAndRemoveBanner(banner) {
 document.addEventListener('DOMContentLoaded', checkCookieConsent);
 
 // ==========================================
-// INITIALISATION SWUP (Version 4)
+// SYSTÈME DE CONSENTEMENT RGPD (Version Pro)
 // ==========================================
-// On crée l'instance Swup pour activer la navigation fluide
-var swup;
+function checkCookieConsent() {
+    const consent = localStorage.getItem('estimez_cookie_consent');
+    if (consent === 'all') {
+        activateAnalytics();
+    } else if (!consent) {
+        initCookieBanner();
+    }
+}
+
+function initCookieBanner() {
+    if (document.querySelector('.cookie-banner')) return;
+
+    const banner = document.createElement('div');
+    banner.className = 'cookie-banner';
+    banner.innerHTML = `
+        <h3><i class="fas fa-cookie-bite" style="color: #F59E0B;"></i> Respect de votre vie privée</h3>
+        <p>Nous utilisons des cookies essentiels au fonctionnement de votre espace. Nous souhaitons également utiliser des outils d'analyse anonymes pour améliorer nos services.</p>
+        <div class="cookie-btns">
+            <button class="cookie-btn reject" id="cookie-reject">Refuser</button>
+            <button class="cookie-btn accept" id="cookie-accept">Tout accepter</button>
+        </div>
+    `;
+
+    document.body.appendChild(banner);
+
+    // FIX : Ajout des écouteurs de clics (listeners)
+    const acceptBtn = banner.querySelector('#cookie-accept');
+    const rejectBtn = banner.querySelector('#cookie-reject');
+
+    if (acceptBtn) {
+        acceptBtn.onclick = () => {
+            localStorage.setItem('estimez_cookie_consent', 'all');
+            hideAndRemoveBanner(banner);
+            activateAnalytics();
+        };
+    }
+
+    if (rejectBtn) {
+        rejectBtn.onclick = () => {
+            localStorage.setItem('estimez_cookie_consent', 'essential_only');
+            hideAndRemoveBanner(banner);
+        };
+    }
+
+    setTimeout(() => banner.classList.add('show'), 500);
+}
+
+function hideAndRemoveBanner(banner) {
+    banner.classList.remove('show');
+    setTimeout(() => banner.remove(), 500);
+}
+
+function activateAnalytics() {
+    console.log("🚀 Cookies analytiques activés.");
+}
+
+// Initialisation au chargement de la page
+document.addEventListener('DOMContentLoaded', checkCookieConsent);
+
+// ==========================================
+// INITIALISATION SWUP (Version 4 - Syntax Fix)
+// ==========================================
+var swactive;
 try {
     if (typeof Swup !== 'undefined') {
-        swup = new Swup(); // On initialise le moteur
+        swactive = new Swup(); // On initialise l'instance
 
-        // On écoute les changements de page pour revérifier les cookies
-        swup.hooks.on('page:view', () => {
+        // Syntaxe correcte pour Swup 4 : .hooks.on
+        swactive.hooks.on('page:view', () => {
             if (typeof checkCookieConsent === 'function') {
                 checkCookieConsent();
             }
         });
-
         console.log("🚀 Swup est actif !");
     }
 } catch (e) {
-    console.warn("Swup n'a pas pu être initialisé (ID #swup manquant ?)");
+    console.warn("Swup non initialisé :", e.message);
 }
 
 // ==========================================
