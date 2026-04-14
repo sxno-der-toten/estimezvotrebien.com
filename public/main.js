@@ -679,60 +679,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-
-// ==========================================
-// SYSTÈME DE CONSENTEMENT RGPD (Version Pro)
-// ==========================================
-function checkCookieConsent() {
-    const consent = localStorage.getItem('estimez_cookie_consent');
-
-    // Si l'utilisateur a déjà accepté, on charge les outils de stats
-    if (consent === 'all') {
-        activateAnalytics();
-    }
-    // Sinon, s'il n'a pas encore fait de choix, on affiche le bandeau
-    else if (!consent) {
-        initCookieBanner();
-    }
-}
-
-function initCookieBanner() {
-    if (document.querySelector('.cookie-banner')) return;
-
-    const banner = document.createElement('div');
-    banner.className = 'cookie-banner';
-    banner.innerHTML = `
-        <h3><i class="fas fa-cookie-bite" style="color: #F59E0B;"></i> Respect de votre vie privée</h3>
-        <p>Nous utilisons des cookies essentiels au fonctionnement de votre espace. Nous souhaitons également utiliser des outils d'analyse anonymes pour améliorer nos services.</p>
-        <div class="cookie-btns">
-            <button class="cookie-btn reject" id="cookie-reject">Refuser</button>
-            <button class="cookie-btn accept" id="cookie-accept">Tout accepter</button>
-        </div>
-    `;
-
-    document.body.appendChild(banner);
-
-    // On récupère les boutons directement à l'intérieur de NOTRE banner
-    const acceptBtn = banner.querySelector('#cookie-accept');
-    const rejectBtn = banner.querySelector('#cookie-reject');
-
-    // Animation d'entrée
-    setTimeout(() => banner.classList.add('show'), 500);
-}
-
-function hideAndRemoveBanner(banner) {
-    banner.classList.remove('show');
-    setTimeout(() => banner.remove(), 500); // Supprime du DOM après l'animation
-}
-
-// function activateAnalytics() {
-//     console.log("🚀 Cookies analytiques activés : Vous pouvez maintenant charger Google Analytics.");
-//     /* C'est ici que tu colleras ton code Google Analytics ou Facebook Pixel plus tard */
-// }
-
-// Initialisation au chargement de la page
-document.addEventListener('DOMContentLoaded', checkCookieConsent);
-
 // ==========================================
 // SYSTÈME DE CONSENTEMENT RGPD (Version Pro)
 // ==========================================
@@ -746,8 +692,7 @@ function checkCookieConsent() {
 }
 
 function initCookieBanner() {
-    if (document.querySelector('.cookie-banner')) return;
-
+    if (document.querySelector('.cookie-banner') || localStorage.getItem('estimez_cookie_consent')) return;
     const banner = document.createElement('div');
     banner.className = 'cookie-banner';
     banner.innerHTML = `
@@ -761,7 +706,6 @@ function initCookieBanner() {
 
     document.body.appendChild(banner);
 
-    // FIX : Ajout des écouteurs de clics (listeners)
     const acceptBtn = banner.querySelector('#cookie-accept');
     const rejectBtn = banner.querySelector('#cookie-reject');
 
@@ -792,7 +736,6 @@ function activateAnalytics() {
     console.log("🚀 Cookies analytiques activés.");
 }
 
-// Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', checkCookieConsent);
 
 // ==========================================
@@ -803,7 +746,6 @@ try {
     if (typeof Swup !== 'undefined') {
         swactive = new Swup(); // On initialise l'instance
 
-        // Syntaxe correcte pour Swup 4 : .hooks.on
         swactive.hooks.on('page:view', () => {
             if (typeof checkCookieConsent === 'function') {
                 checkCookieConsent();
@@ -1146,15 +1088,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// --- LOGIQUE REDIRECTION ET AUTH ---
+function updateNavbarLinks(user) {
+    const role = (user?.publicMetadata?.role || user?.unsafeMetadata?.role || '').toString().toLowerCase();
+    const isAdmin = role === 'admin';
+    const targetPage = isAdmin ? 'admin.html' : 'client.html';
+
+    document.querySelectorAll('.nav-espace-link').forEach(link => {
+        link.href = targetPage;
+        link.classList.remove('espace-disabled');
+        link.classList.add('espace-active');
+        link.textContent = 'Mon espace';
+    });
+
+    // Sauvegarde immédiate pour Swup
+    localStorage.setItem('app_auth_state', 'logged_in');
+    localStorage.setItem('app_user_role', isAdmin ? 'admin' : 'client');
+}
+
 // ==========================================
 // LOGIQUE CLERK AMÉLIORÉE (ZÉRO BLOCAGE)
 // ==========================================
 var clerkInterval = setInterval(async () => {
     if (window.Clerk) {
         clearInterval(clerkInterval);
-
         try {
-            // On ne charge Clerk que s'il n'est pas déjà prêt
             if (!window.Clerk.isReady) {
                 await window.Clerk.load({
                     appearance: {
@@ -1170,6 +1128,7 @@ var clerkInterval = setInterval(async () => {
 
             if (window.Clerk.user) {
                 const user = window.Clerk.user;
+                updateNavbarLinks(user); // Fix le "double clic"
 
                 // Sync profil avec Supabase (On ne bloque pas si ça échoue)
                 if (window.supabaseClient) {
@@ -1182,41 +1141,28 @@ var clerkInterval = setInterval(async () => {
                     }).then(({ error }) => { if (error) console.warn("Note: Synchro profil ignorée (Base vide ?)"); });
                 }
 
-                // MISE A JOUR UI
-                const role = (user.publicMetadata?.role || user.unsafeMetadata?.role || '').toString().toLowerCase();
-                const isAdmin = role === 'admin';
-
-                // On met à jour le localStorage pour les scripts de page
-                localStorage.setItem('clerk_auth_state', 'logged_in');
-                localStorage.setItem('clerk_auth_role', isAdmin ? 'admin' : 'client');
-                localStorage.setItem('app_auth_state', 'logged_in');
-                localStorage.setItem('app_user_role', isAdmin ? 'admin' : 'client');
-
                 document.documentElement.classList.add('is-logged-in');
                 document.documentElement.classList.remove('is-logged-out');
 
-                // Montage des boutons (On vide d'abord pour éviter les bugs Swup)
+                // Montage des boutons
                 const desktopBtn = document.getElementById('user-button-desktop');
                 if (desktopBtn) {
                     desktopBtn.innerHTML = '';
-                    window.Clerk.mountUserButton(desktopBtn, { afterSignOutUrl: window.location.origin });
+                    window.Clerk.mountUserButton(desktopBtn, { afterSignOutUrl: './' });
                 }
 
                 const mobileBtn = document.getElementById('user-button-mobile');
                 if (mobileBtn) {
                     mobileBtn.innerHTML = '';
-                    window.Clerk.mountUserButton(mobileBtn, { afterSignOutUrl: window.location.origin });
+                    window.Clerk.mountUserButton(mobileBtn, { afterSignOutUrl: './' });
                 }
 
-                // Injecte le nom dans le drawer
                 const profileName = document.getElementById('mobile-profile-name');
-                if (profileName) {
-                    profileName.textContent = [user.firstName, user.lastName].filter(Boolean).join(' ') || 'Mon compte';
-                }
-
+                if (profileName) profileName.textContent = [user.firstName, user.lastName].filter(Boolean).join(' ') || 'Mon compte';
             } else {
-                // Déconnecté
                 localStorage.setItem('clerk_auth_state', 'logged_out');
+                localStorage.setItem('app_auth_state', 'logged_out');
+                localStorage.removeItem('app_user_role');
                 document.documentElement.classList.add('is-logged-out');
                 document.documentElement.classList.remove('is-logged-in');
             }
@@ -1224,7 +1170,7 @@ var clerkInterval = setInterval(async () => {
             console.error("Erreur d'initialisation Clerk :", error);
         }
     }
-}, 50);
+}, 100);
 
 // ==========================================
 // GESTION MOBILE UNIVERSELLE (ANTI-DOUBLE CLIC)
