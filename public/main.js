@@ -789,7 +789,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 if (result.status === 'complete') {
                     await window.Clerk.setActive({ session: result.createdSessionId });
-                    window.location.href = 'index.html';
+                    window.location.href = './';
                 } else {
                     errorDiv.textContent = "Une vérification supplémentaire est requise (2FA).";
                 }
@@ -898,7 +898,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     if (result.status === 'complete') {
                         await window.Clerk.setActive({ session: result.createdSessionId });
-                        window.location.href = 'index.html';
+                        window.location.href = './';
                     }
                 } catch (err) {
                     let errMsg = err.errors?.[0]?.longMessage || "Erreur de réinitialisation.";
@@ -930,7 +930,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     await window.Clerk.client.signIn.authenticateWithRedirect({
                         strategy: "oauth_google",
                         redirectUrl: new URL('sso-callback.html', window.location.href).href,
-                        redirectUrlComplete: new URL('index.html', window.location.href).href,
+                        redirectUrlComplete: new URL('./', window.location.href).href,
                     });
                 } catch (err) {
                     errorDiv.textContent = "Erreur de connexion avec Google.";
@@ -962,7 +962,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     await window.Clerk.client.signIn.authenticateWithRedirect({
                         strategy: "oauth_google",
                         redirectUrl: new URL('sso-callback.html', window.location.href).href,
-                        redirectUrlComplete: new URL('index.html', window.location.href).href,
+                        redirectUrlComplete: new URL('./', window.location.href).href,
                     });
                 } catch (err) {
                     errorDivReg.textContent = "Erreur de connexion avec Google.";
@@ -1068,7 +1068,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (completeSignUp.status === 'complete') {
                         await window.Clerk.setActive({ session: completeSignUp.createdSessionId });
-                        window.location.href = 'index.html';
+                        window.location.href = './';
                     } else {
                         errorDivReg.textContent = "Vérification incomplète, veuillez réessayer.";
                     }
@@ -1202,7 +1202,7 @@ var clerkInterval = setInterval(async () => {
                 }
 
                 if (window.location.pathname.includes('connexion.html') || window.location.pathname.includes('inscription.html')) {
-                    window.location.href = 'index.html';
+                    window.location.href = './';
                     return;
                 }
 
@@ -1225,7 +1225,7 @@ var clerkInterval = setInterval(async () => {
 
                 const desktopBtn = document.getElementById('user-button-desktop');
                 if (desktopBtn && !desktopBtn.hasChildNodes()) {
-                    window.Clerk.mountUserButton(desktopBtn, { afterSignOutUrl: new URL('index.html', window.location.href).href });
+                    window.Clerk.mountUserButton(desktopBtn, { afterSignOutUrl: new URL('./', window.location.href).href });
                 }
 
                 // ── Bloc profil mobile custom ──────────────────────────────
@@ -1234,7 +1234,7 @@ var clerkInterval = setInterval(async () => {
                     // On monte l'avatar Clerk (pointer-events: none côté CSS,
                     // le clic est capturé par le bloc parent)
                     window.Clerk.mountUserButton(mobileBtn, {
-                        afterSignOutUrl: new URL('index.html', window.location.href).href
+                        afterSignOutUrl: new URL('./', window.location.href).href
                     });
                 }
 
@@ -1305,7 +1305,7 @@ if (!window.mobileMenuInitialized) {
 
         // Action : Se déconnecter
         if (e.target.closest('#mobile-sign-out')) {
-            window.Clerk?.signOut().then(() => window.location.href = 'index.html');
+            window.Clerk?.signOut().then(() => window.location.href = './');
         }
     });
     window.mobileMenuInitialized = true;

@@ -1,10 +1,10 @@
 const CACHE_NAME = 'evb-v1';
 const ASSETS_TO_CACHE = [
-    '/',
-    '/index.html',
-    '/css/global.css',
-    '/main.js',
-    '/images/logo.png'
+    './',           // On cache la racine (index)
+    './index.html', // On garde le fichier physique en secours
+    './css/global.css',
+    './main.js',
+    './images/logo.png'
 ];
 
 // Installation : Mise en cache des fichiers critiques
@@ -30,7 +30,7 @@ self.addEventListener('fetch', (event) => {
             }).catch(() => {
                 // Fallback si on est hors ligne et que la ressource n'est pas en cache
                 if (event.request.mode === 'navigate') {
-                    return caches.match('index.html');
+                    return caches.match('./');
                 }
             });
         })
