@@ -734,8 +734,8 @@ function hideAndRemoveBanner(banner) {
 document.addEventListener('DOMContentLoaded', checkCookieConsent);
 
 // Support pour Swup : On vérifie le consentement à chaque changement de page
-if (typeof swup !== 'undefined') {
-    swup.on('contentReplaced', checkCookieConsent);
+if (typeof window.swup !== 'undefined' && window.swup.hooks) {
+    window.swup.hooks.on('page:view', checkCookieConsent);
 }
 
 // ==========================================
