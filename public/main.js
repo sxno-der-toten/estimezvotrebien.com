@@ -38,21 +38,20 @@ function clearSavedClerkSession() {
     }
 }
 
-function getClerkRole(user) {
-    const rawRole = user?.publicMetadata?.role ?? user?.unsafeMetadata?.role ?? '';
-    if (Array.isArray(rawRole)) {
-        return rawRole
-            .map(item => String(item || '').trim().toLowerCase())
-            .filter(Boolean)
-            .join(' ');
-    }
-    if (rawRole && typeof rawRole === 'object') {
-        return Object.values(rawRole)
-            .map(item => String(item || '').trim().toLowerCase())
-            .filter(Boolean)
-            .join(' ');
-    }
-    return String(rawRole || '').trim().toLowerCase();
+function updateNavbarLinks(user) {
+    const role = (user?.publicMetadata?.role || user?.unsafeMetadata?.role || '').toString().toLowerCase();
+    const isAdmin = role === 'admin';
+    const targetPage = isAdmin ? 'admin.html' : 'client.html';
+
+    document.querySelectorAll('.nav-espace-link').forEach(link => {
+        link.href = targetPage;
+        link.classList.remove('espace-disabled');
+        link.textContent = 'Mon espace';
+    });
+
+    // Sauvegarde immédiate pour Swup
+    localStorage.setItem('app_auth_state', 'logged_in');
+    localStorage.setItem('app_user_role', isAdmin ? 'admin' : 'client');
 }
 
 function isClerkAdmin(user) {
@@ -1134,6 +1133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
 
 // ==========================================
 // LOGIQUE CLERK AMÉLIORÉE (ZÉRO BLOCAGE)
