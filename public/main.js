@@ -82,12 +82,6 @@ function restoreNavbarFromSavedSession() {
 
 restoreNavbarFromSavedSession();
 
-// ==========================================
-// 1. INITIALISATION DE SWUP (Navigation Fluide)
-// ==========================================
-if (typeof Swup !== 'undefined') {
-    var swup = new Swup();
-}
 
 // ==========================================
 // 2. GESTION DES RÔLES ET LOCALSTORAGE
